@@ -1,0 +1,5 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+public interface NMEASentenceParser {
+	public boolean parse(String [] tokens, ValueGPS position);
+}

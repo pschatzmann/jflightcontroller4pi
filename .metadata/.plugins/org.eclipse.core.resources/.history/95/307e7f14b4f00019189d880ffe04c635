@@ -1,0 +1,24 @@
+# Sensors
+
+Beitian BN-880Q GPS+GLONASS Dual GPS Antenna Module FLASH TTL Level 9600bps for FPV Airplane RC Racing Drone
+
+- Output protocol:	NMEA-0183 or UBX, default NMEA-0183 protocol
+- NMEA sentences: RMC, VTG, GGA, GSA, GSV, GLL
+- Update frequency	: 1Hz-10Hz, default 1Hz
+- Baud rate: 4800bps-921600bps, default 9600bps
+
+
+
+	<bean id="gps" class="ch.pschatzmann.jflightcontroller4pi.devices.Sensor" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="name" value="GPS"/>
+	  	<property name="in">
+			<ref bean="pinI2C"/>
+		</property>
+	</bean>
+	
+	
+	<bean id="pinI2C" class="ch.pschatzmann.jflightcontroller4pi.protocols.InputFromPiI2C">
+	</bean>
+	
+	

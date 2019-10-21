@@ -1,0 +1,34 @@
+package ch.pschatzmann.jdkflightsimulator4pi.devices;
+
+import ch.pschatzmann.jdkflightsimulator4pi.FlightControllerState;
+import ch.pschatzmann.jdkflightsimulator4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jdkflightsimulator4pi.scaling.Scaler;
+
+public class Rudder extends OutDevice {
+	private Scaler scaler = new Scaler(0,100.0);
+	
+	public Rudder(){
+		this.setPinName("GPIO_01");
+	}
+
+	@Override
+	public void setup() {
+		super.setup();
+        
+        // Define handler to update the Servo Position
+        FlightControllerState.getParameterStore().register(ParametersEnum.RUDDER, rudder -> {
+			int rudderPWM = (int)scaler.scale(rudder.value);			
+			this.getPin().setPwm(rudderPWM);
+		});
+
+        // Set rudder to neutral position
+        FlightControllerState.getParameterStore().addValue(ParametersEnum.YAW, 0.0);
+
+	}
+
+	
+	
+
+
+
+}

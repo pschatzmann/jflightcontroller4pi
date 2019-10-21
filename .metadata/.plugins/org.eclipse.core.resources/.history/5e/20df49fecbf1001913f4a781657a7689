@@ -1,0 +1,13 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.util.List;
+
+/**
+ * @author pschatzmann
+ *
+ */
+public interface IFieldDefinitions {
+	public List<FieldDefinition> getFieldDefinitions();
+	public List<FieldDefinition> getInputFields();
+
+}

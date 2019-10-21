@@ -1,0 +1,89 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class NMEAParser {
+	ValueGPS position = new ValueGPS();	
+	private static final Map<String, NMEASentenceParser> NMEASentenceParsers = new HashMap<String, NMEASentenceParser>();
+	
+    public NMEAParser() {
+    	NMEASentenceParsers.put("GPGGA", new GPGGA());
+    	NMEASentenceParsers.put("GPGGL", new GPGGL());
+    	NMEASentenceParsers.put("GPRMC", new GPRMC());
+    	NMEASentenceParsers.put("GPRMZ", new GPRMZ());
+    }
+    
+    
+	public ValueGPS parse(String line) {
+		if(line.startsWith("$")) {
+			String nmea = line.substring(1);
+			String[] tokens = nmea.split(",");
+			String type = tokens[0];
+			if(NMEASentenceParsers.containsKey(type)) {
+				NMEASentenceParsers.get(type).parse(tokens, position);
+			}
+		}
+		return position;
+	}
+	
+	// utils
+	static float Latitude2Decimal(String lat, String NS) {
+		float med = Float.parseFloat(lat.substring(2))/60.0f;
+		med +=  Float.parseFloat(lat.substring(0, 2));
+		if(NS.startsWith("S")) {
+			med = -med;
+		}
+		return med;
+	}
+
+	static float Longitude2Decimal(String lon, String WE) {
+		float med = Float.parseFloat(lon.substring(3))/60.0f;
+		med +=  Float.parseFloat(lon.substring(0, 3));
+		if(WE.startsWith("W")) {
+			med = -med;
+		}
+		return med;
+	}
+
+	// parsers 
+	class GPGGA implements NMEASentenceParser {
+		public boolean parse(String [] tokens, ValueGPS position) {
+			position.setTime( Float.parseFloat(tokens[1]));
+			position.setLatitude(Latitude2Decimal(tokens[2], tokens[3]));
+			position.setLongitude(Longitude2Decimal(tokens[4], tokens[5]));
+			position.setNumberOfSatellites(Integer.parseInt(tokens[6]));
+			position.setAltitude(Float.parseFloat(tokens[9]);
+			return true;
+		}
+	}
+	
+	class GPGGL implements NMEASentenceParser {
+		public boolean parse(String [] tokens, ValueGPS position) {
+			position.setLatitude(Latitude2Decimal(tokens[1], tokens[2]));
+			position.setLongitude(Longitude2Decimal(tokens[3], tokens[4]));
+			position.setTime(Float.parseFloat(tokens[5]));
+			return true;
+		}
+	}
+	
+	class GPRMC implements NMEASentenceParser {
+		public boolean parse(String [] tokens, ValueGPS position) {
+			position.setTime(Float.parseFloat(tokens[1]));
+			position.setLatitude(Latitude2Decimal(tokens[3], tokens[4]));
+			position.setLongitude( Longitude2Decimal(tokens[5], tokens[6]));
+//			position.velocity = Float.parseFloat(tokens[7]);
+//			position.dir = Float.parseFloat(tokens[8]);
+			return true;
+		}
+	}
+		
+	class GPRMZ implements NMEASentenceParser {
+		public boolean parse(String [] tokens, ValueGPS position) {
+			position.setAltitude( Float.parseFloat(tokens[1]));
+			return true;
+		}
+	}
+
+
+}

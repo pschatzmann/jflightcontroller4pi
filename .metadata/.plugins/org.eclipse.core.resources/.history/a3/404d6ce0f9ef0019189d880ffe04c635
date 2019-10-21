@@ -1,0 +1,45 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+public class GPS {
+	private static ValueGPS actualValue = new ValueGPS();
+	private static ValueGPS priorValue = new ValueGPS();
+
+	// get the actual value structure which needs to be filled in order to pass
+	// values
+	public ValueGPS getValue() {
+		return actualValue;
+	}
+
+	public void putValue(ValueGPS actualValue) {
+		if (actualValue!=GPS.actualValue) {
+			GPS.actualValue = actualValue;
+			log.warn("Please use the value from calling getValue to update the status");
+		}
+		priorValue.setValue(actualValue);
+	}
+
+	/**
+	 * Calculates the speed in meters per second (mps)
+	 * 
+	 * @return
+	 */
+
+	public double getSpeed() {
+		if (priorValue.getTime() == 0) {
+			return 0.0;
+		}
+		return actualValue.getSpeed(priorValue);
+	}
+	
+	/**
+	 * Determines the direction in Degrees
+	 * @return
+	 */
+	public double getDirection() {
+		if (priorValue.getTime() == 0) {
+			return 0.0;
+		}
+		return actualValue.getDirection(priorValue);
+	}
+
+}

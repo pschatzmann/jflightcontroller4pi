@@ -1,0 +1,16 @@
+# UDP Communication
+
+We can receive and send information with the help of UDP. In the following example we explain how to set up
+the integration with FlightGear
+
+
+# Receiving Data
+
+We would like to update the following parameters from Flight Gear:
+	- SENSORROLL
+	- SENSORPITCH
+	- SENSORYAW
+	- SENSORSPEED 
+	- SENSORDIRECTION 
+	- SENSORALTITUDE
+

@@ -1,0 +1,15 @@
+package ch.pschatzmann.jflightcontroller4pi.protocols;
+
+import ch.pschatzmann.jflightcontroller4pi.utils.IData;
+import ch.pschatzmann.jflightcontroller4pi.utils.Data;
+
+/**
+ * Interface for Reading PWM information
+ * 
+ * @author pschatzmann
+ *
+ */
+public interface IPwmIn {
+	IData getValues() ;
+	void shutdown() ;
+}

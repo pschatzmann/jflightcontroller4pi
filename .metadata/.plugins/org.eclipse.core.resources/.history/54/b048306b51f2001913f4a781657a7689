@@ -1,0 +1,21 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+public interface IData {
+
+	String getString();
+
+	void append(double scaledValue);
+
+	void append(String delimiter);
+
+	boolean isEmpty();
+
+	byte[] getBytes();
+
+	void close();
+
+	void setBytes(byte[] array);
+
+	double[] splitDouble(char delimiter);
+
+}

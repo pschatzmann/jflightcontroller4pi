@@ -1,0 +1,16 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.util.List;
+
+public class FieldDefinitionsExt implements IFieldDefinitions {
+	List<FieldDefinition> fieldDefinitions = new ArrayList();
+
+	@Override
+	public List<FieldDefinition> getFieldDefinitions() {
+		return this.fieldDefinitions;
+	}
+	public void setFieldDefinitions(List<FieldDefinition> def) {
+		this.fieldDefinitions = def;
+	}
+
+}

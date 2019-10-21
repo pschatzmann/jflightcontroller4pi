@@ -1,0 +1,45 @@
+## Manual Mode  
+Manual Mode was very easy to implement. We do not rely on any sensors and the input from the end user is directly fed into the primary flight control surfaces:
+
+	- YAW -> RUDDER 
+	- ROLL -> AILERON 
+	- PITCH -> ELEVETOR 
+	- THROTTLE -> SPEED
+
+
+For more sophisticated flight modes we need to use this sensor information to measure the current state of the airplane in order to stabilize the flight 
+
+
+	<bean id="manualMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="name" value="manual" /> 
+	  	<property name="rules">
+	  		<list>
+            	<ref bean="manualModeRuleRudder" />
+            	<ref bean="manualModeRuleElevator" />                
+            	<ref bean="manualModeRuleAileron" />                
+            	<ref bean="manualModeRuleThrottle" />                
+        	</list>
+	  	</property>	 	  	
+	</bean>
+	
+	<bean id="manualModeRuleRudder" class="ch.pschatzmann.jflightcontroller4pi.modes.manualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="rudder"> </property>
+	    <property name="parameterFrom" value="YAW"> </property>
+	</bean>
+	<bean id="manualModeRuleElevator" class="ch.pschatzmann.jflightcontroller4pi.modes.manualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="elevator"> </property>
+	    <property name="parameterFrom" value="PITCH"> </property>
+	</bean>
+	<bean id="manualModeRuleAileron" class="ch.pschatzmann.jflightcontroller4pi.modes.manualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="aileron"> </property>
+	    <property name="parameterFrom" value="ROLL"> </property>
+	</bean>
+	<bean id="manualModeRuleThrottle" class="ch.pschatzmann.jflightcontroller4pi.modes.manualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="throttle"> </property>
+	    <property name="parameterFrom" value="SPEED"> </property>
+	</bean>

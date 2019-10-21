@@ -1,0 +1,124 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
+
+/**
+ * 
+ * Control using Timers. We can control the speed by setting the inputTimerPeriod for the input processing
+ *  and outputTimerPeriod for the (extended) output processing.
+ *  
+ * @author pschatzmann
+ *
+ */
+public class ControlLoopWithTimers implements IControlLoop {
+	private FlightController controller;
+	private long inputTimerPeriod = 100L;
+	private long outputTimerPeriod = 1000L;
+	private TimerTask inputTask;
+	private TimerTask outputTask;
+	private boolean active=false;
+	
+	/**
+	 * Empty Constructor used by Spring
+	 */
+	public ControlLoopWithTimers() {}
+
+	/**
+	 * Default Constructor
+	 * @param controller
+	 */
+	public ControlLoopWithTimers(FlightController controller) {
+		this.controller = controller;
+	}
+	
+	
+	/**
+	 * Executes the control loop. We just process all input sensors.
+	 */
+	@Override
+	public void run() {
+		System.out.println("The Flight Controller is running...");
+		active = true;
+		processSensors();
+		processOutEx();
+		
+		while (true) {
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	protected void processSensors() {
+		inputTask = new TimerTask() {
+			@Override
+			public void run() {
+				controller.getDevices().stream().filter(d -> d instanceof ISensor)
+						.forEach(sensor -> ((ISensor) sensor).processInput());
+			}
+		};
+		Timer timer = new Timer("InputTimer");
+
+		long delay = 0L;
+		timer.scheduleAtFixedRate(inputTask, delay, inputTimerPeriod);
+
+	}
+
+	protected void processOutEx() {
+		outputTask = new TimerTask() {
+			@Override
+			public void run() {
+				controller.getDevices().stream().filter(d -> d instanceof IOutDeviceEx)
+				.forEach(sensor -> ((IOutDeviceEx) sensor).processOutput());
+			}
+		};
+		Timer timer = new Timer("OutputTimer");
+
+		long delay = 0L;
+		timer.scheduleAtFixedRate(outputTask, delay, outputTimerPeriod);
+	}
+
+	public FlightController getController() {
+		return controller;
+	}
+
+	public void setController(FlightController controller) {
+		this.controller = controller;
+	}
+
+	public long getInputTimerPeriod() {
+		return inputTimerPeriod;
+	}
+
+	public void setInputTimerPeriod(long inputTimerPeriod) {
+		this.inputTimerPeriod = inputTimerPeriod;
+	}
+
+	public long getOutputTimerPeriod() {
+		return outputTimerPeriod;
+	}
+
+	public void setOutputTimerPeriod(long outputTimerPeriod) {
+		this.outputTimerPeriod = outputTimerPeriod;
+	}
+
+	@Override
+	public void stop() {
+		inputTask.cancel();
+		outputTask.cancel();
+		active = false;
+	}
+
+	@Override
+	public boolean isStopped() {
+		return !active;
+	}
+
+}

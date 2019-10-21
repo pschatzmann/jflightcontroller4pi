@@ -1,0 +1,101 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+
+/**
+ * Generic Flight Mode implementation which can be configured e.g. with Spring
+ * 
+ * @author pschatzmann
+ *
+ */
+public class FlightMode implements IFlightMode {
+	private Collection<IRecalculate> recalcCollection = new HashSet<IRecalculate>();
+	private FlightController flightController;
+	private String name = this.getClass().getSimpleName();
+	private Collection<IDevice> devices = new HashSet();
+
+	/**
+	 * Empty Constructor
+	 */
+	public FlightMode() {
+	}
+
+	/**
+	 * Setup of with Initial (Empty) Mode
+	 */
+	public FlightMode(FlightController flightController, Collection<IRecalculate> rules ) {
+		this.flightController = flightController;		
+		this.recalcCollection = rules;
+	}
+	
+	/**
+	 * Add local devices to the controller and update the calculation rules in the devices
+	 */
+	@Override
+	public void setup() {
+		// add devices from rules
+		recalcCollection.stream().map(c -> c.getDevice()).forEach(dev -> this.devices.add(dev));
+		
+		// make the devices known to the controller
+		flightController.addDevices(this.getDevices());
+		
+		// set the calculation rules in the devices
+		recalcCollection.forEach(rule -> rule.getDevice().setRecalculate(rule));
+	}
+
+	@Override
+	public void shutdown() {
+		flightController.removeDevices(this.getDevices());
+	}
+
+	public Collection<IDevice> getDevices() {
+		return recalcCollection.stream().map(c -> c.getDevice()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Define Devices owned by the mode
+	 * @param devices
+	 */
+	public void setDevices(Collection<IDevice>  devices) {
+		this.devices = devices;
+	}
+
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+	
+	public Collection<IRecalculate> getRules() {
+		return recalcCollection;
+	}
+
+	public void setRules(Collection<IRecalculate> recalcCollection) {
+		this.recalcCollection = recalcCollection;
+		recalcCollection.forEach(c -> {
+			IDevice dev = c.getDevice();
+			((IOutDeviceEx)dev).setRecalculate(c);
+		});
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+}

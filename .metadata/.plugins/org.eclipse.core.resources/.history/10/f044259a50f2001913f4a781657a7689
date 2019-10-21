@@ -1,0 +1,123 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+/**
+ * Data Class implemented as String
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class DataOfString implements IData {
+	private String string;
+	
+	public byte[] getBytes(){
+		return this.string.getBytes();
+	}
+	
+	public void setBytes(byte[] b){
+		this.string = new String(b);
+		this.string = this.string.replaceAll("(\\r|\\n)", "");
+	}
+	
+	/**
+	 * Provides the numbers which are contained in the string 
+	 * @param delimiter
+	 * @return
+	 */
+	public double[] splitDouble(char delimiter) {
+		String[] stringArray = this.string.split(String.valueOf(delimiter));
+		double[] result = new double[stringArray.length];
+		for (int j=0;j<result.length;j++) {
+			result[j] = Double.parseDouble(stringArray[j]);
+		}
+		return result;
+	}
+	
+	/**
+	 * Provides the length (in unicode chodes)
+	 * @return
+	 */
+	public int length() {
+		return string.length();
+	}
+	
+	/**
+	 * Counts the number of the indicted characters in the string
+	 * @param c
+	 * @return
+	 */
+	public int count(char c) {
+	    int count = 0;
+	    for (int i=0; i < string.length(); i++)
+	    {
+	        if (string.charAt(i) == c)
+	        {
+	             count++;
+	        }
+	    }
+	    return count;
+	}
+	
+	public int indexOf(char ch, int start) {
+		return string.indexOf(ch, start);
+	}
+
+	/**
+	 * Convenience Method to return a standard java String
+	 * @return
+	 */
+	public String getString() {
+		return string;
+	}
+
+
+	public void append(byte c) {
+		this.string = this.string + c;
+	}
+	
+	public void append(char c) {
+		byte b = (byte)c;
+		append(b);
+	}
+
+	public void append(byte ba[]) {
+		string = string + new String(ba);
+	}
+	
+	public void append(String s) {
+		string = string + s;
+	}
+
+	public void append(DataOfString s) {
+		this.append(s.getString());
+	}
+	
+	public String substring(int i) {
+		return this.string.substring(i);
+	}
+
+	public void append(double v) {
+		this.append(String.valueOf(v));
+	}
+	
+	public boolean isEmpty() {
+		return this.string.isEmpty();
+	}
+
+	
+	/**
+	 * Returns a new String (from the available strings)
+	 * @return
+	 */
+	protected static IData instance() {
+		return new DataOfString();
+	}
+	
+
+	/**
+	 * This is done by the garbage collector
+	 */
+	public void close() {
+	}
+
+}

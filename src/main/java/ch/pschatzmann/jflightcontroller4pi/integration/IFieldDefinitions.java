@@ -1,0 +1,15 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.util.List;
+
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * @author pschatzmann
+ *
+ */
+public interface IFieldDefinitions {
+	public List<FieldDefinition> getFieldDefinitions();
+	public List<ParametersEnum> getFieldNames();
+
+}

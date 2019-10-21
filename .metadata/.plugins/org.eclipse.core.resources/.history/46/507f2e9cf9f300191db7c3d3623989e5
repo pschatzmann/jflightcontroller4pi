@@ -1,0 +1,112 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.Mixer;
+import ch.pschatzmann.jflightcontroller4pi.control.MixerComponent;
+import ch.pschatzmann.jflightcontroller4pi.control.PIDController;
+import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
+import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+public class TestController {
+	
+	// e.g. Aileron: input -1 to 1 => output -30 to 30
+	@Test
+	public void testP() throws InterruptedException {
+		final PIDController pid = new PIDController(1.0/30.0, 0.0, 0.0);
+
+		double actual = 20.0;
+		double target = 0.0;
+		//pid.setOutputLimits(-.5, .5);
+
+		// pidController.enable();
+		for (int j = 0; j < 5; j++) {
+			double output = pid.getOutput(actual, target);
+			System.out.println("Output: " + output + " actual: " + actual + " target: " + target+" error: "+pid.getError());
+			
+			actual = actual + output*30;
+			
+		}
+		
+		Assert.assertEquals(0.0, pid.getError(),0.001);
+
+	}
+	
+	// e.g. Elevation: input -1 to 1 / throttle -1 to 1 => output 0.2 to 1.0
+	
+	@Test
+	public void testMotor() throws InterruptedException {
+		FlightController ctl = new FlightController();	
+		
+		MixerComponent c1 = new MixerComponent(ParametersEnum.PITCH, new Scaler(-1,1,0.2,1.0), 5.0);
+		MixerComponent c2 = new MixerComponent(ParametersEnum.SPEED, new Scaler(-1,1,0.2,1.0), 1.0);
+		
+		Collection <MixerComponent> components = Arrays.asList(c1,c2);		
+		Mixer m = new Mixer(ctl,components);
+		
+		// neutral position
+		ctl.setValue(ParametersEnum.PITCH, 0.0);
+		ctl.setValue(ParametersEnum.SPEED, 0.0);
+		double throttle = m.getValue();
+		System.out.println("neutral ->"+throttle);
+
+		// neutral position - full throttle
+		ctl.setValue(ParametersEnum.PITCH, 0.0);
+		ctl.setValue(ParametersEnum.SPEED, 1.0);
+		throttle = m.getValue();
+		System.out.println("neutral full throttle ->"+throttle);
+
+		// neutral position - no throttle
+		ctl.setValue(ParametersEnum.PITCH, 0.0);
+		ctl.setValue(ParametersEnum.SPEED, -1.0);
+		throttle = m.getValue();
+		System.out.println("neutral no throttle ->"+throttle);
+
+		
+		// raising plane
+		ctl.setValue(ParametersEnum.PITCH, 1.0);
+		ctl.setValue(ParametersEnum.SPEED, 0.0);
+		throttle = m.getValue();
+		System.out.println("raising ->"+throttle);
+
+		// raising plane - no throttle
+		ctl.setValue(ParametersEnum.PITCH, 1.0);
+		ctl.setValue(ParametersEnum.SPEED, -1.0);
+		throttle = m.getValue();
+		System.out.println("raising  no throttle ->"+throttle);
+
+
+		// raising plane - full throttle
+		ctl.setValue(ParametersEnum.PITCH, 1.0);
+		ctl.setValue(ParametersEnum.SPEED, 1.0);
+		throttle = m.getValue();
+		System.out.println("raising  full throttle ->"+throttle);
+		
+		// sinking plane
+		ctl.setValue(ParametersEnum.PITCH, -1.0);
+		ctl.setValue(ParametersEnum.SPEED, 0.0);
+		throttle = m.getValue();
+		System.out.println("sinking  ->"+throttle);
+
+		// sinking no throttle
+		ctl.setValue(ParametersEnum.PITCH, -1.0);
+		ctl.setValue(ParametersEnum.SPEED, -1.0);
+		throttle = m.getValue();
+		System.out.println("sinking no throttle ->"+throttle);
+
+		// sinking full throttle
+		ctl.setValue(ParametersEnum.PITCH, -1.0);
+		ctl.setValue(ParametersEnum.SPEED, 1.0);
+		throttle = m.getValue();
+		System.out.println("sinking full throttle ->"+throttle);
+		
+		
+	}
+
+}

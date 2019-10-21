@@ -1,0 +1,76 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+
+/**
+ * Generates for multiple input values one combined output value. We use this
+ * functionality e.g. for driving the Throttle from the requested input speed
+ * (correction) and the requested pitch. We just calculate the weighted average of 
+ * all the (scaled) inputs.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Mixer {
+	private FlightController flightController;
+	private Collection<MixerComponent> components = new ArrayList<MixerComponent>();
+	private Double totalWeight = null;
+	private IScaler scaler = new NoScaler();
+
+	public Mixer(FlightController flightController, Collection<MixerComponent> components) {
+		this.flightController = flightController;
+		this.components = components;
+	}
+
+	private void calcTotalWeight(Collection<MixerComponent> components) {
+		this.totalWeight = components.stream().mapToDouble(i -> i.getWeight()).sum();
+	}
+
+	public double getValue() {
+		if (totalWeight == null) {
+			calcTotalWeight(components);
+		}
+
+		double result = 0;
+		for (MixerComponent c : this.components) {
+			result += c.getScaler().scale(flightController.getValue(c.getParameter()).value)
+					* (c.getWeight() / this.totalWeight);
+		}
+		return scaler.scale(result);
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	public Collection<MixerComponent> getComponents() {
+		return components;
+	}
+
+	public void setComponents(Collection<MixerComponent> components) {
+		this.components = components;
+	}
+
+	public Double getTotalWeight() {
+		return totalWeight;
+	}
+
+	public void setTotalWeight(Double totalWeight) {
+		this.totalWeight = totalWeight;
+	}
+
+	public IScaler getScaler() {
+		return scaler;
+	}
+
+	public void setScaler(IScaler scaler) {
+		this.scaler = scaler;
+	}
+
+}

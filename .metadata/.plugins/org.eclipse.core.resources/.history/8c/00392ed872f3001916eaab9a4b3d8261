@@ -1,0 +1,17 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.utils.Data;
+
+public class TestData {
+	Data data = new Data();
+
+	@Test
+	public void testCRLF() {
+		data.setBytes("12345\n67".getBytes());
+		Assert.assertEquals("12345", data.toString());
+	}
+
+}

@@ -1,0 +1,168 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
+
+/**
+ * 
+ * Control using Timers. We can control the speed by setting the inputTimerPeriod for the input processing
+ *  and outputTimerPeriod for the (extended) output processing.
+ *  
+ * @author pschatzmann
+ *
+ */
+public class ControlLoopWithTimers implements IControlLoop {
+    private static final Logger log = LoggerFactory.getLogger(ControlLoopWithTimers.class);
+
+	private FlightController controller;
+	private long inputTimerPeriod = 100L;
+	private long outputTimerPeriod = 1000L;
+	private long statisticsTimerPeriod = 10000L;
+	private TimerTask inputTask;
+	private TimerTask outputTask;
+	private TimerTask statisticsTask;
+	private boolean active=false;
+	private boolean blocking=true;
+	private long outCount;
+	private long inCount;
+	
+	/**
+	 * Empty Constructor used by Spring
+	 */
+	public ControlLoopWithTimers() {}
+
+	/**
+	 * Default Constructor
+	 * @param controller
+	 */
+	public ControlLoopWithTimers(FlightController controller) {
+		this.controller = controller;
+	}
+	
+	/**
+	 * Constructor for testing
+	 * @param controller
+	 * @param blocking
+	 */
+	public ControlLoopWithTimers(FlightController controller, boolean blocking) {
+		this.controller = controller;
+		this.blocking = blocking;
+	}
+	
+	/**
+	 * Executes the control loop. We just process all input sensors.
+	 */
+	@Override
+	public void run() {
+		log.info("The Flight Controller is running...");
+		active = true;
+		processSensors();
+		processOut();
+		
+		while (active && blocking) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	protected void processSensors() {
+		inputTask = new TimerTask() {
+			@Override
+			public void run() {				
+				controller.getDevices().stream().filter(d -> d instanceof ISensor)
+						.forEach(sensor -> ((ISensor) sensor).processInput());
+				inCount++;
+			}
+		};
+		Timer timer = new Timer("InputTimer");
+
+		long delay = 0L;
+		timer.scheduleAtFixedRate(inputTask, delay, inputTimerPeriod);
+
+	}
+
+	protected void processOut() {
+		outputTask = new TimerTask() {
+			@Override
+			public void run() {
+				controller.getDevices().stream().filter(d -> d instanceof IOutDevice)
+				.forEach(sensor -> ((IOutDevice) sensor).processOutput());
+				outCount++;
+			}
+		};
+		Timer timer = new Timer("OutputTimer");
+
+		long delay = 0L;
+		timer.scheduleAtFixedRate(outputTask, delay, outputTimerPeriod);
+	}
+	
+	protected void processStatistics() {
+		statisticsTask = new TimerTask() {
+			@Override
+			public void run() {
+				log.info("Output {} hz", outCount / statisticsTimerPeriod * 1000.0 );
+				log.info("Input {} hz", inCount / statisticsTimerPeriod * 1000.0 );
+			}
+		};
+		Timer timer = new Timer("StatisticsTimer");
+
+		long delay = 0L;
+		timer.scheduleAtFixedRate(statisticsTask, delay, statisticsTimerPeriod);
+	}
+
+	public FlightController getController() {
+		return controller;
+	}
+
+	public void setController(FlightController controller) {
+		this.controller = controller;
+	}
+
+	public long getInputTimerPeriod() {
+		return inputTimerPeriod;
+	}
+
+	public void setInputTimerPeriod(long inputTimerPeriod) {
+		this.inputTimerPeriod = inputTimerPeriod;
+	}
+
+	public long getOutputTimerPeriod() {
+		return outputTimerPeriod;
+	}
+
+	public void setOutputTimerPeriod(long outputTimerPeriod) {
+		this.outputTimerPeriod = outputTimerPeriod;
+	}
+
+	@Override
+	public void stop() {
+		inputTask.cancel();
+		outputTask.cancel();
+		statisticsTask.cancel();
+		active = false;
+	}
+
+	@Override
+	public boolean isStopped() {
+		return !active;
+	}
+
+	public boolean isBlocking() {
+		return blocking;
+	}
+
+	public void setBlocking(boolean blocking) {
+		this.blocking = blocking;
+	}
+
+}

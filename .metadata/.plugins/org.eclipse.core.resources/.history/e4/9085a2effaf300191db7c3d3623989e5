@@ -1,0 +1,23 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+public class MixingModeRule implements IFlightMode {
+
+	@Override
+	public void setup() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

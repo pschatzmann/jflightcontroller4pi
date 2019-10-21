@@ -1,0 +1,82 @@
+# Sensors
+
+CJMCU 10DOF 9 Axis MPU9250 + BMP180 Sensor Module Gyro Acceleration + Barometric Height Sensor
+
+- 3-axis gyroscope + 3-axis accelerometer + 3-axis magnetic field + barometric altitude sensor
+- Module uses imported chips: integrated high-precision 9-axis high precision pressure MPU9250 chip + BMP180 chips
+- Power supply: 3.3v
+- Communication: SPI / IIC
+
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.Sensor" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="name" value="gyroscope-accelerometer-compass-altitude"/>
+	  	<property name="in">
+			<ref bean="pinI2C0"/>
+		</property>
+		
+	  	<property name="inputProcessor">
+	  		<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.InputProcessor">
+	  			<property name "inputParameters">
+	  				<list>
+	  					<value>GYROX</value>
+	  					<value>GYROY</value>
+	  					<value>GYROZ</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>MAGNETOMETERX</value>
+	  					<value>MAGNETOMETERY</value>
+	  					<value>MAGNETOMETERZ</value>
+	  					<value>SENSORALTITUDE</value>
+	  				</list>
+	  			</property>
+	  		</bean>
+	  	</property>		
+	</bean>
+
+
+And we need to configure the related Input Pins to use I2C0
+
+
+	<bean id="pinI2C0" class="ch.pschatzmann.jflightcontroller4pi.protocols.InputFromPiI2C">
+	  	<property name="bus" value="0"/>
+	</bean>
+
+
+## GPS
+
+Beitian BN-880Q GPS+GLONASS Dual GPS Antenna Module FLASH TTL Level 9600bps for FPV Airplane RC Racing Drone
+
+- Output protocol:	NMEA-0183 or UBX, default NMEA-0183 protocol
+- NMEA sentences: RMC, VTG, GGA, GSA, GSV, GLL
+- Update frequency	: 1Hz-10Hz, default 1Hz
+- Baud rate: 4800bps-921600bps, default 9600bps
+
+Fortunately we have an Input Processor which handles NMEA, so we can define this device as follows:
+
+	<bean id="gps" class="ch.pschatzmann.jflightcontroller4pi.devices.Sensor" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="name" value="GPS"/>
+	  	<property name="in">
+			<ref bean="pinI2C1"/>
+		</property>
+		
+	  	<property name="inputProcessor" ref="ch.pschatzmann.jflightcontroller4pi.navigation.GPSInputProcessor"/>		
+	</bean>
+
+And we need to configure the related Input Pins to use I2C1
+
+- Pins PI Zero:
+	1. SDA. -> SDA1 (I2C1 pin 3)
+	2. GND, ground. (pin 9)
+	3. TX, the data output of the module.
+	4. RX, the data input of the module.
+	5. VCC, 3.0V--5.5V. (pin 2)
+	6. SCL -> SDA1 (I2C1 pin 5)
+	
+	<bean id="pinI2C1" class="ch.pschatzmann.jflightcontroller4pi.protocols.InputFromPiI2C">
+	  	<property name="bus" value="1"/>
+	</bean>
+	
+	
+	

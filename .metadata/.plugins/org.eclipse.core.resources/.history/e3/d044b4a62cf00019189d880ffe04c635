@@ -1,0 +1,14 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+
+/**
+ * The compassmust provide the Degree and 
+ * @author pschatzmann
+ *
+ */
+public interface ICompass {
+	public double getDegree(Value3D magnetometer);
+//	public Heading getHeading(double degrees);
+
+}

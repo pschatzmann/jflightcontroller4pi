@@ -1,0 +1,30 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import java.util.Collection;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+
+public class MixingModeRule implements IRecalculate {
+	private String name;
+	private FlightController flightController; 
+	private Collection<MixingRules> rules;
+	
+	
+	@Override
+	public IOutDeviceEx getDevice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void recalculate() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+
+
+}

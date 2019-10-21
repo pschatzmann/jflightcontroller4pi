@@ -1,0 +1,157 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The idea is to have a string class which is reusing the underlying byte
+ * buffer data and does not need any garbage collection.
+ * 
+ * This might be useful to be used by the DatagramWriter and DatagramReader and 
+ * by the Sensors which are constantly producing data.
+ * 
+ * Not sure if I want to keep this.
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class XString implements IData {
+	private byte[] string;
+	private int size;
+	private static List<IData> free = new ArrayList(); 
+	private static int maxLength = 160;
+	
+	public byte[] getBytes(){
+		return this.string;
+	}
+	
+	public void setBytes(byte[] b){
+		this.string = b;
+		for (int j=0;j<b.length;j++) {
+			if (b[j]== '\r' || b[j]== '\r') {
+				this.size = j+1;
+			}
+		}
+		this.size = b.length;
+	}
+	
+	/**
+	 * Provides the numbers which are contained in the string 
+	 * @param delimiter
+	 * @return
+	 */
+	public double[] splitDouble(char delimiter) {
+		double[] result = new double[count(delimiter)];
+		int index = 0;
+		int pos = 0;
+		while (pos<this.size-1) {
+			int nextPos = find(delimiter,pos);
+			result[index] = Double.parseDouble(new String(this.string,pos,nextPos-pos));
+			++index;
+			pos = nextPos;
+		}
+		return result;
+	}
+	
+	public int length() {
+		return size;
+	}
+	
+	/**
+	 * Counts the number of the indicted characters in the string
+	 * @param c
+	 * @return
+	 */
+	public int count(char c) {
+		int count = 0;
+		for (int j=0;j<size;j++) {
+			if (string[j]== c) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public int find(char c, int start) {
+		int count = 0;
+		for (int j=start;j<size;j++) {
+			if (string[j]== c) {
+				return j;
+			}
+		}
+		return size;
+	}
+
+	/**
+	 * Convenience Method to return a standard java String
+	 * @return
+	 */
+	public String getString() {
+		return new String(string,0,size);
+	}
+
+	/**
+	 * Returns a new String (from the available strings)
+	 * @return
+	 */
+	public static IData instance() {
+		if (free.size()>0) {
+			return free.remove(0);
+		} else {
+			Data s = new Data();
+			s.string = new byte[maxLength];
+			return s;
+		}
+	}
+	
+	public void append(byte c) {
+		byte b = (byte)c;
+		if (size >= string.length) {
+			throw new RuntimeException("Please increase the maxLength in the XString class");
+		}
+		string[size-1] = b;
+		size++;		
+	}
+	
+	public void append(char c) {
+		byte b = (byte)c;
+		append(b);
+	}
+
+	public void append(byte ba[]) {
+		for (int j=0;j<ba.length;j++) {
+			this.append(ba[j]);
+		}
+	}
+	
+	public void append(String s) {
+		this.append(s.getBytes());
+	}
+
+	public void append(Data s) {
+		this.append(s.getBytes());
+	}
+	
+	public boolean isEmpty() {
+		return this.size==0;
+	}
+
+
+	/**
+	 * Releases the memory by putting it back to the available strings
+	 */
+	public void close() {
+		free.add(this);
+	}
+
+	public String substring(int i) {
+		return new String(this.string,i,size);
+	}
+
+	public void append(double v) {
+		this.append(String.valueOf(v));
+	}
+
+
+}

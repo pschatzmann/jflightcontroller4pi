@@ -1,0 +1,12 @@
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+
+/**
+ * Implementation of Autopilot
+ * @author pschatzmann
+ *
+ */
+public interface IAutoPilot extends IOutDevice {
+
+}

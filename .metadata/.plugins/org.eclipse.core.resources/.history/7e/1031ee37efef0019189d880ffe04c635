@@ -1,0 +1,113 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+/**
+ * Converts a 3d Magentometer output into more readable Degrees and Headings.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Compass {
+	double declination = 0;
+	double defaultLSB = 0.48828125; // in Milligauss (mG), 
+	
+	public enum Heading {
+		North, NorthWest, West, SouthWest, South, SouthEast, East, NorthEast
+	}
+
+	/**
+	 * Determine the heading in degrees from a magnetometer
+	 * @param lsb
+	 * @return
+	 */
+	public double getDegree(Value3D lsb) {
+		// Calculate the real Gauss value for the X and Y axes from the amount of LSBs returned where the LSB value by default is 0.48828125 mG, resulting in 2048 LSBs per Gauss.
+		double directionDeg = 0;
+		
+			double xGaussData = lsb.x() * defaultLSB;
+			double yGaussData = lsb.y() * defaultLSB;
+
+		//	Calculate the direction D by first checking to see if the X Gauss data is equal to 0 to prevent divide by 0 zero errors in the future calculations. If the X Gauss data is 0, check to see if the Y Gauss data is less than 0. If Y is less than 0 Gauss, the direction D is 90 degrees; if Y is greater than or equal to 0 Gauss, the direction D is 0 degrees.
+			if (xGaussData==0) {
+				
+			} else if (xGaussData>0) {
+				if (yGaussData<0) {
+					 directionDeg = 90; 
+				} else {
+					directionDeg = 0;
+				}
+			} else {
+				// If the X Gauss data is not zero, calculate the arctangent of the Y Gauss and X Gauss data and convert from polar coordinates to degrees.
+				directionDeg = (float) Math.atan((yGaussData / xGaussData) * (180.0/Math.PI));
+
+				// If the direction D is greater than 360 degrees, subtract 360 degrees from that value.
+				if (directionDeg>360) {
+					directionDeg-=360;
+				} else { 
+					//if the direction D is less than 0 degrees, add 360 degrees to that value.
+					if (directionDeg<360) {
+						directionDeg+=360;
+					}
+				}
+			}	
+			return directionDeg;
+	}
+
+	/**
+	 * This function allows the user to set a degree of magnetic declination to be
+	 * used as compenstion in heading calculation. Input Param: newDec, can be
+	 * entered as a signed integer Return: nothing
+	 */
+	public void setDeclination(int newDec) {
+		declination = newDec;
+	}
+
+	/**
+	 * The compass heading can then be determined by the direction value D: If D is
+	 * greater than 337.25 degrees or less than 22.5 degrees – North If D is between
+	 * 292.5 degrees and 337.25 degrees – North-West If D is between 247.5 degrees
+	 * and 292.5 degrees – West If D is between 202.5 degrees and 247.5 degrees –
+	 * South-West If D is between 157.5 degrees and 202.5 degrees – South If D is
+	 * between 112.5 degrees and 157.5 degrees – South-East If D is between 67.5
+	 * degrees and 112.5 degrees – East If D is between 0 degrees and 67.5 degrees –
+	 * North-East
+	 * 
+	 */
+	public Heading getHeading (double degree) {
+		//If D is greater than 337.25 degrees or less than 22.5 degrees – North
+		if (degree >337.25 || degree<22.5 ) return Heading.North;
+		//If D is between 292.5 degrees and 337.25 degrees – North-West
+		if (degree >=292.5  || degree<337.25 ) return Heading.NorthWest;
+		//If D is between 247.5 degrees and 292.5 degrees – West
+		if (degree >=247.5  || degree<292.5 ) return Heading.West;		
+		//If D is between 202.5 degrees and 247.5 degrees – South-West
+		if (degree >=202.5 || degree<247.5 ) return Heading.SouthWest;				
+		//If D is between 157.5 degrees and 202.5 degrees – South
+		if (degree >=157.5 || degree<202.5 ) return Heading.SouthWest;				
+		//If D is between 112.5 degrees and 157.5 degrees – South-East
+		if (degree >=112.5 || degree<157.5  ) return Heading.SouthWest;				
+		//If D is between 67.5 degrees and 112.5 degrees – East
+		if (degree >=167.5 || degree<112.5 ) return Heading.SouthWest;				
+		//If D is between 0 degrees and 67.5 degrees – North-East
+		if (degree >=0 || degree<67.5 ) return Heading.SouthWest;
+		
+		// this can not happen if the ranges above are correct
+		throw new RuntimeException("Heading could not be determined");				
+	}
+
+	public double getDefaultLSB() {
+		return defaultLSB;
+	}
+
+	public void setDefaultLSB(double defaultLSB) {
+		this.defaultLSB = defaultLSB;
+	}
+
+	public double getDeclination() {
+		return declination;
+	}
+
+	public void setDeclination(double declination) {
+		this.declination = declination;
+	}
+
+}

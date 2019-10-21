@@ -1,0 +1,5 @@
+/**
+ * Automatic navigation with the help of an imu and gps
+ */
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+

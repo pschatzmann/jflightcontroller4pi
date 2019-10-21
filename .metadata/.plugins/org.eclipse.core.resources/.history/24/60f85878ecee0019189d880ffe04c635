@@ -1,0 +1,14 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.util.TimerTask;
+
+public class Utils {
+	public TimerTask wrap(Runnable r) {
+		return new TimerTask() {
+			@Override
+			public void run() {
+				r.run();
+			}
+		};
+	}
+}

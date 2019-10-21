@@ -1,0 +1,102 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Integration device for the IMU into our Flight Controller
+ * 
+ * @author pschatzmann
+ *
+ */
+public class IMUDevice implements IOutDevice {
+	private static Logger log = LoggerFactory.getLogger(IMUDevice.class);
+	private FlightController flightController;
+	private IMU imu;
+	private Compass compass = new Compass();
+	private Value3D gyro = new Value3D();
+	private Value3D accelerometer = new Value3D();
+	private Value3D magnetometer = new Value3D();
+
+	public IMUDevice(FlightController fc, float sampleFreq) {
+		this.imu = new IMU(sampleFreq);
+		this.flightController = fc;
+	}
+	
+	/**
+	 * Determine the roll pitch and yaw
+	 * 
+	 * @param gyro
+	 * @param accelerometer
+	 * @param magnetometer
+	 * @return
+	 */
+	public Quaternion getQuaternion() {
+		return this.imu.madgwickAHRSupdate(gyro.x(), gyro.y(), gyro.z(), accelerometer.x(), accelerometer.y(), accelerometer.z(),
+				magnetometer.x(), magnetometer.y(), magnetometer.z());
+	}
+	
+	/**
+	 * Determines the direction in 360 degrees
+	 * 
+	 * @param magnetometer
+	 * @return
+	 */
+	public double getDirection() {
+		return compass.getDegree(this.magnetometer);
+	}
+
+	/**
+	 * Determines the heading: North South West..
+	 * 
+	 * @param degrees
+	 * @return
+	 */
+	public Heading getHeading(double degrees) {
+		return compass.getHeading(degrees);
+	}
+	
+
+	@Override
+	public void setup() {
+		log.info("Setting up IMU");
+	}
+
+	@Override
+	public void shutdown() {
+		log.info("Shutting down IMU");		
+	}
+
+	@Override
+	public void processOutput() {
+		// load latest values from the parameters
+		readParameters(gyro, ParametersEnum.GYROX,ParametersEnum.GYROY,ParametersEnum.GYROZ);
+		readParameters(accelerometer, ParametersEnum.ACCELEROMETERX,ParametersEnum.ACCELEROMETERY,ParametersEnum.ACCELEROMETERZ);
+		readParameters(magnetometer, ParametersEnum.MAGNETOMETERX,ParametersEnum.MAGNETOMETERY,ParametersEnum.MAGNETOMETERZ);
+		
+		// update the new IMU parameters
+		Quaternion q = this.getQuaternion();
+		setParameter(ParametersEnum.SENSORPITCH, this.getQuaternion().getPitch());
+		setParameter(ParametersEnum.SENSORROLL, this.getQuaternion().getRoll());
+		setParameter(ParametersEnum.SENSORYAW, this.getQuaternion().getYaw());
+		setParameter(ParametersEnum.DIRECTIONSENSOR, this.getDirection());
+		
+	}
+
+	private void setParameter(ParametersEnum par, double value) {
+		flightController.setValue(par, value);
+	}
+
+	private void readParameters(Value3D dev, ParametersEnum x, ParametersEnum y, ParametersEnum z) {
+		double v[] = dev.vector();
+		v[0] = flightController.getValue(x).value;
+		v[1] = flightController.getValue(y).value;
+		v[2] = flightController.getValue(z).value;		
+	}
+
+}

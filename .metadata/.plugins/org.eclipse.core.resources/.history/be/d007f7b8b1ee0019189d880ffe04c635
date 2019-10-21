@@ -1,0 +1,66 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+public class AcroModeRule implements IRecalculate {
+	private FlightController flightController;
+	private ParametersEnum parameterFrom;
+	private ParametersEnum parameterTarget;
+	private IOutDeviceEx device;
+
+	public AcroModeRule() {
+	}
+	
+	public AcroModeRule(FlightController flightController, IOutDeviceEx device, ParametersEnum parameterFrom, ParametersEnum parameterTarget ) {
+		this.flightController = flightController;
+		this.parameterFrom = parameterFrom;
+		this.parameterTarget = parameterTarget;
+		this.device = device;
+	}
+	
+	@Override
+	public IOutDeviceEx getDevice() {
+		return device;
+	}
+	
+	@Override
+	public void recalculate() {
+		double value = flightController.getValue(parameterFrom).value;
+		if (flightController.getValue(parameterTarget).value != value) {
+			System.out.println("AcroModeLogic: "+parameterTarget+"->"+value);
+			flightController.addValue(parameterTarget, value);
+		}
+	}
+	
+	public FlightController getFlightController() {
+		return flightController;
+	}
+	
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+	
+	public ParametersEnum getParameterFrom() {
+		return parameterFrom;
+	}
+	
+	public void setParameterFrom(ParametersEnum parameterFrom) {
+		this.parameterFrom = parameterFrom;
+	}
+	
+	public ParametersEnum getParameterTarget() {
+		return parameterTarget;
+	}
+	
+	public void setParameterTarget(ParametersEnum parameterTarget) {
+		this.parameterTarget = parameterTarget;
+	}
+	
+	public void setDevice(IOutDeviceEx device) {
+		this.device = device;
+	}
+	
+}

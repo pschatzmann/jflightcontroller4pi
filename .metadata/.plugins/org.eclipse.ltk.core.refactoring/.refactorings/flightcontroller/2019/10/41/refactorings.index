@@ -1,0 +1,50 @@
+1570862774043	Rename type 'App'
+1570862797905	Delete element
+1570862883401	Delete element
+1570862961906	Rename package 'org.jdkflightsimulator4j.devices'
+1570862988453	Rename package 'org.jdkflightsimulator4j.simulator'
+1570863005469	Rename package 'org.jdkflightsimulator4j.simulator.integration'
+1570863024340	Rename package 'org.jdkflightsimulator4j.simulator.parameters'
+1570863062422	Delete element
+1570864531523	Rename type 'ParameterValue'
+1570865545851	Rename field 'values'
+1570867387183	Rename package 'ch.pschatzmann.jdkflightsimulator4j'
+1570867404843	Rename package 'ch.pschatzmann.jdkflightsimulator4j.devices'
+1570867489487	Rename package 'ch.pschatzmann.jdkflightsimulator4j.integration'
+1570867503017	Rename package 'ch.pschatzmann.jdkflightsimulator4j.modes'
+1570867536177	Rename package 'ch.pschatzmann.jdkflightsimulator4j.parameters'
+1570867592084	Rename package 'org.jdkflightsimulator4j.simulator'
+1570869820059	Delete element
+1570873821766	Rename type 'State'
+1570873905387	Delete element
+1570874637723	Delete element
+1570874664754	Delete element
+1570881805233	Move compilation unit
+1570882599697	Delete element
+1570883940660	Rename enum constant 'PICH'
+1570884307748	Rename type 'FlightMode'
+1570885280719	Rename local variable 'SampleTimeInSec'
+1570885381770	Rename field 'Setpoint'
+1570885882736	Rename local variable 'rudder'
+1570886135048	Delete element
+1570897524324	Extract method 'setupRead'
+1570897582354	Rename type 'InputField'
+1570897933504	Rename type 'JSBSim'
+1570898445816	Copy compilation unit
+1570898517151	Rename field 'inputFields'
+1570898578381	Rename method 'readInThread'
+1570898605153	Rename method 'processInputLine'
+1570905871741	Extract method 'setupScalers'
+1570906419589	Extract method 'processInput'
+1570906951107	Extract method 'doVibrate'
+1570907763012	Rename type 'Device'
+1570910631888	Rename type 'PwmPi'
+1570910647886	Rename type 'PwmOutput4Pi'
+1570910827834	Move compilation units
+1570910835075	Move compilation unit
+1570911814302	Move compilation unit
+1570911858100	Rename type 'FieldDefinition'
+1570911940370	Delete element
+1570912060129	Copy compilation unit
+1570912081387	Rename type 'PwmOutput2Pi'
+1570913129476	Copy compilation unit

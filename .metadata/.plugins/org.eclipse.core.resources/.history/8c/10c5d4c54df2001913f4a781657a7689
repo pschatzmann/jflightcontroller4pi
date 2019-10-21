@@ -1,0 +1,9 @@
+package ch.pschatzmann.jflightcontroller4pi.devices;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.utils.IData;
+import ch.pschatzmann.jflightcontroller4pi.utils.XString;
+
+public interface IInputProcessor {
+	void processInput(FlightController controller, IData input, char delimiter);
+}

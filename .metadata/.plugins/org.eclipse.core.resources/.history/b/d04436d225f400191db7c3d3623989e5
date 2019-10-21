@@ -1,0 +1,59 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+
+/**
+ * Generates for multiple input values one combined output value. We use this
+ * functionality e.g. for driving the Throttle from the requested input speed
+ * (correction) and the requested pitch. We just calculate the weighted average of 
+ * all the (scaled) inputs.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Mixer {
+	private FlightController flightController;
+	private Collection<MixerComponent> components = new ArrayList<MixerComponent>();
+	private IScaler scaler = new NoScaler();
+
+	public Mixer(FlightController flightController, Collection<MixerComponent> components) {
+		this.flightController = flightController;
+		this.components = components;
+	}
+
+	public double getValue() {
+		double result = 0;
+		for (MixerComponent c : this.components) {
+			double value = flightController.getValue(c.getParameter()).value;
+			result += c.getScaler().scale(value) * (c.getWeight());
+		}
+		return scaler.scale(result);
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	public Collection<MixerComponent> getComponents() {
+		return components;
+	}
+
+	public void setComponents(Collection<MixerComponent> components) {
+		this.components = components;
+	}
+
+	public IScaler getScaler() {
+		return scaler;
+	}
+
+	public void setScaler(IScaler scaler) {
+		this.scaler = scaler;
+	}
+
+}

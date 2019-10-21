@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.pschatzmann.ch</groupId>
+	<artifactId>jflightcontroller</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>flight controller for raspberry pi</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<!--  Support for Joysticks -->
+		<repository>
+			<id>Jamepad</id>
+			<name>your custom repo</name>
+			<url>http://maven.imagej.net/content/repositories/public/</url>
+		</repository>
+	</repositories>
+
+    <build>
+		<plugins>
+		    <plugin>    
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <configuration>
+		            <source>1.8</source>
+		            <target>1.8</target>
+		        </configuration>
+		    </plugin>
+		</plugins>
+	 </build>
+	
+
+	<dependencies>
+		<!--  Unit Tests -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+
+		<!--  Raspberry PI Communication Library -->
+		<dependency>
+			<groupId>com.pi4j</groupId>
+			<artifactId>pi4j-core</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<!-- Support for Joysticks -->
+		<dependency>
+			<groupId>com.github.WilliamAHartman</groupId>
+			<artifactId>Jamepad</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!-- Configuration and Dependecy Injection -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>5.2.0.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		
+
+	</dependencies>
+</project>

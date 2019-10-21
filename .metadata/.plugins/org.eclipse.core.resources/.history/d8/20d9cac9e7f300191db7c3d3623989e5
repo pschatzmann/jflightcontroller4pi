@@ -1,0 +1,15 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Generates for multiple input values a combined output value
+ * 
+ * @author pschatzmann
+ *
+ */
+public class MixerComponent {
+	ParametersEnum parameter;
+	IScaler scaler;
+	double weight;
+}

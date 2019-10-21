@@ -1,0 +1,168 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+
+/**
+ * Write values from the ParameterStore to an UDP Port (e.g. for JSBSim). This functionality
+ * is driven by the output processing which is defined in the control loop.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class DatagramWriter implements IOutDevice {
+	private int port = 5000;
+	private InetAddress ip;
+	private DatagramSocket socket;
+	private byte[] buffer = new byte[2048];
+	private DatagramPacket packet;
+	private List<FieldDefinition> outputFields = new ArrayList();
+	private FlightController flightController;
+	private long processedRecords = 0;
+
+	/**
+	 * Default Constructor used by Spring
+	 */
+	public DatagramWriter(){
+	}
+	
+	/**
+	 * Constructor which provides all dependent objects
+	 * @param flightController
+	 * @param outputFields
+	 * @param port
+	 */
+	public DatagramWriter(FlightController flightController, List<FieldDefinition> outputFields, int port){
+		this.flightController = flightController;
+		this.outputFields = outputFields;
+		this.port = port;
+	}
+	
+	public DatagramWriter(FlightController flightController, List<FieldDefinition> outputFields, DatagramSocket dsocket){
+		this.flightController = flightController;
+		this.outputFields = outputFields;
+		this.socket = dsocket;
+		this.port = dsocket.getLocalPort();
+	}
+	
+	/**
+	 * Setup Reader and read the values in a separate Thread
+	 * 
+	 **/
+	@Override
+	public void setup() {
+		try {
+			if (socket==null) {
+				// Create a socket to listen on the port.
+				socket = new DatagramSocket(port);
+			}
+			if (ip==null) {
+		        ip = InetAddress.getLocalHost(); 				
+			}
+			// Create a packet to receive data into the buffer
+			packet = new DatagramPacket(buffer, buffer.length);
+			
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	/**
+	 * Determines the data from the Store and sends it out via a socket
+	 */
+	@Override
+	public void processOutput() {
+		try {
+			byte[] outLine = getOutputLine().getBytes();
+			if (outLine.length > 0) {
+				DatagramPacket packet = new DatagramPacket(outLine,0, outLine.length, ip, port);
+				socket.send(packet);
+				processedRecords++;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	protected String getOutputLine() {
+		StringBuffer sb = new StringBuffer();
+
+		// push the data to the ParametersStore
+		for (FieldDefinition def : outputFields) {
+			double value = flightController.getValue(def.getInputField()).value;
+			double scaledValue = def.getScaler().scale(value);
+			sb.append(scaledValue);
+			sb.append(" ");
+		}
+		return sb.toString().trim();
+	}
+
+	/**
+	 * Determines the fields which need to be processed
+	 * @return
+	 */
+	public List<FieldDefinition> getFieldDefinitions() {
+		return outputFields;
+	}
+
+	/**
+	 * Defines the fields which need to be processed
+	 */
+	public void setFieldDefinitions(List<FieldDefinition> inputFields) {
+		this.outputFields = inputFields;
+	}
+
+	/**
+	 * Determines the UDP port
+	 * @return
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * Defines the UDP port
+	 * @param port
+	 */
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
+	/**
+	 * Provides the number of sent records/lines
+	 * @return
+	 */
+	public long getRecordCount() {
+		return processedRecords;
+	}
+
+	public DatagramSocket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(DatagramSocket socket) {
+		this.socket = socket;
+	}
+
+	@Override
+	public void shutdown() {
+		socket.close();
+		this.socket = null;
+		this.packet = null;
+	}
+
+}

@@ -1,0 +1,5 @@
+/**
+ * Automatic navigation with the help of gps and gps targets
+ */
+package ch.pschatzmann.jflightcontroller4pi.navigation.gps;
+

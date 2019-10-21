@@ -1,0 +1,219 @@
+package ch.pschatzmann.jflightcontroller4pi.devices;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.studiohartman.jamepad.ControllerAxis;
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerState;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.scaling.Scaler;
+
+/**
+ * Feed Throttle, Rudder, Aleron and Elevator from a Game Console to the
+ * ParameterStore. We also process the Buttons to control the Flight Modes.
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class GameConsole implements ISensor {
+    private static final Logger log = LoggerFactory.getLogger(GameConsole.class);
+	private int sleepMs = 0;
+	private ControllerManager controllers;
+	private ControllerIndex currController;
+	private Scaler lxScaler;
+	private Scaler lyScaler;
+	private Scaler rxScaler;
+	private Scaler ryScaler;
+	private IFlightMode offMode;
+	private IFlightMode acroMode;
+	private FlightController flightController;
+
+	public GameConsole() {
+		this.setup();
+	}
+
+	/**
+	 * Setup Input Thread
+	 */
+	@Override
+	public void setup() {
+		controllers = new ControllerManager();
+		controllers.initSDLGamepad();
+
+		ControllerState state = controllers.getState(0);
+		if (state.isConnected) {
+			currController = controllers.getControllerIndex(0);
+
+			doVibrate(currController, 3000);
+			setupScalers(currController);
+
+			log.info("Processing Input...");
+			doVibrate(currController, 1000);
+		} else {
+			log.warn("There is no Game Controller available");
+		}
+	}
+
+	/**
+	 * Process the Input with the help of the ControllerManager. We need to setup
+	 * the scales first before we can start with the processing
+	 */
+	@Override
+	public void processInput() {
+		if (currController!=null) {
+			controllers.update();
+			try {
+				processInput(currController);
+			} catch (Exception e) {
+				log.error("Could not Process Input from GameConsole: " + e.getMessage());
+			}
+		}		
+	}
+
+	private void doVibrate(ControllerIndex currController, int ms) {
+		try {
+			currController.doVibration(1f, 1.f, ms);
+		} catch (ControllerUnpluggedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void processInput(ControllerIndex currController) throws ControllerUnpluggedException {
+		// define Modes
+		if (currController.isButtonPressed(ControllerButton.START)) {
+			flightController.setValue(ParametersEnum.MODE, 0.0);
+		}
+		if (currController.isButtonPressed(ControllerButton.A)) {
+			flightController.setValue(ParametersEnum.MODE, 1.0);
+		}
+		if (currController.isButtonPressed(ControllerButton.B)) {
+			flightController.setValue(ParametersEnum.MODE, 2.0);
+		}
+
+		// process left stick
+		double valLX = currController.getAxisState(ControllerAxis.LEFTX);
+		flightController.setValue(ParametersEnum.THROTTLE, lxScaler.scale(valLX));
+
+		double valLY = currController.getAxisState(ControllerAxis.LEFTY);
+		flightController.setValue(ParametersEnum.RUDDER, lyScaler.scale(valLY));
+
+		// process right stick
+		double valRX = currController.getAxisState(ControllerAxis.RIGHTX);
+		flightController.setValue(ParametersEnum.AILERON, rxScaler.scale(valRX));
+
+		double valRY = currController.getAxisState(ControllerAxis.RIGHTY);
+		flightController.setValue(ParametersEnum.ELEVETOR, ryScaler.scale(valRY));
+	}
+
+	protected void setupScalers(ControllerIndex currController) {
+		double lxMin = 0, lxMax = 0, lyMin = 0, lyMax = 0, rxMin = 0, rxMax = 0, ryMin = 0, ryMax = 0;
+		log.info("Move the sticks in all maximum positions and click start when done");
+		while (true) {
+			try {
+				if (currController.isButtonPressed(ControllerButton.START)) {
+					break;
+				}
+				double valLX = currController.getAxisState(ControllerAxis.LEFTX);
+				lxMax = Math.max(valLX, lxMax);
+				lxMin = Math.min(valLX, lxMin);
+
+				double valLY = currController.getAxisState(ControllerAxis.LEFTY);
+				lyMax = Math.max(valLY, lyMax);
+				lyMin = Math.min(valLY, lyMin);
+
+				double valRX = currController.getAxisState(ControllerAxis.RIGHTX);
+				rxMax = Math.max(valRX, rxMax);
+				rxMin = Math.min(valRX, rxMin);
+
+				double valRY = currController.getAxisState(ControllerAxis.RIGHTY);
+				ryMax = Math.max(valRY, ryMax);
+				ryMin = Math.min(valRY, ryMin);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		log.info("Setting up Input Scalers");
+
+		lxScaler = new Scaler(lxMin, lxMax,-1,1);
+		lyScaler = new Scaler(lyMin, lyMax,-1,1);
+		rxScaler = new Scaler(rxMin, rxMax,-1,1);
+		ryScaler = new Scaler(ryMin, ryMax,-1,1);
+	}
+
+	@Override
+	public void shutdown() {
+		controllers.quitSDLGamepad();
+	}
+
+	/**
+	 * Implement Switching of the Flight Mode
+	 * 
+	 * @author pschatzmann
+	 *
+	 */
+	protected class ModeSwitch {
+
+		ModeSwitch(ParameterStore parameterStore, IDevice controlDevice) {
+
+			// register event handler
+			parameterStore.register(ParametersEnum.MODE, value -> {
+				int mode = (int) value.value;
+				switch (mode) {
+				case 0:
+					flightController.setMode(offMode);
+					break;
+				case 1:
+					flightController.setMode(acroMode);
+					break;
+
+				}
+			});
+
+			// per default we switch off the processing
+			parameterStore.setValue(ParametersEnum.MODE, 0.0);
+		}
+	}
+
+	public int getSleepMs() {
+		return sleepMs;
+	}
+
+	public void setSleepMs(int sleepMs) {
+		this.sleepMs = sleepMs;
+	}
+
+	public IFlightMode getOffMode() {
+		return offMode;
+	}
+
+	public void setOffMode(IFlightMode offMode) {
+		this.offMode = offMode;
+	}
+
+	public IFlightMode getAcroMode() {
+		return acroMode;
+	}
+
+	public void setAcroMode(IFlightMode acroMode) {
+		this.acroMode = acroMode;
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+}

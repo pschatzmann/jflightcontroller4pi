@@ -1,0 +1,70 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
+import ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore;
+import ch.pschatzmann.jflightcontroller4pi.modes.AcroModeRule;
+import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
+
+/**
+ * Checks the basic functionality of the FlightController
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class TestFlightController {
+	FlightController ctl;
+	OutDevice rudder;
+	OutDevice elevator;
+	OutDevice aileron;
+	OutDevice throttle;
+
+	@Before
+	public void setup() {
+		ctl = new FlightController();
+		rudder = new OutDevice(ctl, ParametersEnum.RUDDER,  0.0, new NullDevice());
+		elevator = new OutDevice(ctl, ParametersEnum.ELEVETOR,  0.0, new NullDevice());
+		aileron = new OutDevice(ctl, ParametersEnum.AILERON,  0.0, new NullDevice());
+		throttle = new OutDevice(ctl, ParametersEnum.THROTTLE,  -1.0, new NullDevice());
+		
+		new Thread(() -> {
+			ctl.run();
+		}).start();
+	}
+
+
+	@Test
+	public void testDevices() {
+		FlightMode fm = (FlightMode) ctl.getMode();
+		// devices known from FlightModeLogic
+		// devices know to mode
+		Assert.assertEquals(4, fm.getDevices().size());
+		// devices known by controller
+		Assert.assertEquals(4, ctl.getDevices().size());
+		
+	}
+	
+
+
+	@Test
+	public void testJMX() {
+
+		ctl.addValue(ParametersEnum.ROLL, 0.1);
+		JMXParameterStore jmx = new JMXParameterStore(ctl);
+
+		Assert.assertEquals(0.1, ctl.getValue(ParametersEnum.ROLL).value, 0.001);
+		Assert.assertEquals(0.1, jmx.getRoll(), 0.001);
+	}
+
+}

@@ -1,0 +1,6 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+public class IIMU {
+	public Quaternion getQuaternion(double gx, double gy, double gz, double ax, double ay, double az, double mx, double my,
+			double mz);
+}

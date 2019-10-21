@@ -1,0 +1,5 @@
+/**
+ * Common shared functionality
+ */
+package ch.pschatzmann.jflightcontroller4pi.data;
+

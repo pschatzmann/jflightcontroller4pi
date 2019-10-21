@@ -1,0 +1,68 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import java.util.Collection;
+import java.util.Collections;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.Mixer;
+import ch.pschatzmann.jflightcontroller4pi.control.MixerComponent;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+
+public class MixingModeRule implements IRecalculate {
+	private String name = this.getClass().getSimpleName();
+	private FlightController flightController; 
+	private Collection<MixerComponent> mixerComponents = Collections.emptyList();
+	private IOutDeviceEx device;
+	private Mixer mixer;
+	
+	public MixingModeRule() {
+	}
+	
+	@Override
+	public IOutDeviceEx getDevice() {
+		return device;
+	}
+	
+	public void setDevice(IOutDeviceEx device) {
+		this.device = device;
+	}
+	
+	@Override	
+	public void recalculate() {	
+		if (this.mixer==null) {
+			throw new RuntimeException("The mixer is not defined for "+getName());
+		}
+		double value = this.mixer.getValue();
+		flightController.setValue(this.device.getControlParameter(),value);
+	}
+
+	public Collection<MixerComponent> getMixerComponents() {
+		return mixerComponents;
+	}
+
+	public void setMixerComponents(Collection<MixerComponent> mixerComponents) {
+		if (flightController==null) {
+			throw new RuntimeException("Define the flightController first");
+		}
+		this.mixerComponents = mixerComponents;
+		this.mixer = new Mixer(flightController, mixerComponents);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+}

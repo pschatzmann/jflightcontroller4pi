@@ -1,0 +1,19 @@
+package ch.pschatzmann.jflightcontroller4pi.devices;
+
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Device where the recalculation of parameters gets managed by the event loop
+ * 
+ * @author pschatzmann
+ *
+ */
+public interface IOutDeviceEx extends IOutDevice {
+	
+	public IRecalculate getRecalculate();
+	
+	public void setRecalculate(IRecalculate c);
+
+	ParametersEnum getControlParameter();
+	
+}

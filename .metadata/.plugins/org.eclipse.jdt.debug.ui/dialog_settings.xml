@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="expressionHistory">
+	</section>
+	<section name="org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator$ExpressionInformationControl">
+		<item key="WIDTH" value="677"/>
+		<item key="HEIGHT" value="156"/>
+		<item key="SashWeightTree" value="500"/>
+		<item key="SashWeightDetails" value="500"/>
+	</section>
+	<section name="conditionHistory">
+	</section>
+	<section name="org.eclipse.jdt.debug.ui.RUNTIME_CLASSPATH_ADVANCED_DIALOG">
+		<item key="DIALOG_X_ORIGIN" value="294"/>
+		<item key="DIALOG_Y_ORIGIN" value="136"/>
+		<item key="DIALOG_WIDTH" value="212"/>
+		<item key="DIALOG_HEIGHT" value="277"/>
+		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
+	</section>
+</section>

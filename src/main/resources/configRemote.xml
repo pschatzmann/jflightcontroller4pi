@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="flightController" class="ch.pschatzmann.jflightcontroller4pi.FlightController" >
+	    <property name="parameterStore">
+			<bean id="ParameterStore" class="ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore" />
+	    </property>
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="gameConsole" />
+            	<ref bean="datagramWriter" />    
+        	</list>
+	  	</property>
+	  		    	    
+	</bean>
+
+	<!-- Devices -->
+	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
+	    <property name="flightController" ref="flightController"/>
+	</bean>
+	
+	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" >
+	    <property name="flightController" ref="flightController"> </property>
+	  	<property name="port" value="7000"/>
+	  	<property name="host" value="192.168.1.42"/>
+	  	<property name="fieldDefinitions" >
+	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions">
+	  			<property name="fieldNames">
+		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
+						<value>RUDDER</value>
+						<value>AILERON</value>
+						<value>ELEVATOR</value>
+						<value>THROTTLE</value>
+		        	</list>
+		        </property>
+        	</bean>
+	  	</property>
+	</bean>						
+	
+</beans>

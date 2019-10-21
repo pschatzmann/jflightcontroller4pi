@@ -1,0 +1,58 @@
+# Stabilized Mode
+
+## Sensors
+
+
+
+## Inertial Measurement Unit (IMU) (Gyroscope, Accelerometer, Compass, Barometer)
+
+We implemented a software IMU which reports a body's specific force, angular rate, and the orientation of the body. 
+As input example we use the following chip
+
+_CJMCU 10DOF 9 Axis MPU9250 + BMP180 Sensor Module Gyro Acceleration + Barometric Height Sensor_
+
+- 3-axis gyroscope + 3-axis accelerometer + 3-axis magnetic field + barometric altitude sensor
+- Module uses imported chips: integrated high-precision 9-axis high precision pressure MPU9250 chip + BMP180 chips
+- Power supply: 3.3v
+- Communication: SPI / IIC
+
+We can use our generic InputProcessor to record the values
+
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.Sensor" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="name" value="gyroscope-accelerometer-compass-altitude"/>
+	  	<property name="in">
+			<ref bean="pinI2C0"/>
+		</property>
+		
+	  	<property name="inputProcessor">
+	  		<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.InputProcessor">
+	  			<property name "inputParameters">
+	  				<list>
+	  					<value>GYROX</value>
+	  					<value>GYROY</value>
+	  					<value>GYROZ</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>ACCELEROMETERX</value>
+	  					<value>MAGNETOMETERX</value>
+	  					<value>MAGNETOMETERY</value>
+	  					<value>MAGNETOMETERZ</value>
+	  					<value>SENSORALTITUDE</value>
+	  				</list>
+	  			</property>
+	  		</bean>
+	  	</property>		
+	</bean>
+
+
+And we need to configure the related Input Pins to use I2C0
+
+
+	<bean id="pinI2C0" class="ch.pschatzmann.jflightcontroller4pi.protocols.InputFromPiI2C">
+	  	<property name="bus" value="0"/>
+	</bean>
+
+
+
+	

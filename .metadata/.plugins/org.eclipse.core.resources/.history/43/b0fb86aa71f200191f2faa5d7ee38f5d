@@ -1,0 +1,11 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
+
+public interface JMXParameterStoreMBean extends IDevice {
+	public double getStatusRoll(); 
+	public double getPich(); 
+	public double getYaw();
+	public double getSpeed();
+	public String getMode();
+}

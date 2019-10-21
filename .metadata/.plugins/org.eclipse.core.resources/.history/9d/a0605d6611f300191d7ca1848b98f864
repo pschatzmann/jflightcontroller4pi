@@ -1,0 +1,69 @@
+## Flight Controller for Raspberry PI
+
+I was wondering if the Raspberry PI Zero might be sufficient to manage a RC plane. After all, it supports
+WIFI so that we can control the plane remotely and we can receive live images back. It has all the functionality
+to connect up to Sensors and control motors via PWM.
+
+One of the major topics related to flight controllers is configuration: Which sensors do we have,
+how do they communicate, what is the setup of the plane etc. 
+
+
+## Project Goals
+
+In a first step I wanted to prototype a flexible solution where I can 
+- run some **software simulation** (Integration with JSBSim
+- do the input control via a **Game Console**
+- support of **configuration** changes w/o the need to recompile
+- **monitor** the state of the airplane 
+- support different **flight modes** 
+- play around with different alternative implementations 
+
+I came to the conclusion that **Java** with it's infrastructure can help me to come up with a good
+working solution in 1 or 2 days.
+
+## Overall Software Design 
+- There is no GUI logic needed because we can use **JMX to monitor** the key control variables (JMXParameterStore). 
+- **Spring** is used to **configure the classes** and provide specific instances of objects. We can easily 
+  adapt any settings and there is no need for hard coded values or object instances.
+- The overall Class Design is very simple: The **FlightController** is the heart of all processing. It also
+  contains the control loop. It is used to manage the following:
+  - **ParameterStore**: We represent the actual parameter values (and potentially some history). It implements
+    an event handler that fires when a parameter value is updated. We can register a flexible update logic 
+    which might trigger additional parameter updates.The events are mainly driven by the selected Flight Modes 
+    (AcroModeLogic, StabilizedModeLogic) 
+  - **Devices** (IDevice) consist of 
+  	- **Input Sensors** (ISensor) which can be configured to update the Parameter Store. We also need to configure
+  	  the input protocol (I2C or SPI). The GameConsole is also implemented as input device.
+  	- **OutDevices** (Aileron, Elevator, Rudder, Throttle) where we need to configure the Output Protocol (
+  	  Pin and PWM settings)
+  	- **Other Devices** can be used to implement additional functionaliy: JSBSim, JMXParameterStore 
+  
+The **control loop** is just pulling input devices because the OutDevices are automatically updated my the
+event handler when a relevant parameter has been updated.
+
+
+For my standard setup you can have a look at the Spring configuration which is in **config.xml**
+
+## External Dependencies
+I tried to minimize the use of external dependencies:
+- [pi4j](https://pi4j.com/1.2/index.html) -> IO Control for PI  
+- [Jamepad](https://github.com/williamahartman/Jamepad) -> Gamepad support 
+- [spring-context](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html) -> Configuration and Dependency Injection
+- [junit](https://junit.org/junit4/) -> Unit tests
+
+## Performance Considerations
+[Navio2](https://emlid.com/navio/) provides some specific hardware to turn a Raspberry PI into a full blown
+flight controller. However the PI Zero is not supported because it is too slow.  
+It is my expectation that, though it might be too slow to fly multicopters, it should still be fast enough - even without 
+the Navio3 hardware - to fly model airplanes: **Real Airplanes are flown by humans** and a Raspberry
+PI Zero is definitely able to react quicker.
+
+
+## Hardware  
+- Raspberry PI Zero - 10 USD
+- CJMCU 10DOF 9 Axis MPU9250 + BMP180 Sensor Module Gyro Acceleration + Barometric Height Sensor - 8 USD
+
+
+
+
+

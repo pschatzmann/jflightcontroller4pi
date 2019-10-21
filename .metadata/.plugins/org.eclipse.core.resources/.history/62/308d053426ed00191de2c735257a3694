@@ -1,0 +1,33 @@
+package ch.pschatzmann.jdkflightsimulator4pi.devices;
+
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinPwmOutput;
+import com.pi4j.io.gpio.Pin;
+
+import ch.pschatzmann.jdkflightsimulator4pi.scaling.Scaler;
+
+public abstract class OutDevice implements IDevice {
+	private GpioController gpio;
+	private GpioPinPwmOutput pwm;
+	private Scaler scaler = new Scaler(0,100.0);
+	private String pinName = "GPIO_01";
+	
+
+	public void setup() {
+		// setup IO
+        gpio = GpioFactory.getInstance();
+        Pin pin = gpio.getProvisionedPin(pinName).getPin();
+        pwm = gpio.provisionSoftPwmOutputPin(pin);
+        pwm.setPwmRange(100);
+	}
+
+	public String getPinName() {
+		return pinName;
+	}
+
+	public void setPinName(String pinName) {
+		this.pinName = pinName;
+	}
+
+}

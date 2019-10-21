@@ -1,0 +1,43 @@
+# Teach the Airplane to Lift
+
+There are 2 controls involved in lifting an airplane:
+
+- Raising an airplane needs energy - so we need to open up the throttle to make the motors spin faster so that we can keep a constant speed
+- The elevator makes a plane go up or down - so in order to lift the plane it needs to be raised.
+
+We are using a PIDs to control the speed and another to control the elevation (angle).
+Since we do this the first time, we do not want to do this exercise with a real plane: We can use our integration into Flightgear instead to validate if we can implement a stable, working system.
+We use the Cessna 172P for our simulation. In real life things tend to get quite complicated but we try to simplify with the assumption that a model airplane is good natured and has much bigger savety limits. 
+
+
+ ## Speed Control Loop
+ 
+ - Control Input: Target Speed (kmh)
+ - Measured Input: Speed (kmh)
+ - Output: Throttle (0.2 to 1)
+ 
+ In order to be able to fly savely we limit the speed to the range of 100 - 185 kmh.
+ We need to make sure that the motor is not dying off if we give not enough throttle.
+ 
+
+ ## Elevation Control Loop
+
+ - Control Input: Elevation (in degrees)
+ - Measured Input: Elevation (in degrees) from Sensors
+ - Output: Elevator (-1 to 1)
+ 
+We limit the elevation angle to the range of (-40 - 40 degrees) 
+The takeoff will not be automatic. It will be up to the pilot to raise the elevator when the takeoff speed has been reached 
+
+
+## Implementation in JFlightController4Pi
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

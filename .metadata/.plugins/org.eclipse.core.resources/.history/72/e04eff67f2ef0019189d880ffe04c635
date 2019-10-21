@@ -1,0 +1,9 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+public class GPS {
+	GPS(){		
+	}
+	
+	
+	
+}

@@ -1,0 +1,89 @@
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IInputProcessor;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.utils.XString;
+
+/**
+ * API for GPS data which provides the actual location, direction and speed.
+ * Please avoid the of ValueGPS objects so that there is no need for garbage
+ * collection.
+ * 
+ * 
+ * @author pschatzmann
+ *
+ */
+public class GPS {
+	private static Logger log = LoggerFactory.getLogger(GPS.class);
+	private GPSPosition actualValue = new GPSPosition();
+	private GPSPosition priorValue = new GPSPosition();
+	private NMEAParser parser = new NMEAParser(actualValue);
+
+	/**
+	 * Default Constructor
+	 */
+	public GPS() {
+	}
+
+	/**
+	 * get the actual value structure which needs to be filled in order to pass
+	 * values
+	 * 
+	 * @return
+	 */
+	public GPSPosition getValue() {
+		return actualValue;
+	}
+
+	/**
+	 * Updates the actual GPS value
+	 * 
+	 * @param actualValue
+	 */
+	public void putValue(GPSPosition actualValue) {
+		priorValue.setValue(actualValue);
+		if (actualValue != this.actualValue) {
+			this.actualValue = actualValue;
+			log.warn("Please use the value from calling getValue to update the status");
+		}
+	}
+
+	/**
+	 * Parses and adds the actual line which contains data in the NMEA format
+	 * @param line
+	 */
+	public void putValue(XString line) {
+		priorValue.setValue(actualValue);
+		parser.parse(line.getString());
+	}
+
+	/**
+	 * Determines the compass direction in degrees
+	 * 
+	 * @return
+	 */
+	public double getDirection() {
+		if (priorValue.getTime() == 0) {
+			return 0.0;
+		}
+		return actualValue.getDirection(priorValue);
+	}
+
+	/**
+	 * Calculates the speed in meters per second (mps)
+	 * 
+	 * @return
+	 */
+
+	public double getSpeed() {
+		if (priorValue.getTime() == 0) {
+			return 0.0;
+		}
+		return actualValue.getSpeed(priorValue);
+	}
+
+}

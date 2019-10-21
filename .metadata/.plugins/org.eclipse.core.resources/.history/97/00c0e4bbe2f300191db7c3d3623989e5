@@ -1,0 +1,31 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.control.PIDController;
+
+public class TestPIDController {
+	
+	// input -1 to 1 => output -30 to 30
+	
+	@Test
+	public void test1() throws InterruptedException {
+		final PIDController pidController = new PIDController(1, 0.01, 0.01);
+
+		double actual = 20.0;
+		double target = 0.0;
+		pidController.setOutputLimits(-.5, .5);
+
+		// pidController.enable();
+		for (int j = 0; j < 50; j++) {
+			double output = pidController.getOutput(actual, target);
+			System.out.println("Output: " + output + " actual: " + actual + " target: " + target+" error: "+pidController.getError());
+			Thread.sleep(1000);
+			
+			actual = actual + output*30;
+			
+		}
+
+	}
+
+}

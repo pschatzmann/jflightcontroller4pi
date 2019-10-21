@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="SaveAsDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="430"/>
+		<item key="DIALOG_Y_ORIGIN" value="22"/>
+		<item key="DIALOG_WIDTH" value="525"/>
+		<item key="DIALOG_HEIGHT" value="529"/>
+		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
+	</section>
+	<section name="CleanDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="745"/>
+		<item key="DIALOG_Y_ORIGIN" value="162"/>
+		<item key="DIALOG_WIDTH" value="484"/>
+		<item key="DIALOG_HEIGHT" value="447"/>
+		<item key="BUILD_NOW" value="true"/>
+		<item key="BUILD_ALL" value="true"/>
+		<item key="TOGGLE_SELECTED" value="false"/>
+	</section>
+</section>

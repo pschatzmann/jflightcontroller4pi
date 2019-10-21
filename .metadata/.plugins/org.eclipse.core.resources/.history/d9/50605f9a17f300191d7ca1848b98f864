@@ -1,0 +1,59 @@
+# Remote Control
+
+It is my understanding that the PI is struggling with the processing of **RV protocols**: PWM, PPM, SBUS, IBUS.
+- **PWM** should be straight forward - except that it uses up quite a few pins. 
+- The **other protocols** are either only partly supported or quite impossible to implement w/o additional hardware
+
+This is however not a problem for my purpose because I plan to use the built in **WLAN or Bluetooth** so that I can control the plane e.g. with the help of a Game Controller. 
+
+# Setup
+
+We can just use the existing functionality and configure it so, that it acts as remote control. We can execute it then on a separate machine that is connected to the same WIFI network like the Raspberry PI
+
+We just define a new controller with the GameConsole as input device. The DatagramWriter then just sends any input via UDP to the Raspberry PI:
+
+
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+		        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+		<beans>
+			<bean id="flightController" class="ch.pschatzmann.jflightcontroller4pi.FlightController" scope="singleton">
+			    <property name="parameterStore">
+					<bean id="ParameterStore" class="ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore" />
+			    </property>
+			  	<property name="devices">
+			  		<list>
+		            		<ref bean="gameConsole" />
+		            		<ref bean="datagramWriter" />    
+		        		</list>
+			  	</property>			  		    	    
+			</bean>
+		
+			<!-- Input Device -->
+			
+			<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
+			    <property name="flightController" ref="flightController"/>
+			</bean>
+		
+			<!-- Output Device -->
+					
+			<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" scope="singleton">
+			    <property name="flightController" ref="flightController"> </property>
+			  	<property name="port" value="5001"/>
+			  	<property name="fields" >
+			  		 <list  value-type="java.lang.String">
+    						<value>RUDDER</value>
+    						<value>AILERON</value>
+    						<value>ELEVETOR</value>
+    						<value>THROTTLE</value>
+		        		</list>
+			  	</property>
+			</bean>						
+		</beans>
+			
+			
+			
+When we start this on a local machine, the application just forwards the commands which are entered on the game console via UDP to the Flight controller which is running on the Raspberry PI in the Airplane.
+ 
+ 

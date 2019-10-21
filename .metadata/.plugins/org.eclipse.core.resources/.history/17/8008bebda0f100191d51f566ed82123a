@@ -1,0 +1,50 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.ControlLoopWithTimers;
+import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
+import ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions;
+import ch.pschatzmann.jflightcontroller4pi.integration.IFieldDefinitions;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+public class TestFlightGear {
+	@Test
+	public void testRecive() {
+		FlightController ctl = new FlightController();
+		ctl.setControlLoop(new ControlLoopWithTimers(ctl));
+		IFieldDefinitions def = new FieldDefinitions(Arrays.asList(ParametersEnum.SENSORROLL,
+				ParametersEnum.SENSORPITCH,
+				ParametersEnum.SENSORYAW,
+				ParametersEnum.SENSORSPEED,
+				ParametersEnum.SENSORHEADING, 
+				ParametersEnum.SENSORALTITUDE));
+
+		ctl.addDevices(Arrays.asList(new DatagramReader(ctl, def, 7001)));
+		
+		ctl.run();
+	}
+	
+	@Test
+	public void testReciveRaw() throws IOException {
+		byte[] buf = new byte[1000];
+		
+		DatagramPacket packet = new DatagramPacket(buf, buf.length);
+		packet = new DatagramPacket(buf, buf.length);
+		DatagramSocket socket = new DatagramSocket(7000);
+		socket.receive(packet);
+		String received = new String(packet.getData(), 0, packet.getLength());
+		System.out.println("UDP->"+received);
+
+	}
+
+}

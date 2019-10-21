@@ -1,0 +1,7 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+import ch.pschatzmann.jflightcontroller4pi.imu.NMEAParser.GPSPosition;
+
+public interface NMEASentenceParser {
+	public boolean parse(String [] tokens, GPSPosition position);
+}

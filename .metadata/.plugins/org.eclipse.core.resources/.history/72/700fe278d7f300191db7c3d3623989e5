@@ -1,0 +1,20 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+
+/**
+ * Centralized instance factory, so that we can switch the default implementation
+ * quite easily
+ * 
+ * @author pschatzmann
+ *
+ */
+public class DataFactory {
+	/**
+	 * Returns a new String (from the available strings)
+	 * @return
+	 */
+	public static IData instance() {
+		return Data.instance();
+	}
+	
+}

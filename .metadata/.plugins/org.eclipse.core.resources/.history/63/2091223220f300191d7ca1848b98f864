@@ -1,0 +1,87 @@
+# Stabilized Mode
+
+## Goal
+In Manual Mode the user input was directly controlling the setting of the 
+- Elevator
+- Aileron
+- Rudder and
+- Motor Speed
+
+In Stabilized Mode however we want that the user input is defining a stable state by providing the 
+
+- Elevation (in degrees) -> Elevator / Motor Speed 
+- Roll (in degrees) -> Aileron
+- Throttle -> Motor Speed 
+
+So with all inputs in neutral position, the airplane will fly straight ahead in a constant
+altitude with a constant speed.
+
+Multiple PID controllers are used to manage the plane: 
+
+
+## Simulation
+
+Since we do this the first time, we do not want to do this exercise with a real plane: We can use our integration into Flightgear instead to validate if we can implement a stable, working system.
+
+We use the Cessna 172P for our simulation. In real life things tend to get quite complicated but we try to simplify with the assumption that a model airplane is good natured and has much bigger safety limits. 
+
+The takeoff will not be automatic. It will be up to the pilot to raise the elevator when the takeoff speed has been reached. 
+We also do not implement any automatic stall avoidance, detection or recovery. 
+
+
+## Control
+
+We are using a PIDs to control the speed and another to control the elevation (angle).
+
+
+### Speed Control Loop
+ 
+ - Control Input: Target Speed (kmh)
+ - Measured Input: Speed (kmh)
+ - Output: Throttle (0.2 to 1)
+ 
+ In order to be able to fly safely (to avoid stalls or structural damage) we limit the speed to 
+ the range of 100 - 185 kmh with a neutral speed of 142.
+ We also need to make sure that the motor is not dying off if we give not enough throttle.
+ 
+
+### Elevation Control Loop
+
+ - Control Input: Elevation (in degrees) - [Range -40 - 40 degrees] 
+ - Measured Input: Elevation (in degrees) from Sensors
+ - Output: Elevator (-1 to 1)
+ 
+To avoid stalls because we climb too steep, we limit the elevation angle.
+
+
+### Turns 
+ 
+In 3 Channel Model Airplanes the turns are usually done with the help of the Rudder.  
+In real life this is mainly done with the ailerons and the rudder is used to coordinate the turn or if the plain is still on the ground.
+In our simplified implementation we will just use the ailerons:
+
+ - Control Input: Roll (in degrees) - [Range -30 -30 degrees]
+ - Measured Input: Roll (in degrees) from Sensors
+ - Output: Aileron (-1 to 1)
+
+In order to avoid unstable turns we limit the roll angle.
+
+
+## Implementation in JFlightController4Pi
+
+The cool thing with our solution is, that we can implement this w/o any programming language and we can just specify
+the solution in XML:
+
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

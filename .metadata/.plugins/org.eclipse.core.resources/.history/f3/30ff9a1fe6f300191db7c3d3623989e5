@@ -1,0 +1,11 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+/**
+ * Generates for multiple input values a combined output value
+ * 
+ * @author pschatzmann
+ *
+ */
+public class MixerComponent {
+
+}

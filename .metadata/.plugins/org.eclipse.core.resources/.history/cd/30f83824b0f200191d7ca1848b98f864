@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+    <timestamp key="timestamp-by-second" datePattern="yyyyMMdd'T'HHmmss"/>
+    <appender name="Console-Appender" class="ch.qos.logback.core.ConsoleAppender">
+        <layout>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+        </layout>
+    </appender>
+    <logger name="ch.pschatzmann.jflightcontroller4pi" level="info" additivity="false">
+        <appender-ref ref="Console-Appender" />
+    </logger>
+    <root>
+        <appender-ref ref="Console-Appender" level="info" />
+    </root>
+</configuration>

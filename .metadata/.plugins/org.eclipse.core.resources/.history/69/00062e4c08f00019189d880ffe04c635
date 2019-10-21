@@ -1,0 +1,33 @@
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.pschatzmann.jflightcontroller4pi.navigation.gps.GPSPosition;
+
+public class FlightPlan {
+	private GPS gps;
+	private List<GPSPosition> flightPlan = new ArrayList();
+
+	public FlightPlan(GPS gps){
+		this.gps = gps;
+	}
+	
+	/**
+	 * Gets the current flight plan
+	 * @return
+	 */
+	public List<GPSPosition> getFlightPlan() {
+		return flightPlan;
+	}
+	
+	/**
+	 * Defines the flight plan
+	 * @param flightPlan
+	 */
+	public void setFlightPlan(List<GPSPosition> flightPlan) {
+		this.flightPlan = flightPlan;
+	}
+
+
+}

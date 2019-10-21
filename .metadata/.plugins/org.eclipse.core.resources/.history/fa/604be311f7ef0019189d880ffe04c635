@@ -1,0 +1,60 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+/**
+ * 
+ * @author pschatzmann
+ *
+ */
+public class ValueGPS {
+	private long time; //: 235317.000
+	private double longitude; // 4003.9040,N is latitude in degrees.decimal minutes, north
+	private double latitude; // 10512.5792,W is longitude in degrees.decimal minutes, west
+	private int numberOfSatellites;
+	private double altitude;
+	
+	ValueGPS(){		
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public int getNumberOfSatellites() {
+		return numberOfSatellites;
+	}
+
+	public void setNumberOfSatellites(int numberOfSatellites) {
+		this.numberOfSatellites = numberOfSatellites;
+	}
+
+	public double getAltitude() {
+		return altitude;
+	}
+
+	public void setAltitude(double altitude) {
+		this.altitude = altitude;
+	}
+	
+	
+	
+}

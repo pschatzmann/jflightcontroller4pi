@@ -1,0 +1,145 @@
+# UDP Communication
+
+We can receive and send information with the help of UDP. In the following example we explain how to set up
+the integration with FlightGear
+
+
+# Receiving Data from FlightGear
+
+We would like to update the following parameters from Flight Gear:
+	- SENSORROLL
+	- SENSORPITCH
+	- SENSORYAW
+	- SENSORSPEED 
+	- SENSORDIRECTION 
+	- SENSORALTITUDE
+
+
+	<bean id="datagramReader" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader" scope="singleton">
+	    <property name="flightController" ref="flightController"/> 
+	  	<property name="port" value="7001"/>
+	  	<property name="fieldDefinitions">
+	  		 <list>
+				<value>SENSORROLL</value>
+				<value>SENSORPITCH</value>
+				<value>SENSORSPEED</value>
+				<value>SENSORDIRECTION</value>
+				<value>SENSORALTITUDE</value>
+        		</list>
+        </property>
+	</bean>
+
+
+
+# Sending Data to FlightGear
+
+We would like to update the following parameters in Flight Gear from the values in our system, in order to control the airplane:
+
+	- RUDDER 
+	- AILERON 
+	- ELEVETOR 
+	- THROTTLE
+
+This can be done with the following definition
+					
+	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" scope="singleton">
+	    <property name="flightController" ref="flightController"> </property>
+	  	<property name="port" value="7000"/>
+	  	<property name="fields" >
+	  		 <list  value-type="java.lang.String">
+				<value>RUDDER</value>
+				<value>AILERON</value>
+				<value>ELEVETOR</value>
+				<value>THROTTLE</value>
+        		</list>
+	  	</property>
+	</bean>						
+
+
+	
+# Flightgear
+
+Flightgear supports a generic [protocal](http://wiki.flightgear.org/Generic_protocol).
+In OS/X the definition needs to be located in /Applications/FlightGear.app/Contents/Resources/data/Protocol
+
+So we need to set up a new file my-io.xml.
+
+
+		<?xml version="1.0"?>
+				
+		<PropertyList>		
+		 <generic>		
+		  <input>
+		    <binary_mode>false</binary_mode>
+		    <binary_footer>none</binary_footer>
+			<line_separator>newline</line_separator>
+    			<var_separator>,</var_separator>
+    			
+		    <chunk>
+		      <name>rudder</name>
+		      <type>float</type>
+		      <node>/controls/engines/engine[0]/throttle</node>
+		    </chunk>
+
+		    <chunk>
+		      <name>aileron</name>
+		      <type>float</type>
+		      <node>/controls/flight/aileron</node>
+		    </chunk>
+		
+		    <chunk>
+		      <name>elevator</name>
+		      <type>float</type>
+		      <node>/controls/flight/elevator</node>
+		    </chunk>
+		
+		    <chunk>
+		      <name>throttle</name>
+		      <type>float</type>
+		      <node>/aura-uas/act/throttle</node>
+		    </chunk>
+		
+		 </input>
+		 
+		 <output>
+		 	<chunk>
+		      <name>roll degree</name>
+		      <type>float</type>
+		      <node>/orientation/roll-deg</node>
+		    </chunk>
+		 	<chunk>
+		      <name>pitch degree</name>
+		      <type>float</type>
+		      <node>/orientation/pitch-deg</node>
+		    </chunk>
+		 	<chunk>
+		      <name>speed in meters/sec</name>
+		      <type>float</type>
+		      <node>/velocities/groundspeed-kt</node>
+		      <factor>0.514444</factor>
+		    </chunk>
+		    	<chunk>
+		      <name>direction</name>
+		      <type>float</type>
+		      <node>/orientation/heading-deg</node>
+		    </chunk>
+		    	<chunk>
+		      <name>altitude in m</name>
+		      <type>float</type>
+		      <factor>0.3048</factor>
+		      <node>/position/altitude-ft</node>
+		      <node></node>
+		    </chunk>
+		    
+		 </output>
+		
+		 </generic>
+		
+		</PropertyList>
+
+
+We start Flightgear with   
+	
+fgfs  --generic=socket,in,10,localhost,7000,udp,my_io --generic=socket,out,10,localhost,7001,udp,my_io
+
+	

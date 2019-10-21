@@ -1,0 +1,126 @@
+## Configuration / Settings
+
+The airplane with it's components and parameters are defined with the help of a Spring xml definition file.
+
+Here is a minimum working example of a prototype airplane that just implements Manual Mode.  In this example the pins are not connected to any real pins on the PI however.
+
+
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+		        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+		<beans>
+			<bean id="flightController" class="ch.pschatzmann.jflightcontroller4pi.FlightController" scope="singleton">
+			    <property name="parameterStore">
+					<bean id="ParameterStore" class="ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore" />
+			    </property>
+		 	    <property name="mode" ref="acroMode"/> 
+			  	<property name="devices">
+			  		<list>
+		            	<ref bean="gameConsole" />
+		        	</list>
+			  	</property>
+			  	<property name="modes">
+			  		<list>
+		            	<ref bean="offMode" />
+		            	<ref bean="acroMode" />
+		        	</list>
+			  	</property>
+			  	<property name="imu" ref="imu"/> 	  	
+			  		    	    
+			</bean>
+		
+			<!-- Devices -->
+			<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
+			    <property name="flightController" ref="flightController"/>
+			</bean>
+		
+			<!-- Control Planes -->
+			
+			<bean id="aileron" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+			    <property name="flightController" ref="flightController"/>
+			  	<property name="controlParameter" value="AILERON"/>
+			  	<property name="pin" ref="pin1"/>	  	
+			</bean>
+		
+			<bean id="elevator" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+			    <property name="flightController" ref="flightController"/>
+			  	<property name="controlParameter" value="ELEVETOR"/>
+			  	<property name="pin" ref="pin2"/>	  	
+			</bean>
+		
+			<bean id="rudder" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+			    <property name="flightController" ref="flightController"/>
+			  	<property name="controlParameter" value="RUDDER"/>
+			  	<property name="pin" ref="pin3"/>	  	
+			</bean>
+		
+			<bean id="throttle" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+			    <property name="flightController" ref="flightController"/>
+			  	<property name="controlParameter" value="THROTTLE"/>
+			  	<property name="pin" ref="pin4"/>	  	
+			</bean>
+		
+			<!-- Modes -->
+					
+			<bean id="acroMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+			    <property name="flightController" ref="flightController"/>
+			    <property name="name" value="Acro" /> 
+			  	<property name="rules">
+			  		<list>
+		            	<ref bean="acroModeRuleRudder" />
+		            	<ref bean="acroModeRuleElevator" />                
+		            	<ref bean="acroModeRuleAileron" />                
+		            	<ref bean="acroModeRuleThrottle" />                
+		        	</list>
+			  	</property>	 	  	
+			</bean>
+			
+			<bean id="acroModeRuleRudder" class="ch.pschatzmann.jflightcontroller4pi.modes.AcroModeRule" >
+			    <property name="flightController" ref="flightController"/>
+			    <property name="device" ref="rudder"/>
+			    <property name="parameterFrom" value="YAW"/>
+			</bean>
+			<bean id="acroModeRuleElevator" class="ch.pschatzmann.jflightcontroller4pi.modes.AcroModeRule" >
+			    <property name="flightController" ref="flightController"/>
+			    <property name="device" ref="elevator"/>
+			    <property name="parameterFrom" value="PITCH"/>
+			</bean>
+			<bean id="acroModeRuleAileron" class="ch.pschatzmann.jflightcontroller4pi.modes.AcroModeRule" >
+			    <property name="flightController" ref="flightController"/>
+			    <property name="device" ref="aileron"/>
+			    <property name="parameterFrom" value="ROLL"/>
+			</bean>
+			<bean id="acroModeRuleThrottle" class="ch.pschatzmann.jflightcontroller4pi.modes.AcroModeRule" >
+			    <property name="flightController" ref="flightController"/>
+			    <property name="device" ref="throttle"/>
+			    <property name="parameterFrom" value="SPEED"/>
+			</bean>
+			
+			<!-- Pins -->
+			<bean id="nop" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" />
+			
+			<bean id="pin1" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+			    <property name="scaler" ref="scaler100"/> 
+			</bean>
+			<bean id="pin2" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+			    <property name="scaler" ref="scaler100"/> 
+			</bean>
+			<bean id="pin3" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+			    <property name="scaler" ref="scaler100"/> 
+			</bean>
+			<bean id="pin4" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+			    <property name="scaler" ref="scaler100"/> 
+			</bean>
+			
+			<bean id="scaler100" class="ch.pschatzmann.jflightcontroller4pi.scaling.Scaler" >
+			    <property name="inputMin" value="-1.0"/>
+			    <property name="inputMax" value="1.0"/>
+			    <property name="outputMin" value="0.0"/>
+			    <property name="outputMax" value="100.0"/>
+			</bean>
+				
+		</beans>
+		
+		
+	

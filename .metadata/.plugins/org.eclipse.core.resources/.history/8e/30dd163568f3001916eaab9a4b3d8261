@@ -1,0 +1,203 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.DatagramChannel;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IInputProcessor;
+import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
+import ch.pschatzmann.jflightcontroller4pi.devices.InputProcessor;
+import ch.pschatzmann.jflightcontroller4pi.utils.IData;
+import ch.pschatzmann.jflightcontroller4pi.utils.Data;
+import ch.pschatzmann.jflightcontroller4pi.utils.DataFactory;
+
+/**
+ * Read values from a UDP Port (e.g. from JSBSim) into the ParameterStore
+ * 
+ * @author pschatzmann
+ *
+ */
+public class DatagramReader implements ISensor {
+	private static final Logger log = LoggerFactory.getLogger(DatagramReader.class);
+	private IFieldDefinitions inputFields = new FieldDefinitions();
+	private FlightController flightController;
+	private long processedRecords = 0;;
+	private IInputProcessor inputProcessor;
+	private char delimiter = ',';
+	private DatagramChannel channel;
+	private ByteBuffer buffer = ByteBuffer.allocate(1024);
+	private int port = 5000;
+	private String host;
+
+	/**
+	 * Constructor used by Spring
+	 */
+	public DatagramReader() {
+	}
+
+	/**
+	 * Default Constructor
+	 * 
+	 * @param flightController
+	 * @param inputFields
+	 * @param port
+	 */
+	public DatagramReader(FlightController flightController, IFieldDefinitions inputFields, int port) {
+		this.flightController = flightController;
+		this.inputFields = inputFields;
+		this.port = port;
+	}
+
+	public DatagramReader(FlightController flightController, IFieldDefinitions inputFields, DatagramChannel channel,
+			int port) {
+		this.flightController = flightController;
+		this.inputFields = inputFields;
+		this.channel = channel;
+		this.port = port;
+	}
+
+	/**
+	 * Setup Reader and read the values in a separate Thread *
+	 */
+	@Override
+	public void setup() {
+		try {
+			if (this.inputProcessor == null) {
+				this.inputProcessor = new InputProcessor(inputFields.getFieldNames());
+			}
+
+			if (this.channel == null) {
+				if (host != null) {
+					MulticastSocket socket = new MulticastSocket(port);
+					InetAddress address = InetAddress.getByName(host);
+					socket.joinGroup(address);
+				}
+				channel = DatagramChannel.open();
+				channel.socket().bind(new InetSocketAddress(port));
+				channel.configureBlocking(false);
+				channel.socket().setReceiveBufferSize(10240);
+
+			} else {
+				log.info("DatagramReader: the socket has already been set up");
+			}
+			// Create a packet to receive data into the buffer
+			log.info("The datagram reader has been started on port {}", this.port);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	@Override
+	public void processInput() {
+		try {
+			SocketAddress sa = channel.receive(buffer);
+			if (sa != null) {
+				log.info("processInput");
+				buffer.flip();
+				// String content = new String(buffer.array());
+				// content = content.replaceAll("(\\r|\\n)", "");
+				IData str = DataFactory.instance();
+				str.setBytes(buffer.array());
+				if (!str.isEmpty()) {
+					processInputLine(str);
+				}
+
+				// release memory
+				str.close();
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+
+	}
+
+	protected void processInputLine(IData line) {
+		inputProcessor.processInput(flightController, line, delimiter);
+		processedRecords++;
+	}
+
+	public IFieldDefinitions getFieldDefinitions() {
+		return inputFields;
+	}
+
+	public void setFieldDefinitions(IFieldDefinitions inputFields) {
+		this.inputFields = inputFields;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public IInputProcessor getInputProcessor() {
+		return inputProcessor;
+	}
+
+	public void setInputProcessor(IInputProcessor inputProcessor) {
+		this.inputProcessor = inputProcessor;
+	}
+
+	/**
+	 * Provides the number of sent records/lines
+	 * 
+	 * @return
+	 */
+	public long getRecordCount() {
+		return processedRecords;
+	}
+
+	public char getDelimiter() {
+		return delimiter;
+	}
+
+	public void setDelimiter(char delimiter) {
+		this.delimiter = delimiter;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	@Override
+	public void shutdown() {
+		log.info("shutdown");
+		if (this.channel != null)
+			try {
+				this.channel.close();
+			} catch (IOException e) {
+				log.error(e.getMessage(), e);
+			}
+		this.channel = null;
+	}
+
+}

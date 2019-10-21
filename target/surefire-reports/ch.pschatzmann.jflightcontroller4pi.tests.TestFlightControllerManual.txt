@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ch.pschatzmann.jflightcontroller4pi.tests.TestFlightControllerManual
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.449 sec

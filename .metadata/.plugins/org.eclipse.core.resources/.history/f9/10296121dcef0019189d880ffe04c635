@@ -1,0 +1,37 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+/**
+ * 3 D value
+ * @author pschatzmann
+ *
+ */
+public class Value3D {
+	double vector[] = new double[3];
+	
+	public Value3D(double x, double y, double z){
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
+	}
+
+	public Value3D(double in[]){
+		vector[0] = in[0];
+		vector[1] = in[1];
+		vector[2] = in[2];
+	}
+	
+	public double[] vector() {
+		return vector;
+	}
+	
+	public double x() {
+		return vector[0];
+	}
+	public double y() {
+		return vector[1];
+	}
+	public double z() {
+		return vector[2];
+	}
+
+}

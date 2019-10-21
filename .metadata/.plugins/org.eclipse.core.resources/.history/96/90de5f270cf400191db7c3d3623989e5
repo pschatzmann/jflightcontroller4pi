@@ -1,0 +1,15 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.control.IScaler;
+import ch.pschatzmann.jflightcontroller4pi.control.NoScaler;
+import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
+
+/**
+ * Test for scaling of input values to output values
+ */
+public class TestScaling {
+
+}

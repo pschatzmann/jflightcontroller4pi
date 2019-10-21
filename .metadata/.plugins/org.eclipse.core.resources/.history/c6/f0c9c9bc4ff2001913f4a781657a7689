@@ -1,0 +1,129 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The idea is to have a data class which is reusing the underlying byte
+ * buffer and does not need any garbage collection.
+ * 
+ * This might be useful to be used by the DatagramWriter and DatagramReader and 
+ * by the Sensors which are constantly producing data.
+ * 
+ * Not sure if I want to keep this.
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class DataOfString implements IData {
+	private String string;
+	
+	public byte[] getBytes(){
+		return this.string.getBytes();
+	}
+	
+	public void setBytes(byte[] b){
+		this.string = new String(b);
+		this.string = this.string.replaceAll("(\\r|\\n)", "");
+	}
+	
+	/**
+	 * Provides the numbers which are contained in the string 
+	 * @param delimiter
+	 * @return
+	 */
+	public double[] splitDouble(char delimiter) {
+		double[] result = new double[count(delimiter)];
+		int index = 0;
+		int pos = 0;
+		while (pos<this.size-1) {
+			int nextPos = find(delimiter,pos);
+			result[index] = Double.parseDouble(new String(this.string,pos,nextPos-pos));
+			++index;
+			pos = nextPos;
+		}
+		return result;
+	}
+	
+	public int length() {
+		return string.length();
+	}
+	
+	/**
+	 * Counts the number of the indicted characters in the string
+	 * @param c
+	 * @return
+	 */
+	public int count(char c) {
+	    int count = 0;
+	    for (int i=0; i < string.length(); i++)
+	    {
+	        if (string.charAt(i) == c)
+	        {
+	             count++;
+	        }
+	    }
+	    return count;
+	}
+	
+	public int find(char ch, int start) {
+		return string.indexOf(ch, start);
+	}
+
+	/**
+	 * Convenience Method to return a standard java String
+	 * @return
+	 */
+	public String getString() {
+		return string;
+	}
+
+	/**
+	 * Returns a new String (from the available strings)
+	 * @return
+	 */
+	public static IData instance() {
+		return new DataOfString();
+	}
+	
+	public void append(byte c) {
+		this.string = this.string + c;
+	}
+	
+	public void append(char c) {
+		byte b = (byte)c;
+		append(b);
+	}
+
+	public void append(byte ba[]) {
+		string = string + new String(ba);
+	}
+	
+	public void append(String s) {
+		string = string + s;
+	}
+
+	public void append(DataOfString s) {
+		this.append(s.getString());
+	}
+	
+	public boolean isEmpty() {
+		return this.string.isEmpty();
+	}
+
+	public String substring(int i) {
+		return this.string.substring(i);
+	}
+
+	public void append(double v) {
+		this.append(String.valueOf(v));
+	}
+
+	/**
+	 * This is done by the garbage collector
+	 */
+	public void close() {
+	}
+
+}

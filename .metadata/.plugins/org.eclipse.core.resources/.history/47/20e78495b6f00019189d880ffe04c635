@@ -1,0 +1,110 @@
+package ch.pschatzmann.jflightcontroller4pi.devices;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmIn;
+import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
+
+/**
+ * Generic implementation for a sensor: It needs to be configured by defining the inputParameters and
+ * the input hardware (pin) / protocol.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Sensor implements ISensor {
+    private static final Logger log = LoggerFactory.getLogger(Sensor.class);
+	private String name;
+	private List<ParametersEnum> inputParameters = Collections.EMPTY_LIST;
+	private IPwmIn in = new NullDevice();
+	private FlightController flightController;
+
+	public Sensor() {
+	}
+
+	public Sensor(List<ParametersEnum> inputParameters, IPwmIn in) {
+		this.inputParameters = inputParameters;
+		this.in = in;
+	}
+
+	@Override
+	public void setup() {
+	}
+	
+	@Override
+	public void processInput() {
+		String input = getValues();
+		processInput(input);	
+	}
+
+	protected String getValues() {
+		return in.getValues();
+	}
+
+	protected void processInput(String input) {
+		String values[] = input.split(" ");
+		if (values.length == inputParameters.size()) {
+			for (int j = 0; j < values.length; j++) {
+				if (!values[j].isEmpty()) {
+					flightController.setValue(inputParameters.get(j), Double.parseDouble(values[j]));
+				}
+			}
+		} else {
+			log.warn("Input ignored: "+this.getName());
+		}
+	}
+
+	public IPwmIn getIn() {
+		return in;
+	}
+
+	public void setIn(IPwmIn in) {
+		this.in = in;
+	}
+
+	public String getName() {
+		if (name == null) {
+			name = this.getClass().getSimpleName();
+		}
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Collection<ParametersEnum> getInputParameters() {
+		return inputParameters;
+	}
+
+	public void setInputParameters(Collection<ParametersEnum> inputParameters) {
+		this.inputParameters = new ArrayList<ParametersEnum>(inputParameters);
+	}
+	
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	@Override
+	public void shutdown() {
+		in.shutdown();
+	}
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
+}

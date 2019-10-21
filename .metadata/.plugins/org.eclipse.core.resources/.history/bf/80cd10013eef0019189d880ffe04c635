@@ -1,0 +1,69 @@
+package ch.pschatzmann.jflightcontroller4pi.tests;
+
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Timer;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.ControlLoopWithTimers;
+import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
+import ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter;
+import ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinition;
+import ch.pschatzmann.jflightcontroller4pi.integration.Utils;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+public class TestDatagram {
+	static FlightController ctl;
+	static DatagramWriter w;
+	static DatagramReader r;
+	
+	@BeforeClass
+	public static void setup() throws SocketException {
+		ctl = new FlightController();
+		
+		// setup reader and writer
+		DatagramSocket socket = new DatagramSocket(5000);
+		List<FieldDefinition> def = Arrays.asList(new FieldDefinition(ParametersEnum.RUDDER));
+		w = new DatagramWriter(ctl,def, socket);
+		r = new DatagramReader(ctl,def, socket);
+		
+		// add as devices
+		ctl.addDevices(Arrays.asList(w, r));
+		
+		// make sure that we have a value to process
+		ctl.setValue(ParametersEnum.RUDDER, 0.123);
+		
+		// we stop the control loop after 5 seconds
+		new Timer().schedule(Utils.timerTask(() -> ctl.shutdown()), 5000);
+		
+		// start a non blocking control loop
+		ctl.setControlLoop(new ControlLoopWithTimers(ctl, false));
+		ctl.run();
+		
+		// we give the processing some time
+		Utils.sleep(100000);
+	}
+
+	@Test
+	public void testValue() {
+		Assert.assertEquals(0.123, ctl.getValue(ParametersEnum.RUDDER).value,0.0001);
+	}
+
+	@Test
+	public void testReceive() {
+		Assert.assertTrue(r.getRecordCount() > 0);
+	}
+
+	@Test
+	public void testSend() {
+		Assert.assertTrue(w.getRecordCount() > 0);
+	}
+
+
+}

@@ -1,0 +1,117 @@
+package ch.pschatzmann.jflightcontroller4pi.protocols;
+
+import com.pi4j.io.spi.SpiChannel;
+import com.pi4j.io.spi.SpiDevice;
+import com.pi4j.io.spi.SpiFactory;
+import com.pi4j.io.spi.SpiMode;
+
+import ch.pschatzmann.jflightcontroller4pi.utils.IData;
+import ch.pschatzmann.jflightcontroller4pi.utils.Data;
+
+/**
+ * SPI is a useful bus that allows data exchange between microcontrollers and
+ * peripherals with a minimum of wiring. On the Pi it allows for up to two
+ * attached devices.
+ * 
+ * Pinout: https://github.com/uraimo/SwiftyGPIO/wiki/GPIO-Pinout
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class InputFromPiSPI implements IPwmIn {
+	private short channelCount = 4; // MCP3004=4, MCP3008=8
+	private short channelNumber = 0; // CS0 or CS1
+	private int channelSpeed = SpiDevice.DEFAULT_SPI_SPEED;
+	private int spiMode = SpiDevice.DEFAULT_SPI_MODE.ordinal();
+	private SpiDevice spi;
+
+	public InputFromPiSPI() {
+		try {
+			spi = SpiFactory.getInstance(SpiChannel.getByNumber(channelNumber), channelSpeed,
+					SpiMode.getByNumber(spiMode));
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+
+	}
+
+	@Override
+	public IData getValues() {
+		IData sb = Data.instance();
+		for (short channel = 0; channel < channelCount; channel++) {
+			int conversion_value = getConversionValue(channel);
+			if (channel > 0) {
+				sb.append(" ");
+			}
+			sb.append(String.format("%04d", conversion_value)); // print 4 digits with leading zeros
+		}
+		return sb;
+	}
+
+	/**
+	 * Communicate to the ADC chip via SPI to get single-ended conversion value for
+	 * a specified channel.
+	 * 
+	 * @param channel analog input channel on ADC chip
+	 * @return conversion value for specified analog input channel
+	 */
+	public int getConversionValue(short channel) {
+		try {
+			// create a data buffer and initialize a conversion request payload
+			byte data[] = new byte[] { (byte) 0b00000001, // first byte, start bit
+					(byte) (0b10000000 | (((channel & 7) << 4))), // second byte transmitted -> (SGL/DIF = 1,
+																	// D2=D1=D0=0)
+					(byte) 0b00000000 // third byte transmitted....don't care
+			};
+
+			// send conversion request to ADC chip via SPI channel
+			byte[] result = spi.write(data);
+
+			// calculate and return conversion value from result bytes
+			int value = (result[1] << 8) & 0b1100000000; // merge data[1] & data[2] to get 10-bit result
+			value |= (result[2] & 0xff);
+			return value;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public void shutdown() {
+	}
+	
+
+	public short getChannelCount() {
+		return channelCount;
+	}
+
+	public void setChannelCount(short channelCount) {
+		this.channelCount = channelCount;
+	}
+
+	public short getChannelNumber() {
+		return channelNumber;
+	}
+
+	public void setChannelNumber(short channelNumber) {
+		this.channelNumber = channelNumber;
+	}
+
+	public int getChannelSpeed() {
+		return channelSpeed;
+	}
+
+	public void setChannelSpeed(int channelSpeed) {
+		this.channelSpeed = channelSpeed;
+	}
+
+	public int getSpiMode() {
+		return spiMode;
+	}
+
+	public void setSpiMode(int spiMode) {
+		this.spiMode = spiMode;
+	}
+
+}

@@ -1,0 +1,49 @@
+package ch.pschatzmann.jflightcontroller4pi.protocols;
+
+import ch.pschatzmann.jflightcontroller4pi.scaling.IScaler;
+import ch.pschatzmann.jflightcontroller4pi.scaling.NoScaler;
+import ch.pschatzmann.jflightcontroller4pi.scaling.Scaler;
+
+/**
+ * Dummy input device which generates 0 as values. This can be used e.g. in unit tests.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class NullDevice implements IPwmIn, IPwmOut {
+	private Double value;
+	private IScaler scaler = new NoScaler();
+	
+	@Override
+	public String getValues() {
+		return value != null ? value.toString() : "0.0";
+	}
+
+	@Override
+	public void shutdown() {
+		value = null;
+	}
+
+	@Override
+	public void setValue(double value) {
+		this.value = scaler.scale(value);
+	}
+	
+	@Override
+	public double getValue() {
+		return value;
+	}
+	
+	boolean isEmpty() {
+		return value == 0;
+	}
+
+	public IScaler getScaler() {
+		return scaler;
+	}
+
+	public void setScaler(IScaler scaler) {
+		this.scaler = scaler;
+	}
+
+}

@@ -1,0 +1,34 @@
+package ch.pschatzmann.jflightcontroller4pi.control;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+
+/**
+ * Generates for multiple input values a combined output value
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Mixer {
+	private FlightController flightController;
+	private List<MixerComponent> components = new ArrayList();
+	private Double totalWeight = 1.0;
+	private IScaler scaler = new NoScaler();
+
+	public Mixer(FlightController flightController, List<MixerComponent> components){
+		this.flightController = flightController;
+		this.components = components;
+		this.totalWeight = components.stream().mapToDouble(i -> i.weight).sum();
+	}
+	
+	public double getValue() {
+		double result = 0;
+		for (MixerComponent c : this.components) {
+			result += c.scaler.scale(flightController.getValue(c.parameter).value) * (c.weight / this.totalWeight);
+		}
+		return scaler.scale(result);
+	}
+	
+}

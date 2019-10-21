@@ -1,0 +1,72 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+/**
+ * Converts the 3d magentometer output into
+ * 
+ * @author pschatzmann
+ *
+ */
+public class Compass {
+	int declination = 0;
+
+	public double getDegree(Value3D gauss) {
+		{
+			int temp0 = 0;
+			int temp1 = 0;
+			int deg = 0;
+
+			if (gauss.x < gauss.xMid) {
+				if (gauss.y > gauss.yMid) {
+					// Quadrant 1
+					temp0 = gauss.y - gauss.yMid;
+					temp1 = gauss.xMid - gauss.x;
+
+					deg = (90) - (atan((double) ((temp0) / (double) (temp1))) * (180 / 3.14159));
+				} else {
+					// Quadrant 2
+					temp0 = gauss.yMid - gauss.y;
+					temp1 = gauss.xMid - gauss.x;
+
+					deg = (90) + (atan((double) ((temp0) / (double) (temp1))) * (180 / 3.14159));
+				}
+			} else {
+				if (gauss.y < gauss.yMid) {
+					// Quadrant 3
+					temp0 = gauss.yMid - gauss.y;
+					temp1 = gauss.x - gauss.xMid;
+
+					deg = (270) - (atan((double) ((temp0) / (double) (temp1))) * (180 / 3.14159));
+				} else {
+					// Quadrant 4
+					temp0 = gauss.y - gauss.yMid;
+					temp1 = gauss.x - gauss.xMid;
+
+					deg = (270) + (atan((double) ((temp0) / (double) (temp1))) * (180 / 3.14159));
+				}
+			}
+
+			deg = deg + declination;
+
+			if (declination > 0) {
+				if (deg > 360)
+					deg = deg - 360;
+			} else {
+				if (deg < 0)
+					deg = 360 + deg;
+			}
+
+			return deg;
+		}
+
+	}
+
+	/**
+	 * This function allows the user to set a degree of magnetic declination to be
+	 * used as compenstion in heading calculation. Input Param: newDec, can be
+	 * entered as a signed integer Return: nothing
+	 */
+	void setDeclination(int newDec) {
+		declination = newDec;
+	}
+
+}

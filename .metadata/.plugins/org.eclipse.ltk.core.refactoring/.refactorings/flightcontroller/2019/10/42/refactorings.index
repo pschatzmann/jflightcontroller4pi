@@ -1,0 +1,147 @@
+1570944265159	Rename type 'PwmInputFromPi'
+1570944281924	Rename type 'PwmOutputToPi'
+1570944305086	Rename type 'InputFromPiPwm'
+1570944500752	Copy compilation unit
+1570945427818	Rename field 'channel'
+1570945456832	Move compilation unit
+1570945495964	Rename field 'channels'
+1570949363280	Rename package 'ch.pschatzmann.jdkflightsimulator4pi'
+1570949428696	Rename package 'ch.pschatzmann.jflightsimulator4pi'
+1570956256990	Delete element
+1570957437150	Copy compilation unit
+1570958269610	Copy compilation unit
+1570960527181	Move file
+1570961042087	Move compilation unit
+1570961829883	Delete element
+1570961839348	Delete element
+1570963777210	Rename type 'StabilizeModeLogic'
+1570967231522	Delete elements
+1570967551892	Rename type 'InputNull'
+1570967693843	Move compilation units
+1570967708726	Move compilation units
+1570967945272	Rename package 'ch.pschatzmann.jflightcontroller4pi.integration.protocols'
+1570969086387	Move compilation units
+1570969540621	Rename type 'IInDevice'
+1570969931651	Extract method 'processSensors'
+1570970052559	Rename type 'FlightControllerState'
+1570973456951	Move compilation unit
+1570975862222	Extract method 'getConfigFileName'
+1570976935086	Delete elements
+1570976943008	Delete element
+1570976954064	Delete element
+1570987874226	Rename type 'Parameters'
+1570988045632	Delete element
+1570989940649	Rename type 'JSBSimWrite'
+1570990010451	Delete element
+1570990043726	Rename type 'JSBSimFieldDefinition'
+1570990359714	Rename type 'DatagramSocketReader'
+1570990371575	Rename type 'DatagramSocketWriter'
+1570993518115	Delete element
+1571038340081	Move compilation unit
+1571038755703	Copy compilation unit
+1571040246421	Copy compilation unit
+1571040277221	Copy compilation unit
+1571040706079	Copy compilation unit
+1571040743115	Copy compilation unit
+1571040774706	Copy compilation unit
+1571040826145	Copy compilation unit
+1571040897538	Copy compilation unit
+1571042474534	Rename package 'ch.pschatzmann.jdkflightsimulator4pi'
+1571042553170	Rename package 'ch.pschatzmann.jflightcontroller4pi'
+1571042582682	Copy compilation unit
+1571052807624	Extract method 'setup'
+1571070581210	Extract method 'setupPID'
+1571071831694	Rename enum constant 'SENSORPICH'
+1571073326742	Rename type 'StabilizedDevice'
+1571075314068	Rename type 'ModeLogicBase'
+1571075506844	Rename method 'getRecalcCollection'
+1571075560312	Rename type 'StabilizedRecalculate'
+1571076100784	Delete element
+1571076112509	Delete element
+1571076124370	Rename type 'AcroModeRecalcRules'
+1571076148541	Rename type 'AcroMode'
+1571076166135	Rename type 'StabilizedRecalculateRule'
+1571076438192	Delete element
+1571076688877	Delete element
+1571076714701	Delete element
+1571078261488	Rename method 'getControl'
+1571078425925	Copy compilation unit
+1571079444084	Extract method 'sleep'
+1571080061014	Delete elements
+1571097985618	Copy compilation unit
+1571098838950	Rename method 'addValue'
+1571098850539	Rename method 'addValue'
+1571100501870	Copy compilation unit
+1571100715099	Copy compilation unit
+1571101735991	Rename type 'TestDataGram'
+1571103489883	Rename method 'wrap'
+1571124051882	Rename method 'setPwmPi'
+1571132435435	Rename field 'dsocket'
+1571132575206	Rename field 'dsocket'
+1571134086507	Rename method 'processOutEx'
+1571141677890	Delete element
+1571206272408	Rename type 'Value3'
+1571206446568	Copy compilation unit
+1571212519825	Rename method 'ahrsUupdate'
+1571214917161	Rename method 'getValue'
+1571216034266	Rename type 'GPS'
+1571223268970	Rename type 'ValueGPS'
+1571223760257	Move compilation unit
+1571223768991	Move compilation unit
+1571223782350	Move compilation unit
+1571225012040	Copy package
+1571225020307	Move compilation unit
+1571225066660	Move compilation units
+1571226615468	Delete element
+1571231053851	Rename type 'FlightPlan'
+1571234146053	Rename method 'getGyro'
+1571234156877	Rename method 'getAccelerometer'
+1571234168898	Rename method 'getMagnetometer'
+1571235013216	Rename method 'getValue'
+1571236599418	Rename enum constant 'DIRECTIONSENSOR'
+1571236615017	Rename enum constant 'SENSORDIRECTIO'
+1571239511566	Copy compilation unit
+1571239542706	Copy compilation unit
+1571239628410	Move compilation unit
+1571239649601	Move compilation units
+1571239659252	Delete element
+1571239666905	Delete element
+1571239759235	Move compilation unit
+1571242796773	Rename enum constant 'DIRECTION'
+1571242812841	Rename enum constant 'INCLINATION'
+1571242824512	Rename enum constant 'ALTITUDE'
+1571249367392	Rename type 'StabilizedModeRule'
+1571252525215	Rename type 'NMEASentenceParser'
+1571252622977	Delete element
+1571296903522	Rename resource 'configuration.md'
+1571301900066	Rename method 'getNumberOfSatellites'
+1571301915936	Rename method 'setNumberOfSatellites'
+1571301925032	Rename field 'numberOfSatellites'
+1571302089026	Rename resource 'sensors.md'
+1571304265413	Rename type 'DefaultInputProcessor'
+1571319537102	Copy compilation unit
+1571320797030	Rename resource 'Udp.md'
+1571327480863	Rename type 'Speed'
+1571327494567	Rename type 'VelocityFromAccelerometer'
+1571339864552	Rename enum constant 'SENSORDIRECTION'
+1571339886717	Rename enum constant 'GPSDIRECTION'
+1571340386710	Rename resource 'UdpAndFlightGear.md'
+1571366011221	Delete element
+1571416489458	Rename local variable 'antenna'
+1571474949165	Rename type 'IString'
+1571475147575	Rename type 'XString'
+1571475225401	Copy compilation unit
+1571476078535	Rename method 'find'
+1571488575623	Rename enum constant 'ELEVETOR'
+1571490552309	Rename method 'getRoll'
+1571490561792	Rename method 'getPich'
+1571490576996	Rename method 'getStatusPich'
+1571490587631	Rename method 'getYaw'
+1571490598792	Rename method 'getSpeed'
+1571492544911	Rename method 'getString'
+1571505979059	Move folder
+1571506239047	Delete element
+1571513682145	Delete element
+1571513693747	Delete element
+1571516292568	Move files
+1571516313646	Rename resource 'logback-spring.xml'

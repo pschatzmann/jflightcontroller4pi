@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="desiredSetpoint"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="true"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="desiredSetpoint"/>
+			<item value="error"/>
+			<item value="loop"/>
+			<item value="manualModeRule"/>
+			<item value="acro"/>
+			<item value="leveledMode"/>
+			<item value="processedRecords"/>
+			<item value="jmx"/>
+			<item value="inst"/>
+			<item value="&gt; &lt;/property&gt;"/>
+			<item value="parsedouble"/>
+			<item value="float"/>
+			<item value="double"/>
+			<item value="GPSPosition"/>
+			<item value="NMEANMEASentenceParser"/>
+		</list>
+		<list key="replacehistory">
+			<item value="ManualModeRule"/>
+			<item value="manualModeRule"/>
+			<item value="manual"/>
+			<item value="stabilizedMode"/>
+			<item value="/&gt;"/>
+			<item value="parseDouble"/>
+			<item value="double"/>
+			<item value="float"/>
+			<item value="ValueGPS"/>
+			<item value="NMEASentenceParser"/>
+			<item value="gauss."/>
+			<item value="log.info"/>
+			<item value=""/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="38"/>
+		<item key="DIALOG_Y_ORIGIN" value="189"/>
+		<item key="DIALOG_WIDTH" value="290"/>
+		<item key="DIALOG_HEIGHT" value="409"/>
+		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
+	</section>
+</section>

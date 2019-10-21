@@ -1,0 +1,38 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+/**
+ * 3 D value. Accelerometer and Gyro and Magnetometers are providing their output in values for the x, y and z axis.
+ * We use this 3 dimensions to represent this output in one datastructure; 
+ * @author pschatzmann
+ *
+ */
+public class Value3D {
+	float vector[] = new float[3];
+	
+	public Value3D(float x, float y, float z){
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
+	}
+
+	public Value3D(float in[]){
+		vector[0] = in[0];
+		vector[1] = in[1];
+		vector[2] = in[2];
+	}
+	
+	public float[] vector() {
+		return vector;
+	}
+	
+	public float x() {
+		return vector[0];
+	}
+	public float y() {
+		return vector[1];
+	}
+	public float z() {
+		return vector[2];
+	}
+
+}

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<bean id="flightController" class="ch.pschatzmann.jflightcontroller4pi.FlightController" >
+	    <property name="parameterStore">
+			<bean id="ParameterStore" class="ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore" />
+	    </property>
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="jmx" />
+            	<ref bean="gameConsole" />
+            	<ref bean="datagramReader" />                
+            	<ref bean="datagramWriter" />    
+        	</list>
+	  	</property>
+ 	    <property name="mode" ref="offMode"/> 
+	  	<property name="modes">
+	  		<list>
+            	<ref bean="offMode" />
+            	<ref bean="manualMode" />
+        	</list>
+	  	</property>
+	  	<property name="controlLoop">
+	  		<bean class="ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers">
+			    <property name="flightController" ref="flightController"/>
+	  		</bean>
+	  	</property>
+	  		    	    
+	</bean>
+
+	<!-- Devices -->
+	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
+	    <property name="flightController" ref="flightController"/>
+	</bean>
+
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
+	    <property name="flightController" ref="flightController"/>
+	</bean>
+	
+	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.navigation.AutoPilot" >
+	    <property name="flightController" ref="flightController"/>
+	</bean>
+	
+
+	<!-- Control Planes -->
+	
+	<bean id="aileron" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="controlParameter" value="AILERON"/>
+	  	<property name="pin" ref="pin1"/>	  	
+	</bean>
+
+	<bean id="elevator" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="controlParameter" value="ELEVATOR"/>
+	  	<property name="pin" ref="pin2"/>	  	
+	</bean>
+
+	<bean id="rudder" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="controlParameter" value="RUDDER"/>
+	  	<property name="pin" ref="pin3"/>	  	
+	</bean>
+
+	<bean id="throttle" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
+	    <property name="flightController" ref="flightController"/>
+	  	<property name="controlParameter" value="THROTTLE"/>
+	  	<property name="pin" ref="pin4"/>	  	
+	  	<property name="defaultSetting" value="0.2"/>	  	
+	</bean>
+
+	<!-- Modes -->
+	
+	<bean id="offMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="flightController" ref="flightController"/> 
+	    <property name="name" value="Off" /> 
+	</bean>
+
+	<bean id="manualMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="name" value="manual" /> 
+	  	<property name="rules">
+	  		<list>
+            	<ref bean="manualModeRuleRudder" />
+            	<ref bean="manualModeRuleElevator" />                
+            	<ref bean="manualModeRuleAileron" />                
+            	<ref bean="manualModeRuleThrottle" />                
+        	</list>
+	  	</property>	 	  	
+	</bean>
+	
+	<bean id="manualModeRuleRudder" class="ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="rudder"> </property>
+	    <property name="parameterFrom" value="YAW"> </property>
+	</bean>
+	<bean id="manualModeRuleElevator" class="ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="elevator"> </property>
+	    <property name="parameterFrom" value="PITCH"> </property>
+	</bean>
+	<bean id="manualModeRuleAileron" class="ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="aileron"> </property>
+	    <property name="parameterFrom" value="ROLL"> </property>
+	</bean>
+	<bean id="manualModeRuleThrottle" class="ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="throttle"> </property>
+	    <property name="parameterFrom" value="SPEED"> </property>
+	</bean>
+	
+	<!-- Stabilized Mode -->
+	<bean id="stabilizedMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="name" value="Leveled" /> 
+	  	<property name="rules">
+	  		<list>
+            	<ref bean="stabilizedModeRuleRudder" />
+            	<ref bean="stabilizedModeRuleElevator" />                
+            	<ref bean="stabilizedModeRuleAileron" />  
+            	<ref bean="stabilizedModeRuleThrottle" />                              
+        	</list>
+	  	</property>	 
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="imu" />
+        	</list>
+	  	</property>	 
+	</bean>
+	
+
+	<bean id="stabilizedModeRuleElevator" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="device" ref="elevator"/>
+	    <property name="desiredSetpoint" value="PITCH"/>
+	    <property name="measuredVariable" value="SENSORPITCH"/>
+	    <property name="pid" >
+	    	<bean id="pidElevator" class="ch.pschatzmann.jflightcontroller4pi.control.PIDController" >
+			    <property name="p" value="0.3"/>
+			    <property name="i" value="0.0"/>
+			    <property name="d" value="0.0"/>
+			</bean>
+	    </property>
+	</bean>
+	
+	<bean id="stabilizedModeRuleAileron" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="device" ref="aileron"/>
+	    <property name="desiredSetpoint" value="ROLL"/>
+	    <property name="measuredVariable" value="SENSORROLL"/>
+	    <property name="pid" >
+	    	<bean id="pidAileron" class="ch.pschatzmann.jflightcontroller4pi.control.PIDController" >
+			    <property name="p" value="0.3"/>
+			    <property name="i" value="0.0"/>
+			    <property name="d" value="0.0"/>
+			</bean>
+	    </property>
+	</bean>
+	
+	<bean id="stabilizedModeRuleRudder" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="device" ref="rudder"/>
+	    <property name="desiredSetpoint" value="YAW"/>
+	    <property name="measuredVariable" value="SENSORYAW"/>	    
+	    <property name="pid" >
+	    	<bean id="pidRudder" class="ch.pschatzmann.jflightcontroller4pi.control.PIDController" >
+			    <property name="p" value="0.0"/>
+			    <property name="i" value="0.0"/>
+			    <property name="d" value="0.0"/>
+			</bean>
+	    </property>
+	    
+	</bean>
+	
+	<bean id="stabilizedModeRuleThrottle" class="ch.pschatzmann.jflightcontroller4pi.modes.MixingModeRule" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="device" ref="throttle"/>
+	    <property name="mixerComponents">
+	  		<list>
+				<bean id="inputYaw" class="ch.pschatzmann.jflightcontroller4pi.control.MixerComponent" >
+				    <property name="parameter" value="YAW"/>
+				    <property name="weight" value="3"/>
+				    <property name="scaler">
+						<bean class="ch.pschatzmann.jflightcontroller4pi.control.Scaler" >
+					   	    <property name="inputMin" value="-1.0"/>
+		   					<property name="inputMax" value="1.0"/>
+		    				<property name="outputMin" value="0.2"/>
+		    				<property name="outputMax" value="1.0"/>
+				    	</bean>
+				    </property>
+				</bean>
+				<bean id="inputSpeed" class="ch.pschatzmann.jflightcontroller4pi.control.MixerComponent" >
+				    <property name="parameter" value="SPEED"/>
+				    <property name="weight" value="1"/>
+				    <property name="scaler">
+						<bean class="ch.pschatzmann.jflightcontroller4pi.control.Scaler" >
+					   	    <property name="inputMin" value="-1.0"/>
+		   					<property name="inputMax" value="1.0"/>
+		    				<property name="outputMin" value="0.2"/>
+		    				<property name="outputMax" value="1.0"/>
+				    	</bean>
+				    </property>
+				</bean>
+        	</list>
+	  	</property>	 
+	
+	</bean>
+	
+	
+	<!-- Auto Pilot -->
+	<bean id="autoMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="flightController" ref="flightController"/>
+	    <property name="name" value="Autopilot" /> 
+	  	<property name="rules">
+	  		<list>
+            	<ref bean="autoModeRuleRudder" />
+            	<ref bean="autoModeRuleElevator" />                
+            	<ref bean="autoModeRuleAileron" />  
+            	<ref bean="manualModeRuleThrottle" />                              
+        	</list>
+	  	</property>	 
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="imu" />
+            	<ref bean="autopilot" />
+        	</list>
+	  	</property>	 
+	  	
+	</bean>
+	
+	<bean id="autoModeRuleAileron" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="aileron"> </property>
+	    <property name="desiredSetpoint" value="AUTODIRECTION"> </property>
+	    <property name="measuredVariable" value="SENSORHEADING"> </property>
+	</bean>
+	<bean id="autoModeRuleRudder" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="rudder"> </property>
+	    <property name="desiredSetpoint" value="AUTODIRECTION"> </property>
+	    <property name="measuredVariable" value="SENSORHEADING"> </property>
+	</bean>
+	<bean id="autoModeRuleElevator" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="elevator"> </property>
+	    <property name="desiredSetpoint" value="AUTOALTITUDE"> </property>
+	    <property name="measuredVariable" value="SENSORALTITUDE"> </property>
+	</bean>
+	<bean id="autoModeRuleThrottle" class="ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule" >
+	    <property name="flightController" ref="flightController"> </property>
+	    <property name="device" ref="elevator"> </property>
+	    <property name="desiredSetpoint" value="AUTOALTITUDE"> </property>
+	    <property name="measuredVariable" value="SENSORALTITUDE"> </property>
+	</bean>
+
+	<!-- Pins -->
+	<bean id="nop" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" />
+	
+	<bean id="pin1" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+	</bean>
+	<bean id="pin2" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+	</bean>
+	<bean id="pin3" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+	</bean>
+	<bean id="pin4" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice">
+	</bean>
+	
+	<bean id="scaler100" class="ch.pschatzmann.jflightcontroller4pi.control.Scaler" >
+	    <property name="inputMin" value="-1.0"/>
+	    <property name="inputMax" value="1.0"/>
+	    <property name="outputMin" value="0.0"/>
+	    <property name="outputMax" value="100.0"/>
+	</bean>
+	
+	
+	<!-- Import and Export of data via Datagrams -->
+
+	<bean id="datagramReader" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader" >
+	    <property name="flightController" ref="flightController"/> 
+	  	<property name="port" value="7001"/>
+	  	<property name="fieldDefinitions">
+	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions">
+	  			<property name="fieldNames">
+		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
+						<value>SENSORROLL</value>
+						<value>SENSORPITCH</value>
+						<value>SENSORYAW</value>
+						<value>SENSORSPEED</value>
+						<value>SENSORHEADING</value>
+						<value>SENSORALTITUDE</value>
+		        	</list>
+		        </property>
+        	</bean>
+        </property>
+	</bean>
+
+	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" >
+	    <property name="flightController" ref="flightController"> </property>
+	  	<property name="port" value="7000"/>
+	  	<property name="host" value="192.168.1.42"/>
+	  	<property name="fieldDefinitions" >
+	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions">
+	  			<property name="fieldNames">
+		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
+						<value>RUDDER</value>
+						<value>AILERON</value>
+						<value>ELEVATOR</value>
+						<value>THROTTLE</value>
+		        	</list>
+		        </property>
+        	</bean>
+	  	</property>
+	</bean>						
+
+	<!-- JMX -->
+	<bean id="jmx" class="ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore" >
+	    <property name="flightController" ref="flightController"/>
+	</bean>
+		
+	
+</beans>

@@ -1,0 +1,87 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import java.lang.management.ManagementFactory;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.GameConsole;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Display the actual Airplane State with the help of JMX
+ * 
+ * @author pschatzmann
+ *
+ */
+public class JMXParameterStore implements JMXParameterStoreMBean {
+    private static final Logger log = LoggerFactory.getLogger(JMXParameterStore.class);
+	private FlightController flightController;
+	
+	public JMXParameterStore(){
+	}
+	
+	public JMXParameterStore(FlightController flightController) {
+		this.flightController = flightController;
+	}
+	
+	public void setup()  {
+		try {
+	        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
+	        ObjectName name = new ObjectName("ch.pschatzmann.jdkflightsimulator4pi.integration:type=JMXParameterStore"); 
+	        mbs.registerMBean(this, name); 
+	        log.info("JMX is available");
+		} catch(Exception ex) {
+			log.error(ex.getMessage(),ex);
+		}
+	}
+		
+
+	@Override
+	public double getRoll() {
+		return flightController.getValue(ParametersEnum.ROLL).value;
+	}
+
+	@Override
+	public double getPich() {
+		return flightController.getValue(ParametersEnum.PITCH).value;
+	}
+
+	@Override
+	public double getYaw() {
+		return flightController.getValue(ParametersEnum.YAW).value;
+	}
+
+	@Override
+	public double getSpeed() {
+		return flightController.getValue(ParametersEnum.SPEED).value;
+	}
+
+	@Override
+	public String getMode() {
+		return flightController.getMode().getClass().getSimpleName();
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	@Override
+	public void shutdown() {		
+	}
+
+	
+}

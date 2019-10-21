@@ -1,0 +1,13 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+
+public class DataFactory {
+	/**
+	 * Returns a new String (from the available strings)
+	 * @return
+	 */
+	public static IData instance() {
+		return Data.instance();
+	}
+	
+}

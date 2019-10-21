@@ -1,0 +1,143 @@
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+import ch.pschatzmann.jflightcontroller4pi.imu.IMU;
+import ch.pschatzmann.jflightcontroller4pi.navigation.gps.GPSPosition;
+import ch.pschatzmann.jflightcontroller4pi.navigation.gps.GPSPositionPlan;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Navigation with the help of GPS coordinates
+ * 
+ * @author pschatzmann
+ *
+ */
+public class AutoPilot implements IOutDevice {
+	private FlightController flightController;
+	private GPS gps = new GPS();
+	private double toleranceMeters = 20;
+	private List<GPSPositionPlan> flightPlan = new ArrayList();
+	private double direction;
+	private double angle;
+	private double speed;
+	
+	/**
+	 * Default Constructor
+	 * @param gps
+	 */
+	public AutoPilot(FlightController controller){
+		this.setFlightController(controller);
+	}
+	
+	/**
+	 * Gets the current flight plan
+	 * @return
+	 */
+	public List<GPSPositionPlan> getFlightPlan() {
+		return flightPlan;
+	}
+	
+	/**
+	 * Defines the flight plan
+	 * @param flightPlan
+	 */
+	public void setFlightPlan(List<GPSPositionPlan> flightPlan) {
+		this.flightPlan = flightPlan;
+	}
+		
+	/**
+	 * Returns the actual waypoint
+	 * @return
+	 */
+	public GPSPositionPlan getCurrentWaypointInformation() {
+		return flightPlan.get(0);		
+	}
+	
+	public double getDirection() {
+		return this.direction;
+	}
+	
+	public double getInclinationAngle(GPSPosition prior) {
+		return this.angle;
+	}
+	
+	public double getSpeed() {
+		return this.speed;
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	public GPS getGps() {
+		return gps;
+	}
+
+	public void setGps(GPS gps) {
+		this.gps = gps;
+	}
+
+	public double getToleranceMeters() {
+		return toleranceMeters;
+	}
+
+	public void setToleranceMeters(double toleranceMeters) {
+		this.toleranceMeters = toleranceMeters;
+	}
+
+	public double getAngle() {
+		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+
+	public void setDirection(double direction) {
+		this.direction = direction;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	@Override
+	public void setup() {
+	}
+
+	@Override
+	public void shutdown() {
+		flightPlan.clear();
+		direction = 0;
+		angle = 0;
+		speed = 0;
+	}
+
+	@Override
+	public void processOutput() {		
+		// replace the waypoint of we have reached to target 
+		double distanceToWayPoint = gps.getValue().getDistance(getCurrentWaypointInformation());
+		if (distanceToWayPoint<toleranceMeters) {
+			flightPlan.remove(0);
+		}
+		GPSPositionPlan waypoint = getCurrentWaypointInformation();
+		this.direction = waypoint.getDirection(gps.getValue());
+		this.angle = waypoint.getInclinationAngle(gps.getValue());	
+		this.speed = waypoint.getSpeed();	
+		
+		// Store targets
+		flightController.setValue(ParametersEnum.SPEED, speed);
+		flightController.setValue(ParametersEnum.DIRECTION, direction);
+		flightController.setValue(ParametersEnum.INCLINATION, angle);
+				
+	}
+
+}

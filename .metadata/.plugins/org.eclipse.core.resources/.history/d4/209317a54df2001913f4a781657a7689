@@ -1,0 +1,23 @@
+package ch.pschatzmann.jflightcontroller4pi.utils;
+
+import java.nio.ByteBuffer;
+
+public interface IData {
+
+	String getString();
+
+	void append(double scaledValue);
+
+	void append(String delimiter);
+
+	boolean isEmpty();
+
+	ByteBuffer getBytes();
+
+	void close();
+
+	void setBytes(byte[] array);
+
+	double[] splitDouble(char delimiter);
+
+}

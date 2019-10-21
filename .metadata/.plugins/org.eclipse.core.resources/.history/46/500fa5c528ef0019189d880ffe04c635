@@ -1,0 +1,36 @@
+package ch.pschatzmann.jflightcontroller4pi.protocols;
+
+/**
+ * Dummy input device which generates 0 as values. This can be used e.g. in unit tests.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class NullDevice implements IPwmIn, IPwmOut {
+	private Double value;
+	
+	@Override
+	public String getValues() {
+		return value != null ? value.toString() : "0.0";
+	}
+
+	@Override
+	public void shutdown() {
+		value = null;
+	}
+
+	@Override
+	public void setValue(double value) {
+		this.value = value;
+	}
+	
+	@Override
+	public double getValue() {
+		return value;
+	}
+	
+	boolean isEmpty() {
+		return value == 0;
+	}
+
+}

@@ -1,0 +1,49 @@
+package ch.pschatzmann.jflightcontroller4pi.integration;
+
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.scaling.IScaler;
+import ch.pschatzmann.jflightcontroller4pi.scaling.NoScaler;
+import ch.pschatzmann.jflightcontroller4pi.scaling.Scaler;
+
+/**
+ * Field Definition for input and output fields
+ * 
+ * @author pschatzmann
+ *
+ */
+public class FieldDefinition {
+	private static final IScaler NOSCALER = new NoScaler();
+	private ParametersEnum inputField;
+	private IScaler scaler = new NoScaler();
+
+	public FieldDefinition() {
+	}
+
+	public FieldDefinition(ParametersEnum inputField, double inputFieldsMax, double inputFieldsMin) {
+		this.inputField = inputField;
+	}
+
+	public FieldDefinition(ParametersEnum inputField) {
+		this.inputField = inputField;
+		this.scaler = NOSCALER;
+	}
+
+	public ParametersEnum getInputField() {
+		return inputField;
+	}
+
+	public void setInputField(ParametersEnum inputField) {
+		this.inputField = inputField;
+	}
+
+
+	public IScaler getScaler() {
+		return scaler;
+	}
+
+	public void setScaler(IScaler scaler) {
+		this.scaler = scaler;
+	}
+
+
+}

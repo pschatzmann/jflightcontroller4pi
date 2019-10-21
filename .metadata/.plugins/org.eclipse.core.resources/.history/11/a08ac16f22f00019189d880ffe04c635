@@ -1,0 +1,15 @@
+package ch.pschatzmann.jflightcontroller4pi.parameters;
+
+/*
+ * All supported parameters need to be indentified by this enum which is used as key to look
+ * up the value in the ParameterStore
+ */
+public enum ParametersEnum {
+	ROLL, PITCH, YAW, THROTTLE, // standardized input controls -1.0 >= x <= 1.0
+	SENSORROLL, SENSORPITCH, SENSORYAW, SENSORSPEED, SENSORDIRECTION, // Values from Sensors
+	MODE, RUDDER, AILERON, ELEVETOR, SPEED,
+	//PITCHIMU, ROLLIMU, YAWIMU, DIRECTIONIMU, 
+	GYROX, GYROY, GYROZ, 
+	ACCELEROMETERX, ACCELEROMETERY, ACCELEROMETERZ, 
+	MAGNETOMETERX, MAGNETOMETERY, MAGNETOMETERZ, ;
+}

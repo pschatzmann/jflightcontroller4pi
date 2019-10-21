@@ -1,0 +1,34 @@
+package ch.pschatzmann.jflightcontroller4pi.navigation;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IInputProcessor;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * As IInputProcessor it records the data to the GPS data to the parameter store
+ * 
+ * @author pschatzmann
+ *
+ */
+public class GPSInputProcessor implements IInputProcessor {
+	GPS gps = new GPS();
+	
+	/**
+	 * Process the input string received by the GPS Sensor
+	 */
+	@Override
+	public void processInput(FlightController fc, String input) {
+		// Record current settings
+		gps.putValue(input);
+		
+		// Write info to parameters
+		fc.setValue(ParametersEnum.GPSALTITUDE, gps.getValue().getAltitude());
+		fc.setValue(ParametersEnum.GPSLONGITUDE, gps.getValue().getLongitude());
+		fc.setValue(ParametersEnum.GPSLATITUDE, gps.getValue().getLatitude());
+		
+		fc.setValue(ParametersEnum.GPSQUALITY, gps.getValue().getQuality());
+		fc.setValue(ParametersEnum.GPSSPEED, gps.getSpeed());
+		fc.setValue(ParametersEnum.GPSDIRECTION, gps.getDirection());
+		
+	}
+}

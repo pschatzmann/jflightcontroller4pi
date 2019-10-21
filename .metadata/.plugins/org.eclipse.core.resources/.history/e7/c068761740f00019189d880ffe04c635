@@ -1,0 +1,114 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.scaling.MiniPID;
+
+/**
+ * Recalculation logic for The Stabilized Mode using a PID
+ * 
+ * @author pschatzmann
+ *
+ */
+public class StabilizedModeRule implements IRecalculate {
+	private double p = 0.25;
+	private double i = 0.01;
+	private double d = 0.4;
+	private int ouputLimits = 10;
+	private int setpointRange = 40;
+	private MiniPID miniPID;
+	private FlightController flightController;
+	private ParametersEnum parameterFrom;
+	private ParametersEnum parameterSensor;
+	private ParametersEnum parameterTarget;
+	private IOutDeviceEx device;
+
+	public StabilizedModeRule() {
+	}
+	
+	public StabilizedModeRule(FlightController flightController, IOutDeviceEx device, ParametersEnum parameterFrom,ParametersEnum parameterSensor) {
+		this.flightController = flightController;
+		this.parameterFrom = parameterFrom;
+		this.parameterSensor = parameterSensor;
+		this.parameterTarget = device.getControlParameter();
+		this.device = device;
+	}
+	
+	public double getP() {
+		return p;
+	}
+
+	public void setP(double p) {
+		this.p = p;
+	}
+
+	public double getI() {
+		return i;
+	}
+
+	public void setI(double i) {
+		this.i = i;
+	}
+
+	public double getD() {
+		return d;
+	}
+
+	public void setD(double d) {
+		this.d = d;
+	}
+
+	public int getOuputLimits() {
+		return ouputLimits;
+	}
+
+	public void setOuputLimits(int ouputLimits) {
+		this.ouputLimits = ouputLimits;
+	}
+
+	public int getSetpointRange() {
+		return setpointRange;
+	}
+
+	public void setSetpointRange(int setpointRange) {
+		this.setpointRange = setpointRange;
+	}
+
+	public MiniPID getMiniPID() {
+		return miniPID;
+	}
+
+	public void setMiniPID(MiniPID miniPID) {
+		this.miniPID = miniPID;
+	}
+
+	public void setup() {	
+		if (miniPID==null) {
+			miniPID = new MiniPID(p,i,d);
+			miniPID.setOutputLimits(ouputLimits);
+			// miniPID.setMaxIOutput(2);
+			// miniPID.setOutputRampRate(3);
+			// miniPID.setOutputFilter(.3);
+			miniPID.setSetpointRange(setpointRange);
+			miniPID.setSetpoint(0);
+			//miniPID.setSetpoint(target);
+		}
+	}
+	
+	@Override
+	public void recalculate() {
+      // calculate output value to device from input parameter
+		double target = flightController.getValue(parameterFrom).value;
+		double actual = flightController.getValue(parameterSensor).value;
+      	double controlValue = miniPID.getOutput(actual,target);
+      	flightController.setValue(parameterTarget, controlValue);
+	}
+
+	@Override
+	public IOutDeviceEx getDevice() {
+		return this.device;
+	}
+	
+}

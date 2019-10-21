@@ -1,0 +1,147 @@
+package ch.pschatzmann.jflightcontroller4pi.devices;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmOut;
+import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
+import ch.pschatzmann.jflightcontroller4pi.scaling.Scaler;
+
+/**
+ * Output Device which needs to be configured to implement the following flow:
+ * sensor =) scaler =) control =) IPwmOut.
+ * (e.g. 
+ * 
+ * @author pschatzmann
+ *
+ */
+
+public class OutDevice implements IOutDeviceEx {
+	private String pinName = null;
+	private Scaler scaler = new Scaler(0,100.0);
+	private IPwmOut pwmPi;
+	private IPwmOut pwmPiInverted;
+	private ParametersEnum control;
+	private double defaultSetting;
+	private FlightController flightController;
+	private IRecalculate recalculate;
+
+	/**
+	 * Empty Constructor. The ParametersEnum control, ParametersEnum sensor, double sensorDefaultSetting, String pinNam
+	 * need to be defined by calling the related setters!
+	 */
+	public OutDevice() {
+	}
+	
+	public OutDevice(FlightController flightController, ParametersEnum control,  double defaultSetting, IPwmOut out) {
+		this.flightController = flightController;
+		this.control = control;
+		this.defaultSetting = defaultSetting;
+		this.setPwmPi(out);
+	}
+
+	@Override
+	public void setup() {        
+        // Define handler to update the Servo Position
+		flightController.getParameterStore().register(control, value -> {
+			int scaledValue = (int)scaler.scale(value.value);			
+			System.out.println("OutDevice: "+control+"->"+scaledValue);
+			if (pwmPi.getValue()!=scaledValue) {
+				pwmPi.setValue(scaledValue);
+				// Ailerons might have 2 outputs
+				if (pwmPiInverted!=null)
+					this.pwmPiInverted.setValue(-scaledValue);
+			}
+		});
+
+        // Set control device to neutral position
+		flightController.getParameterStore().setValue(control, defaultSetting);
+	}
+
+	@Override
+	public void shutdown() {
+		flightController.getParameterStore().setValue(control, defaultSetting);
+		this.recalculate = null;
+		pwmPi.shutdown();
+	}
+
+	public String getPinName() {
+		return pinName;
+	}
+
+	public void setPinName(String pinName) {
+		this.pinName = pinName;
+		this.pwmPi = new OutputToPiPwm(pinName);
+	}
+
+	@Override
+	public ParametersEnum getControlParameter() {
+		return control;
+	}
+
+	public void setControlParameter(ParametersEnum control) {
+		this.control = control;
+	}
+
+	public double getDefaultSetting() {
+		return defaultSetting;
+	}
+
+	public void setDefaultSetting(double sensorDefaultSetting) {
+		this.defaultSetting = sensorDefaultSetting;
+	}
+
+	public IPwmOut getPwmPi() {
+		return pwmPi;
+	}
+    /**
+     * Defines the output hardware device and protocal
+     * @param pwmPi
+     */
+	public void setPwmPi(IPwmOut pwmPi) {
+		this.pwmPi = pwmPi;
+		double value = scaler.scale(this.defaultSetting);
+		this.pwmPi.setValue(value);
+		if (this.pwmPiInverted!=null)
+			this.pwmPiInverted.setValue(-value);
+	}
+	
+	public IPwmOut getPwmPiInverted() {
+		return pwmPiInverted;
+	}
+
+	/**
+	 * Defines an optional inverted output hardware device and protocal. E.g ailerons need to have
+	 * opposing values e.g 1 and -1
+	 * @param pwmPiInverted
+	 */
+	public void setPwmPiInverted(IPwmOut pwmPiInverted) {
+		this.pwmPiInverted = pwmPiInverted;
+	}
+
+	public String getName() {
+		return this.getControlParameter().toString();
+	}	
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
+	@Override
+	public IRecalculate getRecalculate() {
+		return recalculate;
+	}
+
+	@Override
+	public void setRecalculate(IRecalculate recalculate) {
+		this.recalculate = recalculate;
+	}
+
+	@Override
+	public void processOutput() {
+		if (this.recalculate!=null) {
+			this.recalculate.recalculate();
+		}
+	}
+
+}

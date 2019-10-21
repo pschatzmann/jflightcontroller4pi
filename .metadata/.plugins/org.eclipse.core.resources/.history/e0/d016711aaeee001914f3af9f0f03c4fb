@@ -1,0 +1,59 @@
+package ch.pschatzmann.jflightcontroller4pi.modes;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
+import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
+import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Common functionality for all flight modes
+ * 
+ * @author pschatzmann
+ *
+ */
+public class ModeLogic implements IFlightModeLogic {
+	private Collection<IRecalculate> recalcCollection = new HashSet();
+	private FlightController flightController;
+
+	public ModeLogic() {
+	}
+
+	public ModeLogic(FlightController flightController, OutDevice rudder, OutDevice elevator, OutDevice aileron, OutDevice throttle)
+	{
+		this();
+		this.flightController = flightController;
+	}
+
+	public Collection<IDevice> getDevices() {
+		return recalcCollection.stream().map(i -> i.getDevice()).collect(Collectors.toList());
+	}
+	
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	public Collection<IRecalculate> getRecalcRules() {
+		return recalcCollection;
+	}
+
+	public void setRecalcRules(Collection<IRecalculate> recalcCollection) {
+		this.recalcCollection = recalcCollection;
+		recalcCollection.forEach(c -> {
+			IDevice dev = c.getDevice();
+			((IOutDeviceEx)dev).setRecalculate(c);
+		});
+	}
+
+}

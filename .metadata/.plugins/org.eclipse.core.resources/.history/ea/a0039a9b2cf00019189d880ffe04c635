@@ -1,0 +1,158 @@
+package ch.pschatzmann.jflightcontroller4pi.imu;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
+import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
+/**
+ * Integration device for the Inertial measurement unit (IMU) into our Flight
+ * Controller
+ * 
+ * @author pschatzmann
+ *
+ */
+public class IMUDevice implements IOutDevice {
+	private static Logger log = LoggerFactory.getLogger(IMUDevice.class);
+	private FlightController flightController;
+	private ICompass compass = new Compass();
+	private Value3D gyro = new Value3D();
+	private Value3D accelerometer = new Value3D();
+	private Value3D magnetometer = new Value3D();
+	private IIMU imu = new IMU();
+
+	public IMUDevice(FlightController fc) {
+		this.flightController = fc;
+	}
+	
+	public IMUDevice() {
+	}
+
+	/**
+	 * Determine the roll pitch and yaw from the gyro,accelerometer and magnetometer
+	 * 
+	 * @return
+	 */
+	public Quaternion getQuaternion() {
+		return this.getImu().getQuaternion(gyro.x(), gyro.y(), gyro.z(), accelerometer.x(), accelerometer.y(),
+				accelerometer.z(), magnetometer.x(), magnetometer.y(), magnetometer.z());
+	}
+
+	/**
+	 * Determines the direction in 360 degrees from the magnetometer
+	 * 
+	 * @param magnetometer
+	 * @return
+	 */
+	public double getDirection() {
+		return compass.getDegree(this.magnetometer);
+	}
+
+	@Override
+	public void setup() {
+		log.info("Setting up IMU");
+	}
+
+	@Override
+	public void shutdown() {
+		log.info("Shutting down IMU");
+	}
+
+	@Override
+	public void processOutput() {
+		// load latest values from the parameters
+		readParameters(gyro, ParametersEnum.GYROX, ParametersEnum.GYROY, ParametersEnum.GYROZ);
+		readParameters(accelerometer, ParametersEnum.ACCELEROMETERX, ParametersEnum.ACCELEROMETERY,
+				ParametersEnum.ACCELEROMETERZ);
+		readParameters(magnetometer, ParametersEnum.MAGNETOMETERX, ParametersEnum.MAGNETOMETERY,
+				ParametersEnum.MAGNETOMETERZ);
+
+		// Calculate values
+		Quaternion q = this.getQuaternion();
+		
+		// Update the new IMU parameters
+		setParameter(ParametersEnum.SENSORPITCH, q.getPitch());
+		setParameter(ParametersEnum.SENSORROLL, q.getRoll());
+		setParameter(ParametersEnum.SENSORYAW, q.getYaw());
+		setParameter(ParametersEnum.SENSORDIRECTION, this.getDirection());
+
+		// TODO estimate for velocity ?
+
+	}
+
+	/**
+	 * Update the parameter in the parmeter Store
+	 * @param par
+	 * @param value
+	 */
+	private void setParameter(ParametersEnum par, double value) {
+		flightController.setValue(par, value);
+	}
+
+	/**
+	 * Reads the sensor values from the parameter store
+	 * @param dev
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	private void readParameters(Value3D dev, ParametersEnum x, ParametersEnum y, ParametersEnum z) {
+		double v[] = dev.vector();
+		v[0] = flightController.getValue(x).value;
+		v[1] = flightController.getValue(y).value;
+		v[2] = flightController.getValue(z).value;
+	}
+
+	public FlightController getFlightController() {
+		return flightController;
+	}
+
+	public void setFlightController(FlightController flightController) {
+		this.flightController = flightController;
+	}
+
+	public IIMU getImu() {
+		return this.imu;
+	}
+	
+	public void setImu(IIMU imu) {
+		this.imu = imu;
+	}
+
+	/**
+	 * The compass heading can then be determined by the direction value D: If D is
+	 * greater than 337.25 degrees or less than 22.5 degrees – North If D is between
+	 * 292.5 degrees and 337.25 degrees – North-West If D is between 247.5 degrees
+	 * and 292.5 degrees – West If D is between 202.5 degrees and 247.5 degrees –
+	 * South-West If D is between 157.5 degrees and 202.5 degrees – South If D is
+	 * between 112.5 degrees and 157.5 degrees – South-East If D is between 67.5
+	 * degrees and 112.5 degrees – East If D is between 0 degrees and 67.5 degrees –
+	 * North-East
+	 * 
+	 */
+	public Heading getHeading (double degree) {
+		//If D is greater than 337.25 degrees or less than 22.5 degrees – North
+		if (degree >337.25 || degree<22.5 ) return Heading.North;
+		//If D is between 292.5 degrees and 337.25 degrees – North-West
+		if (degree >=292.5  || degree<337.25 ) return Heading.NorthWest;
+		//If D is between 247.5 degrees and 292.5 degrees – West
+		if (degree >=247.5  || degree<292.5 ) return Heading.West;		
+		//If D is between 202.5 degrees and 247.5 degrees – South-West
+		if (degree >=202.5 || degree<247.5 ) return Heading.SouthWest;				
+		//If D is between 157.5 degrees and 202.5 degrees – South
+		if (degree >=157.5 || degree<202.5 ) return Heading.SouthWest;				
+		//If D is between 112.5 degrees and 157.5 degrees – South-East
+		if (degree >=112.5 || degree<157.5  ) return Heading.SouthWest;				
+		//If D is between 67.5 degrees and 112.5 degrees – East
+		if (degree >=167.5 || degree<112.5 ) return Heading.SouthWest;				
+		//If D is between 0 degrees and 67.5 degrees – North-East
+		if (degree >=0 || degree<67.5 ) return Heading.SouthWest;
+		
+		// this can not happen if the ranges above are correct
+		throw new RuntimeException("Heading could not be determined");				
+	}
+
+}
