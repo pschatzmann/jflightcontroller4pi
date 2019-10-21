@@ -80,10 +80,10 @@ While I am waiting for the hardware to arrive, I go ahead with the implementatio
 
 Additional topics can be found in 
 
-[Basic Configuration](./help/01 Configuration.md)
-[Setting up Manual Mode](./help/02 ModeManual.md)
-[Setting up a Remote Control](./help/03 RemoteControl.md)
-[Using Flightgear](./help/04 Flightgear.md)
-[Setting up Stabilized Mode](./help/05 ModeStabilizedControl)
-[Setting up Stabilized Mode Sensors](./help/06 ModeStabilizedSensors)
+- [Basic Configuration](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/01 Configuration.md)
+- [Setting up Manual Mode](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/02 ModeManual.md)
+- [Setting up a Remote Control](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/03 RemoteControl.md)
+- [Using Flightgear](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/04 Flightgear.md)
+- [Setting up Stabilized Mode](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/05 ModeStabilizedControl)
+- [Setting up Stabilized Mode Sensors](https://github.com/pschatzmann/JFlightController4Pi/edit/master/help/06 ModeStabilizedSensors)
 
