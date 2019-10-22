@@ -1,0 +1,8 @@
+ch/pschatzmann/jflightcontroller4pi/tests/TestData.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestFlightController.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestFlightControllerSpring.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestDatagram.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestControl.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestFlightGear.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestParameters.class
+ch/pschatzmann/jflightcontroller4pi/tests/TestFlightControllerManual.class

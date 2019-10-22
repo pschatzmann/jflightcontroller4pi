@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ch.pschatzmann.jflightcontroller4pi.tests.TestFlightControllerSpring
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.323 sec
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.207 sec

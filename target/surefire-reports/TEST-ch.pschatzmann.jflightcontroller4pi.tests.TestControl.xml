@@ -27,13 +27,15 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf6965750929944242689.tmp"/>
+    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.6.2/libexec/bin/m2.conf"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/philschatzmann/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="maven.conf" value="/usr/local/Cellar/maven/3.6.2/libexec/conf"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.version" value="10.13.6"/>
+    <property name="library.jansi.path" value="/usr/local/Cellar/maven/3.6.2/libexec/lib/jansi-native"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="user.home" value="/Users/philschatzmann"/>
     <property name="user.timezone" value="Europe/Zurich"/>
@@ -41,11 +43,11 @@
     <property name="java.specification.version" value="1.8"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="user.name" value="pschatzmann"/>
-    <property name="java.class.path" value="/Users/philschatzmann/.p2/pool/plugins/org.eclipse.m2e.maven.runtime_1.11.0.20190220-2117/jars/plexus-classworlds-2.5.2.jar"/>
+    <property name="java.class.path" value="/usr/local/Cellar/maven/3.6.2/libexec/boot/plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B install"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -54,7 +56,7 @@
     <property name="java.ext.dirs" value="/Users/philschatzmann/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
     <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/EMBEDDED"/>
+    <property name="maven.home" value="/usr/local/Cellar/maven/3.6.2/libexec"/>
     <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -64,8 +66,8 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testSclingPositive" time="0"/>
-  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testMotor" time="0"/>
+  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testMotor" time="0.001"/>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testP" time="0"/>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testNoScling" time="0"/>
-  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testScling" time="0.001"/>
+  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testScling" time="0"/>
 </testsuite>

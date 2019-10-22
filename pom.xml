@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ch.pschatzmann.ch</groupId>
@@ -16,7 +14,7 @@
 	</properties>
 
 	<repositories>
-		<!--  Support for Joysticks -->
+		<!-- Support for Joysticks -->
 		<repository>
 			<id>Jamepad</id>
 			<name>your custom repo</name>
@@ -24,28 +22,57 @@
 		</repository>
 	</repositories>
 
-    <build>
+	<build>
 		<plugins>
-		    <plugin>    
-		        <artifactId>maven-compiler-plugin</artifactId>
-		        <configuration>
-		            <source>1.8</source>
-		            <target>1.8</target>
-		        </configuration>
-		    </plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<!-- get all project dependencies -->
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>ch.pschatzmann.jflightcontroller4pi.Main</mainClass>
+						</manifest>
+					</archive>
+
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+
+			</plugin>
+
 		</plugins>
-	 </build>
-	
+	</build>
+
 
 	<dependencies>
-		<!--  Unit Tests -->
+		<!-- Unit Tests -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 
-		<!--  Raspberry PI Communication Library -->
+		<!-- Raspberry PI Communication Library -->
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-core</artifactId>
@@ -61,17 +88,18 @@
 
 		<!-- Configuration and Dependecy Injection -->
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>5.2.0.RELEASE</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.2.0.RELEASE</version>
 		</dependency>
-		
+
+		<!-- Logging -->
 		<dependency>
-		<groupId>ch.qos.logback</groupId>
+			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
 		</dependency>
-		
+
 
 	</dependencies>
 </project>

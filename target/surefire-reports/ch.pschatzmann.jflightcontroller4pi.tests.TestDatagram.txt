@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 Test set: ch.pschatzmann.jflightcontroller4pi.tests.TestDatagram
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 10.023 sec <<< FAILURE!
+Tests run: 3, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 10.015 sec <<< FAILURE!
 testReceive(ch.pschatzmann.jflightcontroller4pi.tests.TestDatagram)  Time elapsed: 0.007 sec  <<< FAILURE!
 java.lang.AssertionError
 	at org.junit.Assert.fail(Assert.java:86)

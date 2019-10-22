@@ -28,7 +28,8 @@ working solution in just 1 or 2 days.
 
 ## Overall Software Design 
 
-- There is no GUI logic needed because we can use **JMX to monitor and update** the key control variables (JMXParameterStore). 
+- There is no GUI logic needed because we can use **JMX to monitor and update** the key control variables (JMXParameterStore).
+  We even get nice charts free of charge - which give us the parameter values over time
 - **Spring** can be used to **configure the classes** and provide specific instances of objects. We can easily 
   adapt any settings and there is no need for hard coded values or object instances.
 - The overall Class Design is very simple: The **FlightController** is the heart of all processing. It also
