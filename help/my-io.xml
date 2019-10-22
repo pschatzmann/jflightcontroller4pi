@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!-- 
+ Configuration file for flightgear (/usr/share/games/flightgear/Protocol/my-io.xml)
+ -->
+<PropertyList>
+    <generic>
+        <input>
+            <line_separator>newline</line_separator>
+            <var_separator>,</var_separator>
+            
+            <chunk>
+                <name>aileron</name>
+                <type>double</type>
+                <node>/controls/flight/aileron</node>
+            </chunk>
+            
+            <chunk>
+                <name>elevator</name>
+                <type>double</type>
+                <node>/controls/flight/elevator</node>
+            </chunk>
+            
+            <chunk>
+                <name>throttle</name>
+                <type>double</type>
+                <node>/controls/engines/current-engine/throttle</node>
+            </chunk>
+            
+            <chunk>
+                <name>rudder</name>
+                <type>double</type>
+                <node>/controls/flight/rudder</node>
+            </chunk>
+            
+        </input>
+        
+        <output>
+            <line_separator>newline</line_separator>
+            <var_separator>,</var_separator>
+            
+            <chunk>
+                <name>roll degree</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <node>/orientation/roll-deg</node>
+            </chunk>
+            <chunk>
+                <name>pitch degree</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <node>/orientation/pitch-deg</node>
+            </chunk>
+            <chunk>
+                <name>yaw degree</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <node>/orientation/heading-deg</node>
+            </chunk>
+            <chunk>
+                <name>speed in meters/sec</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <node>/velocities/groundspeed-kt</node>
+                <factor>0.514444</factor>
+            </chunk>
+            <chunk>
+                <name>heading</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <node>/orientation/heading-deg</node>
+            </chunk>
+            <chunk>
+                <name>altitude in m</name>
+                <type>float</type>
+                <format>%.1f</format>
+                <factor>0.3048</factor>
+                <node>/position/altitude-ft</node>
+            </chunk>
+            
+        </output>
+    </generic>
+    
+</PropertyList>
+

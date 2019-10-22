@@ -235,10 +235,10 @@
 	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions">
 	  			<property name="fieldNames">
 		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
-						<value>RUDDER</value>
 						<value>AILERON</value>
 						<value>ELEVATOR</value>
 						<value>THROTTLE</value>
+						<value>RUDDER</value>
 		        	</list>
 		        </property>
         	</bean>

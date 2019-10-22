@@ -74,6 +74,7 @@ This can be done with the following definition
 
 Flightgear supports a generic [protocal](http://wiki.flightgear.org/Generic_protocol).
 In OS/X the definition needs to be located in /Applications/FlightGear.app/Contents/Resources/data/Protocol
+(In linux it is in /usr/share/games/flightgear/Protocol/my-io.xml)
 
 So we need to set up our new interface definition file 'my-io.xml'.
 
