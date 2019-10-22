@@ -31,9 +31,6 @@ public class AutoPilot implements IOutDevice {
 	 * Default Constructor
 	 * @param controller
 	 */
-	public AutoPilot(FlightController controller){
-		this.setFlightController(controller);
-	}
 	
 	public AutoPilot(){}
 	
@@ -114,7 +111,8 @@ public class AutoPilot implements IOutDevice {
 	}
 
 	@Override
-	public void setup() {
+	public void setup(FlightController flightController) {
+		this.flightController = flightController;
 		this.flightController.setAutoPilot(this);
 	}
 

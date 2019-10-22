@@ -33,40 +33,33 @@
 
 	<!-- Devices -->
 	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
-	    <property name="flightController" ref="flightController"/>
 	</bean>
 
 	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
-	    <property name="flightController" ref="flightController"/>
 	</bean>
 	
 	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.navigation.AutoPilot" >
-	    <property name="flightController" ref="flightController"/>
 	</bean>
 	
 
 	<!-- Control Planes -->
 	
 	<bean id="aileron" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
-	    <property name="flightController" ref="flightController"/>
 	  	<property name="controlParameter" value="AILERON"/>
 	  	<property name="pin" ref="pin1"/>	  	
 	</bean>
 
 	<bean id="elevator" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
-	    <property name="flightController" ref="flightController"/>
 	  	<property name="controlParameter" value="ELEVATOR"/>
 	  	<property name="pin" ref="pin2"/>	  	
 	</bean>
 
 	<bean id="rudder" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
-	    <property name="flightController" ref="flightController"/>
 	  	<property name="controlParameter" value="RUDDER"/>
 	  	<property name="pin" ref="pin3"/>	  	
 	</bean>
 
 	<bean id="throttle" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" >
-	    <property name="flightController" ref="flightController"/>
 	  	<property name="controlParameter" value="THROTTLE"/>
 	  	<property name="pin" ref="pin4"/>	  	
 	  	<property name="defaultValue" value="0.2"/>	  	
@@ -218,7 +211,6 @@
 	<!-- Import and Export of data via Datagrams -->
 
 	<bean id="datagramReader" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader" >
-	    <property name="flightController" ref="flightController"/> 
 	  	<property name="port" value="7001"/>
 	  	<property name="fieldDefinitions">
 	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions">
@@ -237,7 +229,6 @@
 	</bean>
 
 	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" >
-	    <property name="flightController" ref="flightController"> </property>
 	  	<property name="port" value="7000"/>
 	  	<property name="host" value="192.168.1.42"/>
 	  	<property name="fieldDefinitions" >
@@ -256,7 +247,6 @@
 
 	<!-- JMX -->
 	<bean id="jmx" class="ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore" >
-	    <property name="flightController" ref="flightController"/>
 	</bean>
 		
 	

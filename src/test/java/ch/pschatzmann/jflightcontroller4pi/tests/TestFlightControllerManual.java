@@ -37,10 +37,10 @@ public class TestFlightControllerManual {
 	@Before
 	public void setup() {
 		ctl = new FlightController();
-		rudder = new OutDevice(ctl, ParametersEnum.RUDDER,  0.0, new NullDevice());
-		elevator = new OutDevice(ctl, ParametersEnum.ELEVATOR,  0.0, new NullDevice());
-		aileron = new OutDevice(ctl, ParametersEnum.AILERON,  0.0, new NullDevice());
-		throttle = new OutDevice(ctl, ParametersEnum.THROTTLE, new NullDevice());
+		rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
+		elevator = new OutDevice( ParametersEnum.ELEVATOR,  0.0, new NullDevice());
+		aileron = new OutDevice( ParametersEnum.AILERON,  0.0, new NullDevice());
+		throttle = new OutDevice( ParametersEnum.THROTTLE, new NullDevice());
 		throttle.setMinValue(0.0);
 		throttle.setDefaultValue(0.0);
 		

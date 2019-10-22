@@ -37,22 +37,21 @@ public class OutDevice implements IOutDeviceEx {
 	public OutDevice() {
 	}
 	
-	public OutDevice(FlightController flightController, ParametersEnum control,  double defaultSetting, IPwmOut out) {
-		this.flightController = flightController;
+	public OutDevice(ParametersEnum control,  double defaultSetting, IPwmOut out) {
 		this.control = control;
 		this.defaultValue = defaultSetting;
 		this.setPin(out);
 	}
 
-	public OutDevice(FlightController flightController, ParametersEnum control, IPwmOut out) {
-		this.flightController = flightController;
+	public OutDevice( ParametersEnum control, IPwmOut out) {
 		this.control = control;
 		this.setPin(out);
 	}
 
 	
 	@Override
-	public void setup() {        
+	public void setup(FlightController flightController) {  
+		this.flightController = flightController;
         // Define handler to update the Servo Position
 		flightController.getParameterStore().register(control, value -> {
 			int scaledValue = (int)scaler.scale(value.value);			

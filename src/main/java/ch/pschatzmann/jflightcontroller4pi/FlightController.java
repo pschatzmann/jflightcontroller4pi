@@ -103,7 +103,7 @@ public class FlightController {
 	}
 
 	private void setupDevice(IDevice device) {
-		device.setup();
+		device.setup(this);
 	}
 
 	/**

@@ -34,10 +34,10 @@ public class TestFlightController {
 	@BeforeClass
 	public static void setup() {
 		ctl = new FlightController();
-		rudder = new OutDevice(ctl, ParametersEnum.RUDDER,  0.0, new NullDevice());
-		elevator = new OutDevice(ctl, ParametersEnum.ELEVATOR,  0.0, new NullDevice());
-		aileron = new OutDevice(ctl, ParametersEnum.AILERON,  0.0, new NullDevice());
-		throttle = new OutDevice(ctl, ParametersEnum.THROTTLE,  -1.0, new NullDevice());		
+		rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
+		elevator = new OutDevice(ParametersEnum.ELEVATOR,  0.0, new NullDevice());
+		aileron = new OutDevice(ParametersEnum.AILERON,  0.0, new NullDevice());
+		throttle = new OutDevice(ParametersEnum.THROTTLE,  -1.0, new NullDevice());		
 	}
 	
 	@AfterClass
@@ -96,13 +96,5 @@ public class TestFlightController {
 		Assert.assertTrue(ctl.getValue(ParametersEnum.SENSORPITCH).timestamp<=end);
 	}
 
-	@Test
-	public void testJMX() {
-		ctl.setValue(ParametersEnum.ROLL, 0.1);
-		JMXParameterStore jmx = new JMXParameterStore(ctl);
-
-		Assert.assertEquals(0.1, ctl.getValue(ParametersEnum.ROLL).value, 0.001);
-		Assert.assertEquals(0.1, jmx.getStatusRoll(), 0.001);
-	}
 
 }

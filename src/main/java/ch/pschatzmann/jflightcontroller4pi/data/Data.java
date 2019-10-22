@@ -89,7 +89,7 @@ public class Data implements IData {
 
 	protected void append(byte c) {
 		byte b = c;
-		if (size >= string.length) {
+		if (size+1 >= string.length) {
 			throw new RuntimeException("Please increase the maxLength in the XString class");
 		}
 		string[size] = b;
@@ -157,7 +157,7 @@ public class Data implements IData {
 			s.size = 0;
 			return s;
 		} else {
-			log.info("Creating new Data record");
+			log.debug("Creating new Data record");
 			Data s = new Data();
 			s.string = new byte[maxLength];
 			s.size = 0;

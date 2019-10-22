@@ -1,5 +1,6 @@
 package ch.pschatzmann.jflightcontroller4pi.tests;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,6 +68,12 @@ public class TestFlightControllerSpring {
 				
 	}
 
+	@AfterClass
+	public static void cleanup() {
+		ctl.shutdown();
+	}
+
+	
 
 	@Test
 	public void testControls() {

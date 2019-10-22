@@ -38,14 +38,14 @@ public class GameConsole implements ISensor {
 	private FlightController flightController;
 
 	public GameConsole() {
-		this.setup();
 	}
 
 	/**
 	 * Setup Input Thread
 	 */
 	@Override
-	public void setup() {
+	public void setup(FlightController flightController) {
+		this.flightController = flightController;
 		controllers = new ControllerManager();
 		controllers.initSDLGamepad();
 

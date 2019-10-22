@@ -47,14 +47,12 @@ public class DatagramWriter implements IOutDevice {
 	 * @param outputFields
 	 * @param port
 	 */
-	public DatagramWriter(FlightController flightController, IFieldDefinitions outputFields, int port) {
-		this.flightController = flightController;
+	public DatagramWriter(IFieldDefinitions outputFields, int port) {
 		this.outputFields = outputFields;
 		this.port = port;
 	}
 	
-	public DatagramWriter(FlightController flightController, IFieldDefinitions outputFields, DatagramChannel dsocket, int port){
-		this.flightController = flightController;
+	public DatagramWriter(IFieldDefinitions outputFields, DatagramChannel dsocket, int port){
 		this.outputFields = outputFields;
 		this.channel = dsocket;
 		this.port = port;
@@ -65,7 +63,8 @@ public class DatagramWriter implements IOutDevice {
 	 * 
 	 **/
 	@Override
-	public void setup() {
+	public void setup(FlightController flightController) {
+		this.flightController = flightController;
 		try {
 			if (ip==null) {
 		        ip = new InetSocketAddress(destinationHost,port); 				

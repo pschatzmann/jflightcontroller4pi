@@ -29,14 +29,14 @@ public class Sensor implements ISensor {
 	public Sensor() {
 	}
 
-	public Sensor(FlightController flightController, List<ParametersEnum> inputParameters, IPwmIn in) {	
-		this.flightController = flightController;
+	public Sensor(List<ParametersEnum> inputParameters, IPwmIn in) {	
 		this.inputProcessor = new InputProcessor(inputParameters);
 		this.in = in;
 	}
 
 	@Override
-	public void setup() {
+	public void setup(FlightController flightController) {
+		this.flightController = flightController;
 	}
 	
 	@Override

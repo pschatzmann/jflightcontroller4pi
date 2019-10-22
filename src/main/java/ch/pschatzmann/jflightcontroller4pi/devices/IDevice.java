@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.devices;
 
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+
 /**
  * Generic functionality for input and output devices
  * 
@@ -10,7 +12,7 @@ public interface IDevice {
 	/**
 	 * Initialize the device
 	 */
-	void setup();
+	void setup(FlightController flightController);
 	/**
 	 * Shutdown the device
 	 */

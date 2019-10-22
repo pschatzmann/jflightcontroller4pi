@@ -11,7 +11,8 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
- * Display the actual Airplane State with the help of JMX
+ * Display the actual Airplane State with the help of JMX. Quick and dirty implementation.
+ * For the time beeing it is not worth the effort to implement dynamic parameters
  * 
  * @author pschatzmann
  *
@@ -22,13 +23,10 @@ public class JMXParameterStore implements JMXParameterStoreMBean {
 	
 	public JMXParameterStore(){
 	}
-	
-	public JMXParameterStore(FlightController flightController) {
-		this.flightController = flightController;
-	}
-	
+		
 	@Override
-	public void setup()  {
+	public void setup(FlightController flightController)  {
+		this.flightController = flightController;
 		try {
 	        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
 	        ObjectName name = new ObjectName("ch.pschatzmann.jdkflightsimulator4pi.integration:type=JMXParameterStore"); 
@@ -42,22 +40,22 @@ public class JMXParameterStore implements JMXParameterStoreMBean {
 
 	@Override
 	public double getStatusRoll() {
-		return flightController.getValue(ParametersEnum.ROLL).value;
+		return flightController.getValue(ParametersEnum.SENSORROLL).value;
 	}
 
 	@Override
 	public double getStatusPitch() {
-		return flightController.getValue(ParametersEnum.PITCH).value;
+		return flightController.getValue(ParametersEnum.SENSORPITCH).value;
 	}
 
 	@Override
 	public double getStatusYaw() {
-		return flightController.getValue(ParametersEnum.YAW).value;
+		return flightController.getValue(ParametersEnum.SENSORYAW).value;
 	}
 
 	@Override
 	public double getStatusSpeed() {
-		return flightController.getValue(ParametersEnum.SPEED).value;
+		return flightController.getValue(ParametersEnum.SENSORSPEED).value;
 	}
 
 

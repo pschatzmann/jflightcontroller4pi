@@ -5,6 +5,7 @@ import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 import java.util.Timer;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,31 +26,42 @@ public class TestDatagram {
 	
 	@BeforeClass
 	public static void setup() throws IOException {
+		Utils.sleep(5000);
+
 		ctl = new FlightController();
 		
 		// setup reader and writer
 		DatagramChannel channel = DatagramChannel.open();
 		IFieldDefinitions def = new FieldDefinitions(Arrays.asList(ParametersEnum.RUDDER));
 		
-		w = new DatagramWriter(ctl,def, channel, 5000);
-		r = new DatagramReader(ctl,def, channel, 5000);
+		w = new DatagramWriter(def, channel, 5000);
+		w.setHost("localhost");
+		r = new DatagramReader(def, channel, 5000);
 		
 		// add them as devices
 		ctl.addDevices(Arrays.asList(w, r));
-		
-		// make sure that we have a value to process
-		ctl.setValue(ParametersEnum.RUDDER, 0.123);
-		
+				
 		// we stop the control loop after 5 seconds
 		new Timer().schedule(Utils.timerTask(() -> ctl.shutdown()), 5000);
 		
 		// start a non blocking control loop
 		ctl.setControlLoop(new ControlLoopWithTimers(ctl, false));
-		ctl.run();
-		
+		ctl.setValue(ParametersEnum.RUDDER, 0.123);
+
+		new Thread(() -> {
+			ctl.run();
+		}).start();
+				
+
 		// we give the processing some time
-		Utils.sleep(10000);
+		Utils.sleep(7000);
 	}
+	
+	@AfterClass
+	public static void cleanup() throws IOException {
+		ctl.shutdown();
+	}
+
 
 	@Test
 	public void testValue() {

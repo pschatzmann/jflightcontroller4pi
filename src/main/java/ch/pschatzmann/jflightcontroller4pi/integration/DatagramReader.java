@@ -46,15 +46,13 @@ public class DatagramReader implements ISensor {
 	 * @param inputFields
 	 * @param port
 	 */
-	public DatagramReader(FlightController flightController, IFieldDefinitions inputFields, int port) {
-		this.flightController = flightController;
+	public DatagramReader(IFieldDefinitions inputFields, int port) {
 		this.inputFields = inputFields;
 		this.port = port;
 	}
 
-	public DatagramReader(FlightController flightController, IFieldDefinitions inputFields, DatagramChannel channel,
+	public DatagramReader(IFieldDefinitions inputFields, DatagramChannel channel,
 			int port) {
-		this.flightController = flightController;
 		this.inputFields = inputFields;
 		this.channel = channel;
 		this.port = port;
@@ -64,7 +62,8 @@ public class DatagramReader implements ISensor {
 	 * Setup Reader and read the values in a separate Thread *
 	 */
 	@Override
-	public void setup() {
+	public void setup(FlightController flightController) {
+		this.flightController = flightController;
 		try {
 			if (this.inputProcessor == null) {
 				this.inputProcessor = new InputProcessor(inputFields.getFieldNames());

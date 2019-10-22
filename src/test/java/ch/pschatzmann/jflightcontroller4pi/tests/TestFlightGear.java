@@ -32,7 +32,7 @@ public class TestFlightGear {
 				Arrays.asList(ParametersEnum.SENSORROLL, ParametersEnum.SENSORPITCH, ParametersEnum.SENSORYAW,
 						ParametersEnum.SENSORSPEED, ParametersEnum.SENSORHEADING, ParametersEnum.SENSORALTITUDE));
 
-		DatagramReader r = new DatagramReader(ctl, def, 7001);
+		DatagramReader r = new DatagramReader(def, 7001);
 		ctl.addDevices(Arrays.asList(r));
 
 		// stop after 10 seconds
@@ -58,29 +58,9 @@ public class TestFlightGear {
 
 	}
 
-//	@Test
-//	public void testReceiveRawMulicastBlocking() throws IOException {
-//		byte[] buffer = new byte[1024];
-//		MulticastSocket socket = new MulticastSocket(7001);
-//		InetAddress group = InetAddress.getByName("224.0.0.1");
-//		socket.joinGroup(group);
-//		System.out.println("Waiting for multicast message...");
-//		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-//		socket.receive(packet);
-//		String msg = new String(packet.getData(), packet.getOffset(), packet.getLength());
-//		System.out.println("[Multicast UDP message received" + msg);
-//		socket.leaveGroup(group);
-//		socket.close();
-//
-//	}
-
 	@Test
 	public void testReciveRawNonBlocking() throws IOException {
 		int port = 7001;
-		// String host = "localhost";
-		// InetAddress address = InetAddress.getByName(host);
-		// if (address.isLoopbackAddress()) {
-		// InetAddress address = InetAddress.getLocalHost();
 
 		DatagramChannel channel = DatagramChannel.open();
 		channel.socket().bind(new InetSocketAddress(port));
@@ -119,7 +99,7 @@ public class TestFlightGear {
 		IFieldDefinitions def = new FieldDefinitions(Arrays.asList(ParametersEnum.AILERON, ParametersEnum.ELEVATOR,
 				ParametersEnum.THROTTLE, ParametersEnum.RUDDER));
 
-		ctl.addDevices(Arrays.asList(new DatagramWriter(ctl, def, 7000)));
+		ctl.addDevices(Arrays.asList(new DatagramWriter(def, 7000)));
 
 		ctl.setValue(ParametersEnum.THROTTLE, 1.0);
 		ctl.setValue(ParametersEnum.AILERON, 1.0);
