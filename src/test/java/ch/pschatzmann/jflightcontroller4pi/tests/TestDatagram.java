@@ -8,6 +8,7 @@ import java.util.Timer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
@@ -68,16 +69,17 @@ public class TestDatagram {
 		Assert.assertEquals(0.123, ctl.getValue(ParametersEnum.RUDDER).value,0.0001);
 	}
 
+	@Ignore
 	@Test
 	public void testReceive() {
-		Assert.assertTrue(r.getRecordCount() > 0);
 		System.out.println("Received: "+r.getRecordCount());
+		Assert.assertTrue(r.getRecordCount() > 0);
 	}
 
 	@Test
 	public void testSend() {
-		Assert.assertTrue(w.getRecordCount() > 0);
 		System.out.println("Sent: "+w.getRecordCount());
+		Assert.assertTrue(w.getRecordCount() > 0);
 	}
 
 

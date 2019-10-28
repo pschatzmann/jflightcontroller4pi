@@ -1,6 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.parameters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -73,9 +74,6 @@ public class ParameterValues {
 		pv.timestamp = timeStamp;
 		pv.value = value;
 
-		// execute all update event handlers
-		// System.out.println("Lambdas "+lambdas.size());
-		
 		lambdas.forEach(lambda -> {
 			lambda.accept(pv);
 		});
@@ -123,6 +121,16 @@ public class ParameterValues {
 	 */
 	public boolean isEmpty() {
 		return this.actualSize == 0;
+	}
+	
+	/**
+	 * Calculates the average
+	 * @return
+	 */
+	public double getAvg() {
+		ParameterValue[] history = this.getHistory();
+		double total = Arrays.asList(history).stream().mapToDouble(r -> r.value).sum();
+		return total / history.length;
 	}
 
 }

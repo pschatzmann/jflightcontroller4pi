@@ -28,7 +28,7 @@ public class DatagramReader implements ISensor {
 	private IInputProcessor inputProcessor;
 	private char delimiter = ',';
 	private DatagramChannel channel;
-	private ByteBuffer buffer = ByteBuffer.allocate(1024);
+	private ByteBuffer buffer = ByteBuffer.allocate(1023);
 	private int port = 5000;
 	private boolean active = true;
 	private long processedRecords = 0;;
@@ -73,7 +73,7 @@ public class DatagramReader implements ISensor {
 				channel = DatagramChannel.open();
 				channel.socket().bind(new InetSocketAddress(port));
 				channel.configureBlocking(false);
-				channel.socket().setReceiveBufferSize(100);
+				channel.socket().setReceiveBufferSize(1024);
 
 			} else {
 				log.info("DatagramReader: the socket has already been set up");
@@ -95,6 +95,7 @@ public class DatagramReader implements ISensor {
 
 	@Override
 	public synchronized void processInput() {
+		IData str = null;
 		try {
 			if (active && channel!=null) {
 				SocketAddress sa = channel.receive(buffer);
@@ -102,7 +103,7 @@ public class DatagramReader implements ISensor {
 					log.debug("processInput");
 					buffer.flip();
 	
-					IData str = DataFactory.instance();
+					str = DataFactory.instance();
 					str.setBytes(buffer.array());
 					if (!str.isEmpty()) {
 						processInputLine(str);
@@ -119,7 +120,9 @@ public class DatagramReader implements ISensor {
 			// dont try to use it any more
 			this.channel = null;
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			if (str!=null) {
+				log.error(e.getMessage()+": '{}'", str.toString(), e);
+			}
 		}
 
 	}

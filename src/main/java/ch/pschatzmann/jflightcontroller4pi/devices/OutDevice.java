@@ -54,7 +54,7 @@ public class OutDevice implements IOutDeviceEx {
 		this.flightController = flightController;
         // Define handler to update the Servo Position
 		flightController.getParameterStore().register(control, value -> {
-			int scaledValue = (int)scaler.scale(value.value);			
+			int scaledValue = (int)scaler.scale(ParametersEnum.PIN, value.value);			
 			log.debug(control+"->"+scaledValue);
 			if (pwmPi.getValue()!=scaledValue) {
 				pwmPi.setValue(scaledValue);
@@ -120,7 +120,7 @@ public class OutDevice implements IOutDeviceEx {
      */
 	public void setPin(IPwmOut pwmPi) {
 		this.pwmPi = pwmPi;
-		double value = scaler.scale(this.defaultValue);
+		double value = scaler.scale(ParametersEnum.PIN, this.defaultValue);
 		this.pwmPi.setValue(value);
 		if (this.pwmPiInverted!=null)
 			this.pwmPiInverted.setValue(-value);

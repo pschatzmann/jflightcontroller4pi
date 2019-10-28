@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!-- 
  Configuration file for flightgear (/usr/share/games/flightgear/Protocol/my-io.xml)
+ http://wiki.flightgear.org/Aircraft_properties_reference
  -->
 <PropertyList>
     <generic>
@@ -39,22 +40,22 @@
             <var_separator>,</var_separator>
             
             <chunk>
-                <name>roll degree</name>
+                <name>roll degree - aleron</name>
                 <type>float</type>
                 <format>%.1f</format>
                 <node>/orientation/roll-deg</node>
             </chunk>
             <chunk>
-                <name>pitch degree</name>
+                <name>pitch degree - elevator</name>
                 <type>float</type>
                 <format>%.1f</format>
                 <node>/orientation/pitch-deg</node>
             </chunk>
             <chunk>
-                <name>yaw degree</name>
+                <name>yaw degree against flying axis - to be corrected by the rudder</name>
                 <type>float</type>
                 <format>%.1f</format>
-                <node>/orientation/heading-deg</node>
+                <node>/orientation/side-slip-deg</node>
             </chunk>
             <chunk>
                 <name>speed in meters/sec</name>

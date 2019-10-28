@@ -3,6 +3,8 @@ package ch.pschatzmann.jflightcontroller4pi.control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
 /**
  * Translates an input value from a defined input range to a output value (with a defined output range)
  * We support an asymmetric input range where the neutral inputNormal value is not in the middle.
@@ -24,21 +26,14 @@ public class Scaler implements IScaler {
 		this.outputMax = outputMax;
 	}
 
-//	public Scaler(double inputMin, double inputMax) {
-//		this.inputMin = inputMin;
-//		this.inputMax = inputMax;
-//		this.outputMin = -1.0;
-//		this.outputMax = 1.0;
-//	}
-
     @Override
-	public double scale(double inputValue) {
+	public double scale(ParametersEnum par, double inputValue) {
     	if (inputValue>inputMax) {
-    		log.warn("Unexpected input value: {} - the value is larger then the max ({}) and will be adjusted", inputValue, inputMax);
+    		log.warn("{}: Unexpected input value: {} - the value is larger then the max ({}) and will be adjusted",par.name(), inputValue, inputMax);
     		inputValue = inputMax;
     	}
     	if (inputValue<inputMin) {
-    		log.warn("Unexpected input value: {} - the value is smaller then the min ({}) and will be adjusted", inputValue, inputMin);
+    		log.warn("{}: Unexpected input value: {} - the value is smaller then the min ({}) and will be adjusted", par.name(), inputValue, inputMin);
     		inputValue = inputMin;
     	}
     	

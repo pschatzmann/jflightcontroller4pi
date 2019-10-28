@@ -26,7 +26,7 @@ public interface IData {
 
 	void setBytes(byte[] array);
 
-	double[] splitDouble(char delimiter);
+	double[] splitDouble(char delimiter, int expectedSize);
 	
 	int length();
 

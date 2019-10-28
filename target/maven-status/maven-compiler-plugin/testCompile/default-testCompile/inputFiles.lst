@@ -1,5 +1,6 @@
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestFlightGear.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestFlightControllerManual.java
+/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestJMX.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestFlightController.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestControl.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/test/java/ch/pschatzmann/jflightcontroller4pi/tests/TestParameters.java

@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.control;
 
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+
 /**
  * Provide the Input to the Output w/o scaling
  * @author pschatzmann
@@ -7,7 +9,7 @@ package ch.pschatzmann.jflightcontroller4pi.control;
  */
 public class NoScaler implements IScaler {
 	@Override
-	public double scale(double inputValue) {
+	public double scale(ParametersEnum par, double inputValue) {
 		return inputValue;
 	}
 }

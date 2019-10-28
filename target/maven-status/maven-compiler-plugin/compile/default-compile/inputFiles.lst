@@ -13,6 +13,7 @@
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/control/PIDController.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/modes/IFlightMode.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/navigation/package-info.java
+/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/tuning/Tune.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/devices/IInputProcessor.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/devices/IDevice.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/parameters/ParameterValues.java
@@ -32,6 +33,7 @@
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/navigation/GPSInputProcessor.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/devices/ISensor.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/modes/PIDModeRule.java
+/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/integration/GraphiteMetrics.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/data/DataOfString.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/protocols/IPwmOut.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/data/IData.java
@@ -63,6 +65,7 @@
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/parameters/ParametersEnum.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/imu/ICompass.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/integration/FieldDefinitions.java
+/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/integration/FlightgearLauncher.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/devices/Sensor.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/navigation/GPS.java
 /Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/src/main/java/ch/pschatzmann/jflightcontroller4pi/imu/IIMU.java

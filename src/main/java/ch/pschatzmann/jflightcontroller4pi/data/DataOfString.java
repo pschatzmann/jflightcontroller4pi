@@ -27,7 +27,7 @@ public class DataOfString implements IData {
 	 * @return
 	 */
 	@Override
-	public double[] splitDouble(char delimiter) {
+	public double[] splitDouble(char delimiter, int expectedLen) {
 		String[] stringArray = this.string.split(String.valueOf(delimiter));
 		double[] result = new double[stringArray.length];
 		for (int j=0;j<result.length;j++) {

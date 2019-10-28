@@ -34,7 +34,7 @@ public class InputProcessor implements IInputProcessor {
 	@Override
 	public void processInput(FlightController flightController, IData input, char delimiter) {
 		if (log.isDebugEnabled()) log.debug(input.toString());
-		double values[] = input.splitDouble(delimiter);
+		double values[] = input.splitDouble(delimiter, inputParameters.size());
 		if (values.length == inputParameters.size()) {
 			for (int j = 0; j < values.length; j++) {
 				flightController.setValue(inputParameters.get(j), values[j]);

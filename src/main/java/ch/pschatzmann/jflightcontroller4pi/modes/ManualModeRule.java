@@ -19,7 +19,6 @@ public class ManualModeRule implements IRecalculate {
     private static final Logger log = LoggerFactory.getLogger(ManualModeRule.class);
 	private FlightController flightController;
 	private ParametersEnum parameterFrom;
-	private ParametersEnum parameterTarget;
 	private IOutDeviceEx device;
 
 	public ManualModeRule() {
@@ -28,7 +27,6 @@ public class ManualModeRule implements IRecalculate {
 	public ManualModeRule(FlightController flightController, IOutDeviceEx device, ParametersEnum parameterFrom ) {
 		this.flightController = flightController;
 		this.parameterFrom = parameterFrom;
-		this.parameterTarget = device.getControlParameter();
 		this.device = device;
 	}
 	
@@ -36,9 +34,9 @@ public class ManualModeRule implements IRecalculate {
 	@Override
 	public void recalculate() {
 		double value = flightController.getValue(parameterFrom).value;
-		if (flightController.getValue(parameterTarget).value != value) {
-			log.debug(parameterTarget+"->"+value);
-			flightController.setValue(parameterTarget, value);
+		if (flightController.getValue(device.getControlParameter()).value != value) {
+			log.debug(device.getControlParameter()+"->"+value);
+			flightController.setValue(device.getControlParameter(), value);
 		}
 	}
 	

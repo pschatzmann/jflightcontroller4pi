@@ -12,18 +12,30 @@ import java.util.Arrays;
 import java.util.Timer;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter;
 import ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions;
+import ch.pschatzmann.jflightcontroller4pi.integration.FlightgearLauncher;
 import ch.pschatzmann.jflightcontroller4pi.integration.IFieldDefinitions;
 import ch.pschatzmann.jflightcontroller4pi.integration.Utils;
 import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 public class TestFlightGear {
+	static FlightgearLauncher fgl = new FlightgearLauncher();
+	
+	@BeforeClass
+	public static void startup() {
+		fgl.setup(null);
+		fgl.doStart();
+		
+	}
+	
+	
 	@Test
 	public void testReceive() {
 		FlightController ctl = new FlightController();
@@ -82,7 +94,6 @@ public class TestFlightGear {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				};
 			}
@@ -127,5 +138,11 @@ public class TestFlightGear {
 		dsocket.close();
 
 	}
+	
+	@Test
+	public void testRestart() {
+		Assert.assertTrue(fgl.doStart());
+	}
+
 
 }

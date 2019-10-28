@@ -123,7 +123,7 @@ public class DatagramWriter implements IOutDevice {
 		// push the data to the ParametersStore
 		for (FieldDefinition def : fields) {
 			double value = flightController.getValue(def.getInputField()).value;
-			double scaledValue = def.getScaler().scale(value);
+			double scaledValue = def.getScaler().scale(def.getInputField(), value);
 			result.append(scaledValue);
 			if (def!=last) {
 				result.append(delimiter);
@@ -191,7 +191,9 @@ public class DatagramWriter implements IOutDevice {
 	public void shutdown() {
 		log.info("shutdown");
 		try {
-			channel.close();
+			if (channel!=null) {
+				channel.close();
+			}
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 		}

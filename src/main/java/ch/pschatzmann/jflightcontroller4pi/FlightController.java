@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
@@ -31,7 +32,7 @@ public class FlightController {
 
 	private Collection<IDevice> devices = new ArrayList<IDevice>();
 	private ParameterStore parameterStore = new ParameterStore();
-	private IFlightMode mode = new FlightMode(this, Collections.emptyList()); // assign value to prevent npe
+	private IFlightMode mode = new FlightMode(Collections.emptyList()); // assign value to prevent npe
 	private Collection<IFlightMode> modes = Collections.emptyList();
 	private IOutDevice imu, autoPilot;
 	private IControlLoop controlLoop = new ControlLoop(this); // use default implementation
@@ -67,7 +68,7 @@ public class FlightController {
 	public void setMode(IFlightMode mode) {
 		this.mode.shutdown();
 		this.mode = mode;
-		mode.setup();
+		mode.setup(this);
 	}
 
 	/**
@@ -168,14 +169,14 @@ public class FlightController {
 		this.modes = modes;
 	}
 
-	public void selectMode(String name) {
+	public IFlightMode selectMode(String name) {
 		for (IFlightMode mode : modes) {
 			if (name.equals(mode.getName())) {
 				this.setMode(mode);
-				return;
+				return mode;
 			}
 		}
-		throw new RuntimeException("The mode does not exist: "+name);
+		throw new RuntimeException("The mode does not exist: "+name+" use one of "+modes.stream().map(s -> s.getName()).collect(Collectors.toList()));
 	}
 
 	/**
@@ -252,7 +253,7 @@ public class FlightController {
 	 */
 	public void run() {
 		if (mode != null) {
-			mode.setup();
+			mode.setup(this);
 		} else {
 			log.info("No flight mode!");
 		}

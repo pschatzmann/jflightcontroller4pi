@@ -22,8 +22,8 @@ public class ControlLoopWithTimers implements IControlLoop {
     private static final Logger log = LoggerFactory.getLogger(ControlLoopWithTimers.class);
 
 	private FlightController controller;
-	private long inputTimerPeriod = 50L;
-	private long outputTimerPeriod = 100L;
+	private long inputTimerPeriod = 500L;
+	private long outputTimerPeriod = 1000L;
 	private long statisticsTimerPeriod = 10000L;
 	private TimerTask inputTask;
 	private TimerTask outputTask;

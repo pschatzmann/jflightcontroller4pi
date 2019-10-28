@@ -96,5 +96,15 @@ public class TestFlightController {
 		Assert.assertTrue(ctl.getValue(ParametersEnum.SENSORPITCH).timestamp<=end);
 	}
 
+	@Test
+	public void testParametersHistory() {
+		ctl.setValue(ParametersEnum.SENSORPITCH, 1.0);	
+		ctl.setValue(ParametersEnum.SENSORPITCH, 2.0);	
+
+		Assert.assertEquals(2.0, ctl.getValue(ParametersEnum.SENSORPITCH).value,0.01);
+		Assert.assertEquals(1.5, ctl.getParameterStore().getAvg(ParametersEnum.SENSORPITCH),0.01);
+		Assert.assertEquals(2, ctl.getParameterStore().getHistory(ParametersEnum.SENSORPITCH).length);
+	}
+
 
 }

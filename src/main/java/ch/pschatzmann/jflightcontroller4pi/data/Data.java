@@ -25,8 +25,9 @@ public class Data implements IData {
 	private static Logger log = LoggerFactory.getLogger(Data.class);
 	private int size;
 	private static List<Data> free = new ArrayList<Data>();
-	private static int maxLength = 160;
+	private static int maxLength = 1024;
 	private byte[] string = new byte[maxLength];
+	private static double[] empty = {};
 
 	@Override
 	public byte[] getBytes() {
@@ -50,13 +51,26 @@ public class Data implements IData {
 	 * @return
 	 */
 	@Override
-	public double[] splitDouble(char delimiter) {
-		double[] result = new double[count(delimiter) + 1];
-		String sa[] = this.toString().split(String.valueOf(delimiter));
-		for (int j = 0; j < result.length; j++) {
-			if (!sa[j].isEmpty()) {
-				result[j] = Double.parseDouble(sa[j]);
+	public double[] splitDouble(char delimiter, int expectedLen) {
+		double[] result = empty;
+		if (count(delimiter) + 1 == expectedLen) {
+			result = new double[count(delimiter) + 1];
+			String sa[] = this.toString().split(String.valueOf(delimiter));
+			for (int j = 0; j < expectedLen; j++) {
+				if (j < sa.length && !sa[j].trim().isEmpty()) {
+					// filightgear sends numbers like 157!.8.0 which is not
+					// good+
+					String str = sa[j];
+					int pos1 = str.lastIndexOf(".");
+					int pos2 = str.indexOf(".");
+					if (pos1 > pos2) {
+						str = str.substring(0, pos2);
+					}
+
+					result[j] = Double.parseDouble(str);
+				}
 			}
+
 		}
 		return result;
 	}
@@ -89,7 +103,7 @@ public class Data implements IData {
 
 	protected void append(byte c) {
 		byte b = c;
-		if (size+1 >= string.length) {
+		if (size + 1 >= string.length) {
 			throw new RuntimeException("Please increase the maxLength in the XString class");
 		}
 		string[size] = b;
@@ -134,7 +148,13 @@ public class Data implements IData {
 
 	@Override
 	public boolean isEmpty() {
-		return this.size == 0;
+		if (this.size == 0)
+			return true;
+		for (int j = 0; j < 5; j++)
+			if (string[j] != ' ')
+				return false;
+
+		return true;
 	}
 
 	protected String substring(int i) {
@@ -151,25 +171,27 @@ public class Data implements IData {
 	 * 
 	 * @return
 	 */
-	protected static IData instance() {
+	protected static synchronized IData instance() {
 		if (free.size() > 0) {
 			Data s = free.remove(0);
-			s.size = 0;
-			return s;
-		} else {
-			log.debug("Creating new Data record");
-			Data s = new Data();
-			s.string = new byte[maxLength];
-			s.size = 0;
-			return s;
+			if (s != null) {
+				s.size = 0;
+				return s;
+			}
 		}
+		log.debug("Creating new Data record");
+		Data s = new Data();
+		s.string = new byte[maxLength];
+		s.size = 0;
+		return s;
+
 	}
 
 	/**
 	 * Releases the memory by putting it back to the available strings
 	 */
 	@Override
-	public void close() {
+	public synchronized void close() {
 		Arrays.fill(string, (byte) ' ');
 		free.add(this);
 	}

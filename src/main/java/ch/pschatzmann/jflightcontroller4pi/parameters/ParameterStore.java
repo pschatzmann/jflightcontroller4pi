@@ -32,9 +32,11 @@ public class ParameterStore {
 	}
 
 	public void setValue(ParametersEnum parametersEnum, double value) {
-		log.debug(parametersEnum+"->"+value);
-		ParameterValues values = store[parametersEnum.ordinal()];
-		values.addValue(System.currentTimeMillis(),value);
+		if (parametersEnum!=null) {
+			log.debug(parametersEnum+"->"+value);
+			ParameterValues values = store[parametersEnum.ordinal()];
+			values.addValue(System.currentTimeMillis(),value);
+		}
 	}
 
 	public ParameterValue getValue(ParametersEnum parametersEnum) {
@@ -58,6 +60,12 @@ public class ParameterStore {
 	public void register(ParametersEnum parametersEnum, Consumer<ParameterValue> lambda) {
 		ParameterValues values = store[parametersEnum.ordinal()];
 		values.register(lambda);
+	}
+
+	public double getAvg(ParametersEnum parametersEnum) {
+		ParameterValues values = store[parametersEnum.ordinal()];
+		return values.getAvg();
+		
 	}
 
 

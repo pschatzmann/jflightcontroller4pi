@@ -7,6 +7,7 @@ import ch.pschatzmann.jflightcontroller4pi.control.IScaler;
 import ch.pschatzmann.jflightcontroller4pi.control.NoScaler;
 import ch.pschatzmann.jflightcontroller4pi.data.DataFactory;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
  * Dummy input device which generates 0 as values. This can be used e.g. in unit tests.
@@ -32,7 +33,7 @@ public class NullDevice implements IPwmIn, IPwmOut {
 
 	@Override
 	public void setValue(double value) {
-		this.doubleValue = scaler.scale(value);
+		this.doubleValue = scaler.scale(ParametersEnum.PIN,value);
 		this.value = DataFactory.instance();
 		this.value.append(String.valueOf(doubleValue));
 		log.debug("-> "+this.value);

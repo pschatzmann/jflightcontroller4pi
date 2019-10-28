@@ -91,7 +91,7 @@ public class PIDModeRule implements IRecalculate {
 		
       	double controlValue = miniPID.getOutput(actual,target);
       	flightController.setValue(device.getControlParameter(), controlValue);
-      	log.debug("PID for "+device.getControlParameter()+": "+controlValue+" | "+measuredParameter+": "+actual+", "+targetParameter+": "+target);
+      	log.debug("{} : {} | {}: {} => {}:{}",  measuredParameter,actual,targetParameter, target, device.getControlParameter(),controlValue);
 	}
 
 	@Override
@@ -125,6 +125,17 @@ public class PIDModeRule implements IRecalculate {
 
 	public void setDevice(IOutDeviceEx device) {
 		this.device = device;
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("p=");
+		sb.append(this.getP());
+		sb.append(" i=");
+		sb.append(this.getI());
+		sb.append(" d=");
+		sb.append(this.getD());
+		return sb.toString();
 	}
 	
 }

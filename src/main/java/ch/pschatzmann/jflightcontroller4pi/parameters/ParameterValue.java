@@ -18,4 +18,5 @@ public class ParameterValue {
 	public String toString() {
 		return Double.toString(value);
 	}
+
 }

@@ -39,6 +39,8 @@ public class TestControl {
 
 	}
 	
+	
+	
 	// e.g. Elevation: input -1 to 1 / throttle -1 to 1 => output 0.2 to 1.0
 	
 	@Test
@@ -113,29 +115,29 @@ public class TestControl {
 	@Test 
 	public void testNoScling() {
 		IScaler no = new NoScaler();
-		Assert.assertEquals(1.1, no.scale(1.1),0.001);
-		Assert.assertEquals(11.1, no.scale(11.1),0.001);
-		Assert.assertEquals(-11.1, no.scale(-11.1),0.001);
+		Assert.assertEquals(1.1, no.scale(ParametersEnum.NA, 1.1),0.001);
+		Assert.assertEquals(11.1, no.scale(ParametersEnum.NA, 11.1),0.001);
+		Assert.assertEquals(-11.1, no.scale(ParametersEnum.NA, -11.1),0.001);
 	}
 	
 	@Test 
 	public void testScling() {
 		IScaler scale = new Scaler(-1,1,-10,10);
-		Assert.assertEquals(0.0, scale.scale(0.0),0.001);
-		Assert.assertEquals(-10.0, scale.scale(-1.0),0.001);
-		Assert.assertEquals(10.0, scale.scale(1.0),0.001);
+		Assert.assertEquals(0.0, scale.scale(ParametersEnum.NA, 0.0),0.001);
+		Assert.assertEquals(-10.0, scale.scale(ParametersEnum.NA, -1.0),0.001);
+		Assert.assertEquals(10.0, scale.scale(ParametersEnum.NA, 1.0),0.001);
 		// input too big
-		Assert.assertEquals(10.0, scale.scale(10.0),0.001);
+		Assert.assertEquals(10.0, scale.scale(ParametersEnum.NA, 10.0),0.001);
 		// input too small
-		Assert.assertEquals(-10.0, scale.scale(-10.0),0.001);
+		Assert.assertEquals(-10.0, scale.scale(ParametersEnum.NA, -10.0),0.001);
 	}
 	
 	@Test 
 	public void testSclingPositive() {
 		IScaler scale = new Scaler(-1,1,0,20);
-		Assert.assertEquals(0.0, scale.scale(-1),0.001);
-		Assert.assertEquals(20.0, scale.scale(1.0),0.001);
-		Assert.assertEquals(10.0, scale.scale(0.0),0.001);
+		Assert.assertEquals(0.0, scale.scale(ParametersEnum.NA, -1),0.001);
+		Assert.assertEquals(20.0, scale.scale(ParametersEnum.NA, 1.0),0.001);
+		Assert.assertEquals(10.0, scale.scale(ParametersEnum.NA, 0.0),0.001);
 	}
 
 }

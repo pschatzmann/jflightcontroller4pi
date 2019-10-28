@@ -3,6 +3,7 @@ package ch.pschatzmann.jflightcontroller4pi.control;
 import java.util.ArrayList;
 import java.util.Collection;
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
  * Generates for multiple input values one combined output value. We use this
@@ -35,10 +36,10 @@ public class Mixer {
 
 		double result = 0;
 		for (MixerComponent c : this.components) {
-			result += c.getScaler().scale(flightController.getValue(c.getParameter()).value)
+			result += c.getScaler().scale(c.getParameter(), flightController.getValue(c.getParameter()).value)
 					* (c.getWeight() / this.totalWeight);
 		}
-		return scaler.scale(result);
+		return scaler.scale(ParametersEnum.NA, result);
 	}
 
 	public FlightController getFlightController() {

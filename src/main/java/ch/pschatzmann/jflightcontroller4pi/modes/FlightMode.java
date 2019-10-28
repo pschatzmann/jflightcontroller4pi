@@ -35,31 +35,39 @@ public class FlightMode implements IFlightMode {
 	/**
 	 * Setup of with Initial (Empty) Mode
 	 */
-	public FlightMode(FlightController flightController, Collection<IRecalculate> rules ) {
-		this.flightController = flightController;		
+	public FlightMode(Collection<IRecalculate> rules ) {
 		this.recalcCollection = rules;
 	}
 	
 	/**
-	 * Add local devices to the controller and update the calculation rules in the devices
+	 * Add local relevant devices to the controller and updates the calculation rules in the devices
 	 */
 	@Override
-	public void setup() {
-		log.info("setup {}",this.getName());
+	public void setup(FlightController flightController) {
+		log.info("setup '{}'",this.getName());
+		this.flightController = flightController;	
+		// reset all existing calculation rules
+		this.flightController.getDevices().stream()
+			.filter(d -> d instanceof IOutDeviceEx)
+			.map(d -> (IOutDeviceEx)d)
+			.forEach(dev -> dev.setRecalculate(null));
+		
 		// add devices from rules
 		recalcCollection.stream().map(c -> c.getDevice()).forEach(dev -> this.devices.add(dev));
 		
 		// make the devices known to the controller
 		flightController.addDevices(this.getDevices());
-		
-		// set the calculation rules in the devices
+				
+		// set the new calculation rules in the devices
 		recalcCollection.forEach(rule -> rule.getDevice().setRecalculate(rule));
 	}
 
 	@Override
 	public void shutdown() {
 		log.info("shutdown {}",this.getName());
-		flightController.removeDevices(this.getDevices());
+		if (flightController!=null) {
+			flightController.removeDevices(this.getDevices());
+		}
 	}
 
 	public Collection<IDevice> getDevices() {

@@ -39,13 +39,13 @@ public class TestData {
 	@Test
 	public void testDouble() {
 		data.setBytes("1,2,3,4".getBytes());
-		Assert.assertEquals(4, data.splitDouble(',').length);
+		Assert.assertEquals(4, data.splitDouble(',',4).length);
 
 		data.setBytes("1, 2, 3, 4".getBytes());
-		Assert.assertEquals(4, data.splitDouble(',').length);
+		Assert.assertEquals(4, data.splitDouble(',',4).length);
 
 		data.setBytes(" 1 ,  2 ,  3 , 4 ".getBytes());
-		Assert.assertEquals(4, data.splitDouble(',').length);
+		Assert.assertEquals(4, data.splitDouble(',',4).length);
 	}
 	
 	@Test

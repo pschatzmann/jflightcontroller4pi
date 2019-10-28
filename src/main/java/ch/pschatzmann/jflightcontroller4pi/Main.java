@@ -26,6 +26,9 @@ public class Main {
 		
 		FlightController flightController = (FlightController) context.getBean("flightController");
 		
+		// just display the current mode as information
+		log.info("The flight controller is in the following mode: '{}'",flightController.getMode());
+		
 		// shutdown all devices if we exit the program
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override

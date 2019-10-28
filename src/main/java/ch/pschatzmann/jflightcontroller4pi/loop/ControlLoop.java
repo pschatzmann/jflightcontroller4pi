@@ -43,7 +43,7 @@ public class ControlLoop implements IControlLoop {
 		this.active = true;
 		IFlightMode mode = controller.getMode();
 		if (mode!=null) {
-			mode.setup();
+			mode.setup(this.controller);
 		} else {
 			log.info("No flight mode!");			
 		}

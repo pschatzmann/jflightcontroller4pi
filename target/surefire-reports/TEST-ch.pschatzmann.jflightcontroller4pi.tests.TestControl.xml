@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="5" failures="0" name="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" time="0.001" errors="0" skipped="0">
+<testsuite tests="6" failures="1" name="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" time="0.009" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib"/>
@@ -27,15 +27,13 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.6.2/libexec/bin/m2.conf"/>
+    <property name="classworlds.conf" value="/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf3308364420756149487.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/philschatzmann/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
-    <property name="maven.conf" value="/usr/local/Cellar/maven/3.6.2/libexec/conf"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.version" value="10.13.6"/>
-    <property name="library.jansi.path" value="/usr/local/Cellar/maven/3.6.2/libexec/lib/jansi-native"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="user.home" value="/Users/philschatzmann"/>
     <property name="user.timezone" value="Europe/Zurich"/>
@@ -43,11 +41,11 @@
     <property name="java.specification.version" value="1.8"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="user.name" value="pschatzmann"/>
-    <property name="java.class.path" value="/usr/local/Cellar/maven/3.6.2/libexec/boot/plexus-classworlds-2.6.0.jar"/>
+    <property name="java.class.path" value="/Users/philschatzmann/.p2/pool/plugins/org.eclipse.m2e.maven.runtime_1.11.0.20190220-2117/jars/plexus-classworlds-2.5.2.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B install"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -56,7 +54,7 @@
     <property name="java.ext.dirs" value="/Users/philschatzmann/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
     <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="/usr/local/Cellar/maven/3.6.2/libexec"/>
+    <property name="maven.home" value="/Users/philschatzmann/Documents/DeveloperJava/JavaProjects/JFlightController4Pi/EMBEDDED"/>
     <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -66,8 +64,57 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testSclingPositive" time="0"/>
-  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testMotor" time="0.001"/>
+  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testMotor" time="0"/>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testP" time="0"/>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testNoScling" time="0"/>
+  <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testPSmall" time="0.009">
+    <failure message="expected:&lt;0.0&gt; but was:&lt;3.982968750000002&gt;" type="java.lang.AssertionError">java.lang.AssertionError: expected:&lt;0.0&gt; but was:&lt;3.982968750000002&gt;
+	at org.junit.Assert.fail(Assert.java:88)
+	at org.junit.Assert.failNotEquals(Assert.java:834)
+	at org.junit.Assert.assertEquals(Assert.java:553)
+	at org.junit.Assert.assertEquals(Assert.java:683)
+	at ch.pschatzmann.jflightcontroller4pi.tests.TestControl.testPSmall(TestControl.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75)
+</failure>
+    <system-out>Output: -0.8999999999999999 actual: 30.0 target: 0.0 error: 30.0
+Output: -0.15000000000000013 actual: 3.0000000000000036 target: 0.0 error: 3.0000000000000036
+Output: -0.5249999999999999 actual: -1.5 target: 0.0 error: -1.5
+Output: 0.2024999999999998 actual: -17.249999999999996 target: 0.0 error: -17.249999999999996
+Output: -0.07124999999999992 actual: -11.175000000000002 target: 0.0 error: -11.175000000000002
+Output: 0.38062499999999994 actual: -13.3125 target: 0.0 error: -13.3125
+Output: 0.033187500000000064 actual: -1.8937500000000025 target: 0.0 error: -1.8937500000000025
+Output: 0.24965624999999997 actual: -0.8981250000000005 target: 0.0 error: -0.8981250000000005
+Output: -0.08695312499999988 actual: 6.591562499999998 target: 0.0 error: 6.591562499999998
+Output: 0.06143906249999993 actual: 3.982968750000002 target: 0.0 error: 3.982968750000002
+</system-out>
+  </testcase>
   <testcase classname="ch.pschatzmann.jflightcontroller4pi.tests.TestControl" name="testScling" time="0"/>
 </testsuite>

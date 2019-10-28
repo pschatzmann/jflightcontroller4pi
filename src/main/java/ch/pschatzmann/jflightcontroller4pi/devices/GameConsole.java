@@ -11,6 +11,8 @@ import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IScaler;
+import ch.pschatzmann.jflightcontroller4pi.control.NoScaler;
 import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
 import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore;
@@ -29,10 +31,15 @@ public class GameConsole implements ISensor {
 	private int sleepMs = 0;
 	private ControllerManager controllers;
 	private ControllerIndex currController;
-	private Scaler lxScaler;
-	private Scaler lyScaler;
-	private Scaler rxScaler;
-	private Scaler ryScaler;
+	private IScaler lxScaler = new NoScaler();
+	private IScaler lyScaler = new NoScaler();
+	private IScaler rxScaler = new NoScaler();
+	private IScaler ryScaler = new NoScaler();
+	private ParametersEnum lxParameter = ParametersEnum.THROTTLE;
+	private ParametersEnum lyParameter = ParametersEnum.RUDDER;
+	private ParametersEnum rxParameter = ParametersEnum.AILERON;
+	private ParametersEnum ryParameter = ParametersEnum.ELEVATOR;
+			
 	private IFlightMode offMode;
 	private IFlightMode acroMode;
 	private FlightController flightController;
@@ -54,7 +61,7 @@ public class GameConsole implements ISensor {
 			currController = controllers.getControllerIndex(0);
 
 			doVibrate(currController, 3000);
-			setupScalers(currController);
+			//setupScalers(currController);
 
 			log.info("Processing Input...");
 			doVibrate(currController, 1000);
@@ -101,54 +108,19 @@ public class GameConsole implements ISensor {
 
 		// process left stick
 		double valLX = currController.getAxisState(ControllerAxis.LEFTX);
-		flightController.setValue(ParametersEnum.THROTTLE, lxScaler.scale(valLX));
+		flightController.setValue(lxParameter, lxScaler.scale(ParametersEnum.THROTTLE, valLX));
 
 		double valLY = currController.getAxisState(ControllerAxis.LEFTY);
-		flightController.setValue(ParametersEnum.RUDDER, lyScaler.scale(valLY));
+		flightController.setValue(lyParameter, lyScaler.scale(ParametersEnum.RUDDER, valLY));
 
 		// process right stick
 		double valRX = currController.getAxisState(ControllerAxis.RIGHTX);
-		flightController.setValue(ParametersEnum.AILERON, rxScaler.scale(valRX));
+		flightController.setValue(rxParameter, rxScaler.scale(ParametersEnum.AILERON, valRX));
 
 		double valRY = currController.getAxisState(ControllerAxis.RIGHTY);
-		flightController.setValue(ParametersEnum.ELEVATOR, ryScaler.scale(valRY));
+		flightController.setValue(ryParameter, ryScaler.scale(ParametersEnum.ELEVATOR, valRY));
 	}
 
-	protected void setupScalers(ControllerIndex currController) {
-		double lxMin = 0, lxMax = 0, lyMin = 0, lyMax = 0, rxMin = 0, rxMax = 0, ryMin = 0, ryMax = 0;
-		log.info("Move the sticks in all maximum positions and click start when done");
-		while (true) {
-			try {
-				if (currController.isButtonPressed(ControllerButton.START)) {
-					break;
-				}
-				double valLX = currController.getAxisState(ControllerAxis.LEFTX);
-				lxMax = Math.max(valLX, lxMax);
-				lxMin = Math.min(valLX, lxMin);
-
-				double valLY = currController.getAxisState(ControllerAxis.LEFTY);
-				lyMax = Math.max(valLY, lyMax);
-				lyMin = Math.min(valLY, lyMin);
-
-				double valRX = currController.getAxisState(ControllerAxis.RIGHTX);
-				rxMax = Math.max(valRX, rxMax);
-				rxMin = Math.min(valRX, rxMin);
-
-				double valRY = currController.getAxisState(ControllerAxis.RIGHTY);
-				ryMax = Math.max(valRY, ryMax);
-				ryMin = Math.min(valRY, ryMin);
-
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);;
-			}
-		}
-		log.info("Setting up Input Scalers");
-
-		lxScaler = new Scaler(lxMin, lxMax,-1,1);
-		lyScaler = new Scaler(lyMin, lyMax,-1,1);
-		rxScaler = new Scaler(rxMin, rxMax,-1,1);
-		ryScaler = new Scaler(ryMin, ryMax,-1,1);
-	}
 
 	@Override
 	public void shutdown() {
@@ -220,6 +192,118 @@ public class GameConsole implements ISensor {
 	@Override
 	public String getName() {
 		return this.getClass().getSimpleName();
+	}
+
+	/**
+	 * @return the lxScaler
+	 */
+	public IScaler getLxScaler() {
+		return lxScaler;
+	}
+
+	/**
+	 * @param lxScaler the lxScaler to set
+	 */
+	public void setLxScaler(IScaler lxScaler) {
+		this.lxScaler = lxScaler;
+	}
+
+	/**
+	 * @return the lyScaler
+	 */
+	public IScaler getLyScaler() {
+		return lyScaler;
+	}
+
+	/**
+	 * @param lyScaler the lyScaler to set
+	 */
+	public void setLyScaler(IScaler lyScaler) {
+		this.lyScaler = lyScaler;
+	}
+
+	/**
+	 * @return the rxScaler
+	 */
+	public IScaler getRxScaler() {
+		return rxScaler;
+	}
+
+	/**
+	 * @param rxScaler the rxScaler to set
+	 */
+	public void setRxScaler(IScaler rxScaler) {
+		this.rxScaler = rxScaler;
+	}
+
+	/**
+	 * @return the ryScaler
+	 */
+	public IScaler getRyScaler() {
+		return ryScaler;
+	}
+
+	/**
+	 * @param ryScaler the ryScaler to set
+	 */
+	public void setRyScaler(IScaler ryScaler) {
+		this.ryScaler = ryScaler;
+	}
+
+	/**
+	 * @return the lxParameter
+	 */
+	public ParametersEnum getLxParameter() {
+		return lxParameter;
+	}
+
+	/**
+	 * @param lxParameter the lxParameter to set
+	 */
+	public void setLxParameter(ParametersEnum lxParameter) {
+		this.lxParameter = lxParameter;
+	}
+
+	/**
+	 * @return the lyParameter
+	 */
+	public ParametersEnum getLyParameter() {
+		return lyParameter;
+	}
+
+	/**
+	 * @param lyParameter the lyParameter to set
+	 */
+	public void setLyParameter(ParametersEnum lyParameter) {
+		this.lyParameter = lyParameter;
+	}
+
+	/**
+	 * @return the rxParameter
+	 */
+	public ParametersEnum getRxParameter() {
+		return rxParameter;
+	}
+
+	/**
+	 * @param rxParameter the rxParameter to set
+	 */
+	public void setRxParameter(ParametersEnum rxParameter) {
+		this.rxParameter = rxParameter;
+	}
+
+	/**
+	 * @return the ryParameter
+	 */
+	public ParametersEnum getRyParameter() {
+		return ryParameter;
+	}
+
+	/**
+	 * @param ryParameter the ryParameter to set
+	 */
+	public void setRyParameter(ParametersEnum ryParameter) {
+		this.ryParameter = ryParameter;
 	}
 
 

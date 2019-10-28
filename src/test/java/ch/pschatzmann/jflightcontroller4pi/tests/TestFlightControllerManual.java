@@ -50,7 +50,7 @@ public class TestFlightControllerManual {
 		rules.add(new ManualModeRule(ctl, aileron,ParametersEnum.ROLL ));
 		rules.add(new ManualModeRule(ctl, throttle,ParametersEnum.SPEED));
 
-		ctl.setMode(new FlightMode(ctl, rules));
+		ctl.setMode(new FlightMode(rules));
 
 		new Thread(() -> {
 			ctl.run();
