@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.integration;
+package ch.pschatzmann.jflightcontroller4pi.tuning;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,7 +31,7 @@ public class FlightgearLauncher implements IDevice {
 	private int maxWait = 300; // in sec
 
 	public FlightgearLauncher() {
-
+		log.info("FlightgearLauncher");
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
-import ch.pschatzmann.jflightcontroller4pi.integration.FlightgearLauncher;
 import ch.pschatzmann.jflightcontroller4pi.integration.GraphiteMetrics;
 import ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
@@ -67,10 +66,10 @@ public class PIDTuner {
 	}
 
 	protected static void setup() {
-		laucher = new FlightgearLauncher();
 
 		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
 		ctl = (FlightController) context.getBean("flightController");
+		laucher = (FlightgearLauncher) context.getBean("flightgearLauncher");
 		ctl.addDevices(Arrays.asList(new HeartBeat()));
 		ctl.selectMode("stabilizedMode");
 		tuneError = new PIDError(ctl);

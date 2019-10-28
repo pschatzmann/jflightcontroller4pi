@@ -19,11 +19,11 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter;
 import ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions;
-import ch.pschatzmann.jflightcontroller4pi.integration.FlightgearLauncher;
 import ch.pschatzmann.jflightcontroller4pi.integration.IFieldDefinitions;
 import ch.pschatzmann.jflightcontroller4pi.integration.Utils;
 import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
+import ch.pschatzmann.jflightcontroller4pi.tuning.FlightgearLauncher;
 
 public class TestFlightGear {
 	static FlightgearLauncher fgl = new FlightgearLauncher();
