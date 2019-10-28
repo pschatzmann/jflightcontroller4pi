@@ -27,7 +27,7 @@ public class FlightgearLauncher implements IDevice {
 	private static Logger log = LoggerFactory.getLogger(FlightgearLauncher.class);
 	private String host = "localhost";
 	private int port = 7002;
-	private String startCommand = "/Applications/FlightGear.app/Contents/MacOS/fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
+	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
 	private int maxWait = 300; // in sec
 
 	public FlightgearLauncher() {

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ch.pschatzmann.jflightcontroller4pi.tests.TestFlightGear
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 30.791 sec
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 85.359 sec
