@@ -30,7 +30,7 @@ public class TestFlightGear {
 	
 	@BeforeClass
 	public static void startup() {
-		fgl.doStart();
+		fgl.start();
 		
 	}
 	
@@ -140,7 +140,7 @@ public class TestFlightGear {
 	
 	@Test
 	public void testRestart() {
-		Assert.assertTrue(fgl.doStart());
+		Assert.assertTrue(fgl.start());
 	}
 
 

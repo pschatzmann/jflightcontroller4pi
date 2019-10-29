@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.net.telnet.TelnetClient;
 import org.slf4j.Logger;
@@ -44,14 +47,14 @@ public class FlightgearLauncher {
 	 * 
 	 * @return
 	 */
-	public boolean doStart() {
+	public boolean start() {
 		if (restart()) {
 			return true;
 		}
 		if (!this.isRunning()) {
 			this.kill();
 		}
-		return start();
+		return start1();
 	}
 
 	/**
@@ -59,7 +62,7 @@ public class FlightgearLauncher {
 	 * 
 	 * @return
 	 */
-	protected boolean start() {
+	protected boolean start1() {
 		try {
 			log.info("start");
 			ProcessBuilder processBuilder = new ProcessBuilder();
@@ -99,11 +102,34 @@ public class FlightgearLauncher {
 	}
 
 	/**
+	 * Time limited restart. We fail if the restart is not returing within 15
+	 * seconds. We need this because sometimes filightgear seems to hang and
+	 * does not respond to user input any more
+	 * 
+	 * @return
+	 */
+
+	protected boolean restart() {
+		ForkJoinPool forkJoinPool = new ForkJoinPool(1);
+		boolean result = false;
+		try {
+			result = forkJoinPool.submit(() -> {
+				return restart1();
+			}).get(15, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			result = false;
+		} catch (Exception e) {
+			result = false;
+		}
+		return result;
+	}
+
+	/**
 	 * Restart via telnet
 	 * 
 	 * @return
 	 */
-	protected boolean restart() {
+	protected boolean restart1() {
 		TelnetClient telnet = new TelnetClient();
 		try {
 			log.info("restart");

@@ -37,14 +37,14 @@ import io.jenetics.util.Factory;
 
 public class PIDTuner {
 	private static Logger log = LoggerFactory.getLogger(PIDTuner.class);
-	private static double pitchError;
-	private static long pitchCount;
-	private static double rollError;
-	private static int rollCount;
-	private static PIDError tuneError;
-	private static FlightController ctl;
-	private static FlightgearLauncher laucher;
-	private static HeartBeatSensor heartBeatSensor;
+	private double pitchError;
+	private long pitchCount;
+	private double rollError;
+	private int rollCount;
+	private PIDError tuneError;
+	private FlightController ctl;
+	private FlightgearLauncher laucher;
+	private HeartBeatSensor heartBeatSensor;
 
 	/**
 	 * The PIDTuner starts here...
@@ -52,20 +52,21 @@ public class PIDTuner {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		setup();
-		Genotype<DoubleGene> result = evaluate();
+		PIDTuner t = new PIDTuner();
+		t.setup();
+		Genotype<DoubleGene> result = t.evaluate();
 		System.out.println("Best result:" + result);
 		System.exit(0);
 	}
 
-	protected static Genotype<DoubleGene> evaluate() {
+	protected Genotype<DoubleGene> evaluate() {
 		// 1.) Define the genotype (factory) suitable
 		// for the problem.
 		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.9, 100),
 				DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.1, 100));
 
 		// 3.) Create the execution environment.
-		Engine<DoubleGene, Double> engine = Engine.builder(PIDTuner::eval, gtf).build();
+		Engine<DoubleGene, Double> engine = Engine.builder(this::eval, gtf).build();
 
 		// 4.) Start the execution (evolution) and
 		// collect the result.
@@ -73,7 +74,7 @@ public class PIDTuner {
 		return result;
 	}
 
-	protected static void setup() {
+	protected void setup() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
 		ctl = (FlightController) context.getBean("flightController");
 		laucher = (FlightgearLauncher) context.getBean("flightgearLauncher");
@@ -88,7 +89,7 @@ public class PIDTuner {
 
 	}
 
-	public synchronized static Double eval(Genotype<DoubleGene> gt) {
+	public synchronized  Double eval(Genotype<DoubleGene> gt) {
 		log.info("eval");
 
 		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
@@ -131,10 +132,10 @@ public class PIDTuner {
 		return fitness;
 	}
 
-	protected static double tryEval() throws Exception {
+	protected double tryEval() throws Exception {
 		log.info("tryEval");
 		// restart flightgear
-		laucher.doStart();
+		laucher.start();
 
 		// reset the error
 		ctl.sleep(1000);
