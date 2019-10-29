@@ -20,6 +20,9 @@ import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 import io.jenetics.DoubleChromosome;
 import io.jenetics.DoubleGene;
 import io.jenetics.Genotype;
+import io.jenetics.MeanAlterer;
+import io.jenetics.Mutator;
+import io.jenetics.engine.Codec;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import io.jenetics.util.Factory;
@@ -58,15 +61,18 @@ public class PIDTuner {
 		System.out.println("Best result:" + result);
 		System.exit(0);
 	}
+	
+
 
 	protected Genotype<DoubleGene> evaluate() {
 		// 1.) Define the genotype (factory) suitable
 		// for the problem.
-		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.9, 100),
-				DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.1, 100));
+		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0.0, 1.0, 6));
 
 		// 3.) Create the execution environment.
-		Engine<DoubleGene, Double> engine = Engine.builder(this::eval, gtf).build();
+		Engine<DoubleGene, Double> engine = Engine.builder(this::eval, gtf)
+			.alterers(new Mutator<>(0.1),new MeanAlterer<>())
+			.build();
 
 		// 4.) Start the execution (evolution) and
 		// collect the result.
@@ -91,6 +97,7 @@ public class PIDTuner {
 
 	public synchronized  Double eval(Genotype<DoubleGene> gt) {
 		log.info("eval");
+		
 
 		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
 		PIDModeRule ruleElevaor = (PIDModeRule) elevator.getRecalculate();
