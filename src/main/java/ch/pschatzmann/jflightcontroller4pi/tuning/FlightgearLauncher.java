@@ -34,7 +34,9 @@ public class FlightgearLauncher {
 	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
 	private int maxWaitStart = 300; // in sec
 	private int maxWaitRestart = 60; // in sec
-
+	private ForkJoinPool forkJoinPool = new ForkJoinPool(1);
+	private Process process;
+	
 	/**
 	 * Default constructor
 	 */
@@ -70,7 +72,7 @@ public class FlightgearLauncher {
 			processBuilder.redirectErrorStream(true);
 			processBuilder.command("bash", "-c", startCommand);
 			log.info(startCommand);
-			Process process = processBuilder.start();
+			process = processBuilder.start();
 
 			StringBuilder output = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -111,7 +113,6 @@ public class FlightgearLauncher {
 	 */
 
 	protected boolean restart() {
-		ForkJoinPool forkJoinPool = new ForkJoinPool(1);
 		boolean result = false;
 		try {
 			result = forkJoinPool.submit(() -> {
@@ -176,14 +177,7 @@ public class FlightgearLauncher {
 	 * @return
 	 */
 	protected boolean isRunning() {
-		boolean result = false;
-		try {
-			String line = getProcessID();
-			result = line != null;
-		} catch (Exception ex) {
-			log.error("Could not determine if process is running", ex);
-			result = false;
-		}
+		boolean result = process != null ? process.isAlive() : false;
 		log.info("isRunning ? is {}", result);
 		return result;
 	}
@@ -213,19 +207,10 @@ public class FlightgearLauncher {
 	protected void kill() {
 		try {
 			log.info("kill");
-			ProcessBuilder processBuilder = new ProcessBuilder();
-			processBuilder.redirectErrorStream(true);
-			processBuilder.command("bash", "-c", "kill " + getProcessID());
-			log.info(startCommand);
-			Process process = processBuilder.start();
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line = reader.readLine();
-			while (line != null) {
-				log.info(line);
-				line = reader.readLine();
+			if (process!=null) {
+				process.destroyForcibly();
+				log.info("-> the process has been killed");
 			}
-			log.info("-> the process has been killed");
 		} catch (Exception ex) {
 			log.error("Could not kill flightgear", ex);
 		}
