@@ -10,7 +10,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
-import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
@@ -26,7 +25,11 @@ import io.jenetics.engine.EvolutionResult;
 import io.jenetics.util.Factory;
 
 /**
- * We try to use a genetic algorythm to determine the best P,I and D settings  for the aileron and elevator.
+ * We try to use a genetic algorythm to determine the best P,I and D settings
+ * for the aileron and elevator using Flightgear as flight simulator:
+ * 
+ * For that we just try to fly as streight ahead as possible for 1 minute with 0
+ * pitch and 0 roll.
  * 
  * @author pschatzmann
  *
@@ -41,10 +44,11 @@ public class PIDTuner {
 	private static PIDError tuneError;
 	private static FlightController ctl;
 	private static FlightgearLauncher laucher;
-	private static boolean isActive;
+	private static HeartBeatSensor heartBeatSensor;
 
 	/**
 	 * The PIDTuner starts here...
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -57,8 +61,8 @@ public class PIDTuner {
 	protected static Genotype<DoubleGene> evaluate() {
 		// 1.) Define the genotype (factory) suitable
 		// for the problem.
-		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0, 1, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.9, 100),
-				DoubleChromosome.of(0, 1, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.1, 100));
+		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.9, 100),
+				DoubleChromosome.of(0, 10, 100), DoubleChromosome.of(0, 0.9, 100), DoubleChromosome.of(0, 0.1, 100));
 
 		// 3.) Create the execution environment.
 		Engine<DoubleGene, Double> engine = Engine.builder(PIDTuner::eval, gtf).build();
@@ -73,10 +77,11 @@ public class PIDTuner {
 		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
 		ctl = (FlightController) context.getBean("flightController");
 		laucher = (FlightgearLauncher) context.getBean("flightgearLauncher");
-		ctl.addDevices(Arrays.asList(new HeartBeat()));
+		heartBeatSensor = new HeartBeatSensor();
+		ctl.addDevices(Arrays.asList(heartBeatSensor));
 		ctl.selectMode("stabilizedMode");
 		tuneError = new PIDError(ctl);
-		
+
 		new Thread(() -> {
 			ctl.run();
 		}).start();
@@ -113,16 +118,16 @@ public class PIDTuner {
 				fitness = tryEval();
 				break;
 			} catch (Exception ex) {
-				log.error("Eval has failed: " + ex.getMessage()+" - we retry...");
+				log.error("Eval has failed: " + ex.getMessage() + " - we retry...");
 			}
 		}
-		
+
 		StringBuilder sbuf = new StringBuilder();
 		Formatter fmt = new Formatter(sbuf);
 		fmt.format("fitness: %f <= elevator: %s / aileron: %s", fitness, ruleElevaor.toString(), ruleAileron.toString());
 		System.out.println(sbuf.toString());
 		fmt.close();
-		
+
 		return fitness;
 	}
 
@@ -137,41 +142,13 @@ public class PIDTuner {
 
 		// evaluate for 1 minute
 		for (int j = 0; j < 600; j++) {
-			if (!isActive) {
+			if (!heartBeatSensor.isActive()) {
 				throw new Exception("We did not get any telemetry data: Flightgear might have crashed");
 			}
 			ctl.sleep(100);
 		}
 		double fitness = tuneError.getFitness();
 		return fitness;
-	}
-
-	/**
-	 * We try to make sure that filghtgear is running and prividing actual data
-	 * @author pschatzmann
-	 *
-	 */
-	static class HeartBeat implements ISensor {
-		FlightController flightController;
-
-		@Override
-		public void setup(FlightController flightController) {
-			this.flightController = flightController;
-		}
-
-		@Override
-		public void shutdown() {
-		}
-
-		@Override
-		public String getName() {
-			return "HeartBeat";
-		}
-
-		@Override
-		public void processInput() {
-			isActive = (System.currentTimeMillis() - this.flightController.getValue(ParametersEnum.SENSORPITCH).timestamp) < 1000;
-		}
 	}
 
 }
