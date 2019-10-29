@@ -18,24 +18,24 @@ import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 
 /**
  * Launch Flightgear via the command line. If it is already running we just
- * reset it via telnet
+ * reset it via telnet. Because this is not very reliable because flightgear
+ * tends to crash or hang we need to recover from these situations as well.
  * 
  * @author pschatzmann
  *
  */
-public class FlightgearLauncher implements IDevice {
+public class FlightgearLauncher {
 	private static Logger log = LoggerFactory.getLogger(FlightgearLauncher.class);
 	private String host = "localhost";
 	private int port = 7002;
 	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
 	private int maxWait = 300; // in sec
 
+	/**
+	 * Default constructor
+	 */
 	public FlightgearLauncher() {
 		log.info("FlightgearLauncher");
-	}
-
-	@Override
-	public void setup(FlightController flightController) {
 	}
 
 	/**
@@ -49,11 +49,9 @@ public class FlightgearLauncher implements IDevice {
 			return true;
 		}
 		if (!this.isRunning()) {
-			return start();
-		} else {
-			log.error("Application is running but restart failed");
-			return false;
+			this.kill();
 		}
+		return start();
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class FlightgearLauncher implements IDevice {
 	 * 
 	 * @return
 	 */
-	public boolean start() {
+	protected boolean start() {
 		try {
 			log.info("start");
 			ProcessBuilder processBuilder = new ProcessBuilder();
@@ -105,8 +103,8 @@ public class FlightgearLauncher implements IDevice {
 	 * 
 	 * @return
 	 */
-	public boolean restart() {
-		TelnetClient telnet=new TelnetClient();
+	protected boolean restart() {
+		TelnetClient telnet = new TelnetClient();
 		try {
 			log.info("restart");
 			telnet.connect(host, port);
@@ -124,6 +122,7 @@ public class FlightgearLauncher implements IDevice {
 					log.info("-> restart success");
 					return true;
 				}
+				line = in.readLine();
 			}
 
 			log.info("-> restart failed");
@@ -132,7 +131,7 @@ public class FlightgearLauncher implements IDevice {
 			log.info("-> restart failed: {}", ex.getMessage());
 			return false;
 		} finally {
-			if (telnet!=null) {
+			if (telnet != null) {
 				try {
 					telnet.disconnect();
 				} catch (IOException e) {
@@ -143,31 +142,65 @@ public class FlightgearLauncher implements IDevice {
 		}
 	}
 
-	public boolean isRunning() {
+	/**
+	 * Checks if flightgear is already running with the help of the process id
+	 * 
+	 * @return
+	 */
+	protected boolean isRunning() {
+		boolean result = false;
 		try {
-			ProcessBuilder processBuilder = new ProcessBuilder();
+			String line = getProcessID();
+			result = line != null;
+		} catch (Exception ex) {
+			log.error("Could not determine if process is running", ex);
+			result = false;
+		}
+		log.info("isRunning ? is {}", result);
+		return result;
+	}
 
+	/**
+	 * Detrmines the process id
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	protected String getProcessID() throws IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.redirectErrorStream(true);
+		processBuilder.command("bash", "-c", "pgrep fgfs");
+		log.info(startCommand);
+		Process process = processBuilder.start();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		String line = reader.readLine();
+		log.info("The process id is: {} ", line);
+		return line;
+	}
+
+	/**
+	 * Kills the flightgear process
+	 */
+	protected void kill() {
+		try {
+			log.info("kill");
+			ProcessBuilder processBuilder = new ProcessBuilder();
 			processBuilder.redirectErrorStream(true);
-			processBuilder.command("bash", "-c", "pgrep fgfs");
+			processBuilder.command("bash", "-c", "kill " + getProcessID());
 			log.info(startCommand);
 			Process process = processBuilder.start();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
 			String line = reader.readLine();
-			return line != null;
+			while (line != null) {
+				log.info(line);
+				line = reader.readLine();
+			}
+			log.info("-> the process has been killed");
 		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			log.error("Could not kill flightgear", ex);
 		}
-	}
-
-	@Override
-	public void shutdown() {
-	}
-
-	@Override
-	public String getName() {
-		return this.getClass().getSimpleName();
 	}
 
 	/**

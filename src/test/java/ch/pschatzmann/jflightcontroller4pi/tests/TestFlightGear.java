@@ -30,7 +30,6 @@ public class TestFlightGear {
 	
 	@BeforeClass
 	public static void startup() {
-		fgl.setup(null);
 		fgl.doStart();
 		
 	}

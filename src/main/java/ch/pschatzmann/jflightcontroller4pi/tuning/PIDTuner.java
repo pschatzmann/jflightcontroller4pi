@@ -34,15 +34,19 @@ import io.jenetics.util.Factory;
 
 public class PIDTuner {
 	private static Logger log = LoggerFactory.getLogger(PIDTuner.class);
-	static double pitchError;
-	static long pitchCount;
-	static double rollError;
-	static int rollCount;
-	static PIDError tuneError;
-	static FlightController ctl;
-	static FlightgearLauncher laucher;
-	static boolean isActive;
+	private static double pitchError;
+	private static long pitchCount;
+	private static double rollError;
+	private static int rollCount;
+	private static PIDError tuneError;
+	private static FlightController ctl;
+	private static FlightgearLauncher laucher;
+	private static boolean isActive;
 
+	/**
+	 * The PIDTuner starts here...
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		setup();
 		Genotype<DoubleGene> result = evaluate();
@@ -66,7 +70,6 @@ public class PIDTuner {
 	}
 
 	protected static void setup() {
-
 		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
 		ctl = (FlightController) context.getBean("flightController");
 		laucher = (FlightgearLauncher) context.getBean("flightgearLauncher");
@@ -118,6 +121,7 @@ public class PIDTuner {
 		Formatter fmt = new Formatter(sbuf);
 		fmt.format("fitness: %f <= elevator: %s / aileron: %s", fitness, ruleElevaor.toString(), ruleAileron.toString());
 		System.out.println(sbuf.toString());
+		fmt.close();
 		
 		return fitness;
 	}
