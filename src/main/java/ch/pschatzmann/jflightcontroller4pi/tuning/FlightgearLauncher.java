@@ -35,7 +35,7 @@ public class FlightgearLauncher {
 	private int port = 7002;
 	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
 	private int maxWaitStart = 400; // in sec
-	private int maxWaitRestart = 60; // in sec
+	private int maxWaitRestart = 5; // in sec
 	private ForkJoinPool forkJoinPool = new ForkJoinPool(1);
 	private Process process;
 	
