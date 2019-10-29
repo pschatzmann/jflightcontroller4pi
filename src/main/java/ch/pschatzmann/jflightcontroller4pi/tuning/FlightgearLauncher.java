@@ -56,7 +56,7 @@ public class FlightgearLauncher {
 		if (restart()) {
 			return true;
 		}
-		if (!this.isRunning()) {
+		if (this.isRunning()) {
 			this.kill();
 		}
 		return start1();
@@ -204,7 +204,7 @@ public class FlightgearLauncher {
 			result.add(line);
 			line = reader.readLine();
 		}
-		log.info("The process id is: {} ", line);
+		log.info("The process ids are: {} ", result.toString());
 		process.destroy();
 		return result;
 	}
@@ -220,11 +220,15 @@ public class FlightgearLauncher {
 				log.info("-> the process has been killed");
 			}
 			
-			// this should not be necessary
-			for (String id : getProcessIDs()) {
-				String cmd = "kill "+id;
-				log.info(cmd);
-	            Process p = Runtime.getRuntime().exec(cmd);
+			Collection ids = getProcessIDs();
+			if (!ids.isEmpty()) {
+				log.warn("We kill the following processes {}",ids.toString());
+				// this should not be necessary
+				for (String id : getProcessIDs()) {
+					String cmd = "kill "+id;
+					log.info(cmd);
+		            Process p = Runtime.getRuntime().exec(cmd);
+				}
 			}
 			
 		} catch (Exception ex) {
