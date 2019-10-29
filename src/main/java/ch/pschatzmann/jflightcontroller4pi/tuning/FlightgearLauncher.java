@@ -32,7 +32,7 @@ public class FlightgearLauncher {
 	private String host = "localhost";
 	private int port = 7002;
 	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
-	private int maxWaitStart = 300; // in sec
+	private int maxWaitStart = 400; // in sec
 	private int maxWaitRestart = 60; // in sec
 	private ForkJoinPool forkJoinPool = new ForkJoinPool(1);
 	private Process process;
@@ -84,6 +84,7 @@ public class FlightgearLauncher {
 				if (line != null) {
 					log.info(line);
 					if (line.contains("Hobbs system started")) {
+						Thread.sleep(2000);
 						log.info("-> start success");
 						return true;
 					}
@@ -172,34 +173,34 @@ public class FlightgearLauncher {
 	}
 
 	/**
-	 * Checks if flightgear is already running with the help of the process id
+	 * Checks if flightgear has already been started
 	 * 
 	 * @return
 	 */
 	protected boolean isRunning() {
-		boolean result = process != null ? process.isAlive() : false;
+		boolean result = process != null;
 		log.info("isRunning ? is {}", result);
 		return result;
 	}
 
-	/**
-	 * Detrmines the process id
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	protected String getProcessID() throws IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.redirectErrorStream(true);
-		processBuilder.command("bash", "-c", "pgrep fgfs");
-		log.info(startCommand);
-		Process process = processBuilder.start();
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		String line = reader.readLine();
-		log.info("The process id is: {} ", line);
-		return line;
-	}
+//	/**
+//	 * Detrmines the process id
+//	 * 
+//	 * @return
+//	 * @throws IOException
+//	 */
+//	protected String getProcessID() throws IOException {
+//		ProcessBuilder processBuilder = new ProcessBuilder();
+//		processBuilder.redirectErrorStream(true);
+//		processBuilder.command("bash", "-c", "pgrep fgfs");
+//		log.info(startCommand);
+//		Process process = processBuilder.start();
+//
+//		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//		String line = reader.readLine();
+//		log.info("The process id is: {} ", line);
+//		return line;
+//	}
 
 	/**
 	 * Kills the flightgear process
@@ -208,7 +209,7 @@ public class FlightgearLauncher {
 		try {
 			log.info("kill");
 			if (process!=null) {
-				process.destroyForcibly();
+				process.destroyForcibly().waitFor();
 				log.info("-> the process has been killed");
 			}
 		} catch (Exception ex) {
