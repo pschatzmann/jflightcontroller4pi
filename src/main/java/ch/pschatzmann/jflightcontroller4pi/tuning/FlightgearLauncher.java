@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -183,24 +185,29 @@ public class FlightgearLauncher {
 		return result;
 	}
 
-//	/**
-//	 * Detrmines the process id
-//	 * 
-//	 * @return
-//	 * @throws IOException
-//	 */
-//	protected String getProcessID() throws IOException {
-//		ProcessBuilder processBuilder = new ProcessBuilder();
-//		processBuilder.redirectErrorStream(true);
-//		processBuilder.command("bash", "-c", "pgrep fgfs");
-//		log.info(startCommand);
-//		Process process = processBuilder.start();
-//
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//		String line = reader.readLine();
-//		log.info("The process id is: {} ", line);
-//		return line;
-//	}
+	/**
+	 * Detrmines the process id
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	protected Collection<String> getProcessIDs() throws IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.redirectErrorStream(true);
+		processBuilder.command("bash", "-c", "pgrep fgfs");
+		Process process = processBuilder.start();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		Collection<String> result = new ArrayList();
+		String line = reader.readLine();
+		while (line!=null) {
+			result.add(line);
+			line = reader.readLine();
+		}
+		log.info("The process id is: {} ", line);
+		process.destroy();
+		return result;
+	}
 
 	/**
 	 * Kills the flightgear process
@@ -212,6 +219,14 @@ public class FlightgearLauncher {
 				process.destroyForcibly().waitFor();
 				log.info("-> the process has been killed");
 			}
+			
+			// this should not be necessary
+			for (String id : getProcessIDs()) {
+				String cmd = "kill "+id;
+				log.info(cmd);
+	            Process p = Runtime.getRuntime().exec(cmd);
+			}
+			
 		} catch (Exception ex) {
 			log.error("Could not kill flightgear", ex);
 		}
