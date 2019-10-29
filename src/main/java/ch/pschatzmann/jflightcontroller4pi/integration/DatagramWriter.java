@@ -43,7 +43,6 @@ public class DatagramWriter implements IOutDevice {
 	
 	/**
 	 * Constructor which provides all dependent objects
-	 * @param flightController
 	 * @param outputFields
 	 * @param port
 	 */

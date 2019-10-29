@@ -29,7 +29,6 @@ public class AutoPilot implements IOutDevice {
 	
 	/**
 	 * Default Constructor
-	 * @param controller
 	 */
 	
 	public AutoPilot(){}

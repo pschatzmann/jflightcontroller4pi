@@ -42,7 +42,6 @@ public class DatagramReader implements ISensor {
 	/**
 	 * Default Constructor
 	 * 
-	 * @param flightController
 	 * @param inputFields
 	 * @param port
 	 */
