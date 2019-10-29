@@ -32,7 +32,8 @@ public class FlightgearLauncher {
 	private String host = "localhost";
 	private int port = 7002;
 	private String startCommand = "fgfs --altitude=10000 --vc=100 --timeofday=noon --generic=socket,in,10,,7000,udp,my-io --generic=socket,out,10,,7001,udp,my-io --airport=LSGS --timeofday=noon --telnet=7002 --httpd=7003 ";
-	private int maxWait = 300; // in sec
+	private int maxWaitStart = 300; // in sec
+	private int maxWaitRestart = 60; // in sec
 
 	/**
 	 * Default constructor
@@ -76,7 +77,7 @@ public class FlightgearLauncher {
 
 			int count = 0;
 			String line;
-			while (count < maxWait && process.isAlive()) {
+			while (count < maxWaitStart && process.isAlive()) {
 				line = reader.readLine();
 				if (line != null) {
 					log.info(line);
@@ -102,7 +103,7 @@ public class FlightgearLauncher {
 	}
 
 	/**
-	 * Time limited restart. We fail if the restart is not returing within 15
+	 * Time limited restart. We fail if the restart is not returing within 60
 	 * seconds. We need this because sometimes filightgear seems to hang and
 	 * does not respond to user input any more
 	 * 
@@ -115,7 +116,7 @@ public class FlightgearLauncher {
 		try {
 			result = forkJoinPool.submit(() -> {
 				return restart1();
-			}).get(15, TimeUnit.SECONDS);
+			}).get(this.maxWaitRestart, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
 			log.info("restart has timed out!");
 			result = false;
@@ -276,18 +277,31 @@ public class FlightgearLauncher {
 	}
 
 	/**
-	 * @return the maxWait
+	 * @return the maxWaitStart
 	 */
-	public int getMaxWait() {
-		return maxWait;
+	public int getMaxWaitStart() {
+		return maxWaitStart;
 	}
 
 	/**
-	 * @param maxWait
-	 *            the maxWait to set
+	 * @param maxWaitStart the maxWaitStart to set
 	 */
-	public void setMaxWait(int maxWait) {
-		this.maxWait = maxWait;
+	public void setMaxWaitStart(int maxWaitStart) {
+		this.maxWaitStart = maxWaitStart;
+	}
+
+	/**
+	 * @return the maxWaitRestart
+	 */
+	public int getMaxWaitRestart() {
+		return maxWaitRestart;
+	}
+
+	/**
+	 * @param maxWaitRestart the maxWaitRestart to set
+	 */
+	public void setMaxWaitRestart(int maxWaitRestart) {
+		this.maxWaitRestart = maxWaitRestart;
 	}
 
 }
