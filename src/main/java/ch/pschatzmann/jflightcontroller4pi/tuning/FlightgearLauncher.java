@@ -117,6 +117,7 @@ public class FlightgearLauncher {
 				return restart1();
 			}).get(15, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
+			log.info("restart has timed out!");
 			result = false;
 		} catch (Exception e) {
 			result = false;
