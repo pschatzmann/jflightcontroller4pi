@@ -31,7 +31,7 @@ public class HeartBeatSensor implements ISensor {
 
 	@Override
 	public void processInput() {
-		isActive = (System.currentTimeMillis() - this.flightController.getValue(ParametersEnum.SENSORPITCH).timestamp) < 1000;
+		isActive = (System.currentTimeMillis() - this.flightController.getValue(ParametersEnum.SENSORPITCH).timestamp) < 2000;
 	}
 
 	/**

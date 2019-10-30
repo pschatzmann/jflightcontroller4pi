@@ -39,7 +39,15 @@ public class PIDError {
 	double getError() {
 		return (pitchError / pitchCount) + (rollError / rollCount);		
 	}
-	
+
+	double getError(ParametersEnum par) {
+		if (par == ParametersEnum.PITCH)
+			return (pitchError / pitchCount);		
+		if (par == ParametersEnum.ROLL)
+			return (rollError / rollCount);	
+		return (pitchError / pitchCount) + (rollError / rollCount);		
+	}
+
 	double getFitness() {
 		return 1.0 / getError();
 	}

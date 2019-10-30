@@ -1,7 +1,11 @@
 package ch.pschatzmann.jflightcontroller4pi.tuning;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Formatter;
+import java.util.Optional;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +32,7 @@ import io.jenetics.engine.EvolutionResult;
 import io.jenetics.util.Factory;
 
 /**
- * We try to use a genetic algorythm to determine the best P,I and D settings
- * for the aileron and elevator using Flightgear as flight simulator:
- * 
- * For that we just try to fly as streight ahead as possible for 1 minute with 0
- * pitch and 0 roll.
+ * We try to find the best P, I and D values for the Aileron and Elevator
  * 
  * @author pschatzmann
  *
@@ -40,10 +40,6 @@ import io.jenetics.util.Factory;
 
 public class PIDTuner {
 	private static Logger log = LoggerFactory.getLogger(PIDTuner.class);
-	private double pitchError;
-	private long pitchCount;
-	private double rollError;
-	private int rollCount;
 	private PIDError tuneError;
 	private FlightController ctl;
 	private FlightgearLauncher laucher;
@@ -57,27 +53,60 @@ public class PIDTuner {
 	public static void main(String[] args) {
 		PIDTuner t = new PIDTuner();
 		t.setup();
-		Genotype<DoubleGene> result = t.evaluate();
-		System.out.println("Best result:" + result);
+
+		PIDResult best = t.evaluate();
+		System.out.println("Best result:" + best);
 		System.exit(0);
+	}
+
+	protected PIDResult evaluate() {
+		// optimize the aileron
+		IOutDeviceEx aileron = ctl.getControlDevice(ParametersEnum.AILERON);
+		PIDModeRule ruleA = (PIDModeRule) aileron.getRecalculate();
+		PIDResult result = evaluateDevice(ruleA, ParametersEnum.ROLL);
+
+		// use optimized elevator for further processing
+		ruleA.setP(result.p);
+		ruleA.setI(result.i);
+		ruleA.setD(result.d);
+
+		// optimize elevator
+		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
+		PIDModeRule rule = (PIDModeRule) elevator.getRecalculate();
+		 result = evaluateDevice(rule, ParametersEnum.PITCH);
+		return result;
 	}
 	
 
+	protected PIDResult evaluateDevice(PIDModeRule rule, ParametersEnum sensor) {
 
-	protected Genotype<DoubleGene> evaluate() {
-		// 1.) Define the genotype (factory) suitable
-		// for the problem.
-		Factory<Genotype<DoubleGene>> gtf = Genotype.of(DoubleChromosome.of(0.0, 1.0, 6));
+		// optimize p
+		Optional<PIDResult> result = this.getRange(0.1, 1.0, 10).map(doubleVal -> {
+			rule.setP(doubleVal);
+			return rule;
+		}).map(r -> new PIDResult(this, sensor, r)).min(Comparator.comparing(e -> e.error));
 
-		// 3.) Create the execution environment.
-		Engine<DoubleGene, Double> engine = Engine.builder(this::eval, gtf)
-			.alterers(new Mutator<>(0.1),new MeanAlterer<>())
-			.build();
+		// optimize i
+		rule.setP(result.get().p);
+		result = this.getRange(0.0, 0.1, 10).map(doubleVal -> {
+			rule.setI(doubleVal);
+			return rule;
+		}).map(r -> new PIDResult(this, sensor, r)).min(Comparator.comparing(e -> e.error));
 
-		// 4.) Start the execution (evolution) and
-		// collect the result.
-		Genotype<DoubleGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
-		return result;
+		// optimize d
+		rule.setP(result.get().p);
+		rule.setI(result.get().i);
+		result = this.getRange(0.0, 0.1, 10).map(doubleVal -> {
+			rule.setD(doubleVal);
+			return rule;
+		}).map(r -> new PIDResult(this, sensor, r)).min(Comparator.comparing(e -> e.error));
+
+		return result.get();
+
+	}
+
+	protected Stream<Double> getRange(double from, double to, int steps) {
+		return DoubleStream.iterate(0, n -> n + (to - from) / steps).limit(steps).boxed();
 	}
 
 	protected void setup() {
@@ -95,35 +124,18 @@ public class PIDTuner {
 
 	}
 
-	public synchronized  Double eval(Genotype<DoubleGene> gt) {
+	protected Double eval(PIDModeRule rule, ParametersEnum par) {
 		log.info("eval");
-		
-
-		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
-		PIDModeRule ruleElevaor = (PIDModeRule) elevator.getRecalculate();
-		IOutDeviceEx aileron = ctl.getControlDevice(ParametersEnum.AILERON);
-		PIDModeRule ruleAileron = (PIDModeRule) aileron.getRecalculate();
-
-		DoubleChromosome dc = gt.getChromosome().as(DoubleChromosome.class);
-		ruleElevaor.setP(dc.doubleValue(0));
-		ruleElevaor.setI(dc.doubleValue(1));
-		ruleElevaor.setD(dc.doubleValue(2));
-		ruleElevaor.setup();
-
-		ruleAileron.setP(dc.doubleValue(3));
-		ruleAileron.setI(dc.doubleValue(4));
-		ruleAileron.setD(dc.doubleValue(5));
-		ruleAileron.setup();
 
 		// set target
 		ctl.setValue(ParametersEnum.PITCH, 0);
 		ctl.setValue(ParametersEnum.ROLL, 0);
 		ctl.setValue(ParametersEnum.THROTTLE, 0.8);
 
-		double fitness = Double.MIN_VALUE;
+		double error = Double.MAX_VALUE;
 		while (true) {
 			try {
-				fitness = tryEval();
+				error = tryEval(par);
 				break;
 			} catch (Exception ex) {
 				log.error("Eval has failed: " + ex.getMessage() + " - we retry...");
@@ -132,14 +144,14 @@ public class PIDTuner {
 
 		StringBuilder sbuf = new StringBuilder();
 		Formatter fmt = new Formatter(sbuf);
-		fmt.format("fitness: %f <= elevator: %s / aileron: %s", fitness, ruleElevaor.toString(), ruleAileron.toString());
+		fmt.format("error: %f <=  %s", error, rule.toString());
 		System.out.println(sbuf.toString());
 		fmt.close();
 
-		return fitness;
+		return error;
 	}
 
-	protected double tryEval() throws Exception {
+	protected double tryEval(ParametersEnum par) throws Exception {
 		log.info("tryEval");
 		// restart flightgear
 		laucher.start();
@@ -155,8 +167,45 @@ public class PIDTuner {
 			}
 			ctl.sleep(100);
 		}
-		double fitness = tuneError.getFitness();
-		return fitness;
+		log.info("Setting {} to {}", par.name(), -10);
+		ctl.setValue(par, 10);
+		for (int j = 0; j < 600; j++) {
+			if (!heartBeatSensor.isActive()) {
+				throw new Exception("We did not get any telemetry data: Flightgear might have crashed");
+			}
+			ctl.sleep(100);
+		}
+
+		double error = tuneError.getError(par);
+		return error;
+	}
+
+	static class PIDResult {
+		double p;
+		double i;
+		double d;
+		double error;
+
+		PIDResult(PIDTuner pidTuner, ParametersEnum sensor, PIDModeRule rule) {
+			error = pidTuner.eval(rule, sensor);
+			p = rule.getP();
+			i = rule.getI();
+			d = rule.getD();
+			log.info("PIDResult: ", this.toString());
+		}
+
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			sb.append("p=");
+			sb.append(p);
+			sb.append(" i=");
+			sb.append(i);
+			sb.append(" d=");
+			sb.append(d);
+			sb.append(" -> ");
+			sb.append(error);
+			return sb.toString();
+		}
 	}
 
 }
