@@ -74,6 +74,7 @@ public class PIDTuner {
 		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
 		PIDModeRule rule = (PIDModeRule) elevator.getRecalculate();
 		 result = evaluateDevice(rule, ParametersEnum.PITCH);
+		 
 		return result;
 	}
 	

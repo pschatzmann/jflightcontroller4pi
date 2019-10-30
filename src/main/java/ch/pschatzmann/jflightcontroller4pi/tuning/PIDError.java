@@ -18,12 +18,12 @@ public class PIDError {
 	
 	PIDError(FlightController ctl){
 		ctl.getParameterStore().register(ParametersEnum.SENSORPITCH, p -> {
-			pitchError += Math.abs(p.value);
+			pitchError += Math.abs(ctl.getValue(ParametersEnum.PITCH).value - p.value);
 			pitchCount++;				
 		});
 		
 		ctl.getParameterStore().register(ParametersEnum.SENSORROLL, p -> {
-			rollError += Math.abs(p.value);
+			rollError += Math.abs(ctl.getValue(ParametersEnum.ROLL).value - p.value);
 			rollCount++;
 		});
 
