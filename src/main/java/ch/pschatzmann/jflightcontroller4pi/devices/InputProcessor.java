@@ -35,28 +35,13 @@ public class InputProcessor implements IInputProcessor {
 	public void processInput(FlightController flightController, IData input, char delimiter) {
 		if (log.isDebugEnabled()) log.debug(input.toString());
 		double values[] = input.splitDouble(delimiter, inputParameters.size());
-		if (values.length == inputParameters.size()) {
-			for (int j = 0; j < values.length; j++) {
-				flightController.setValue(inputParameters.get(j), values[j]);
-			}
-		} else {
+		for (int j = 0; j < values.length; j++) {
+			flightController.setValue(inputParameters.get(j), values[j]);
+		}
+		if (values.length != inputParameters.size()) {
 			log.warn("Input inconsitent: we exptected {} paramameters: '{}'", inputParameters.size(),input.toString());
 		}
 	}
-
-//	public void processInput(FlightController flightController, String input, char delimiter) {
-//		log.debug(input);
-//		String values[] = input.split(String.valueOf(delimiter));
-//		if (values.length == inputParameters.size()) {
-//			for (int j = 0; j < values.length; j++) {
-//				if (!values[j].isEmpty()) {
-//					flightController.setValue(inputParameters.get(j), Double.parseDouble(values[j]));
-//				}
-//			}
-//		} else {
-//			log.warn("Input inconsitent: we exptected {} paramameters" ,inputParameters.size());
-//		}
-//	}
 
 	public Collection<ParametersEnum> getInputParameters() {
 		return inputParameters;

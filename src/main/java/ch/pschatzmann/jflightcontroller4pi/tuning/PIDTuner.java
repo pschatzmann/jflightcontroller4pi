@@ -21,15 +21,6 @@ import ch.pschatzmann.jflightcontroller4pi.integration.GraphiteMetrics;
 import ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
-import io.jenetics.DoubleChromosome;
-import io.jenetics.DoubleGene;
-import io.jenetics.Genotype;
-import io.jenetics.MeanAlterer;
-import io.jenetics.Mutator;
-import io.jenetics.engine.Codec;
-import io.jenetics.engine.Engine;
-import io.jenetics.engine.EvolutionResult;
-import io.jenetics.util.Factory;
 
 /**
  * We try to find the best P, I and D values for the Aileron and Elevator
@@ -74,7 +65,7 @@ public class PIDTuner {
 		PIDModeRule ruleA = (PIDModeRule) aileron.getRecalculate();
 		PIDResult result = evaluateDevice(ruleA, ParametersEnum.ROLL);
 
-		// use optimized elevator for further processing
+		// use optimized aileron for further processing
 		ruleA.setP(result.p);
 		ruleA.setI(result.i);
 		ruleA.setD(result.d);

@@ -108,12 +108,6 @@
 			<artifactId>commons-net</artifactId>
 			<version>3.6</version>
 		</dependency>
-		<dependency>
-		    <groupId>io.jenetics</groupId>
-		    <artifactId>jenetics</artifactId>
-		    <version>5.0.1</version>
-		</dependency>
-
 
 	</dependencies>
 
