@@ -107,7 +107,7 @@ public class PIDTuner {
 	}
 
 	protected Stream<Double> getRange(double from, double to, int steps) {
-		return DoubleStream.iterate(0, n -> n + (to - from) / steps).limit(steps).boxed();
+		return DoubleStream.iterate(from, n -> n + (to - from) / steps).limit(steps).boxed();
 	}
 
 	protected void setup() {
@@ -188,6 +188,7 @@ public class PIDTuner {
 		double error;
 
 		PIDResult(PIDTuner pidTuner, ParametersEnum sensor, PIDModeRule rule) {
+			rule.setup();
 			error = pidTuner.eval(rule, sensor);
 			p = rule.getP();
 			i = rule.getI();
