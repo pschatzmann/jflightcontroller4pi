@@ -60,6 +60,15 @@ public class PIDTuner {
 	}
 
 	protected PIDResult evaluate() {
+
+		// deactivate elevator
+		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
+		PIDModeRule ruleE = (PIDModeRule) elevator.getRecalculate();
+		ruleE.setP(0);
+		ruleE.setI(0.0);
+		ruleE.setD(0.0);
+		ruleE.setup();
+		
 		// optimize the aileron
 		IOutDeviceEx aileron = ctl.getControlDevice(ParametersEnum.AILERON);
 		PIDModeRule ruleA = (PIDModeRule) aileron.getRecalculate();
@@ -71,9 +80,7 @@ public class PIDTuner {
 		ruleA.setD(result.d);
 
 		// optimize elevator
-		IOutDeviceEx elevator = ctl.getControlDevice(ParametersEnum.ELEVATOR);
-		PIDModeRule rule = (PIDModeRule) elevator.getRecalculate();
-		 result = evaluateDevice(rule, ParametersEnum.PITCH);
+		result = evaluateDevice(ruleE, ParametersEnum.PITCH);
 		 
 		return result;
 	}
