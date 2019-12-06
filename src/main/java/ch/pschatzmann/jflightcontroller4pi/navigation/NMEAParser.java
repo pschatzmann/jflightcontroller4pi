@@ -28,7 +28,6 @@ public class NMEAParser {
     }
     
     
-	
 	public GPSPosition parse(String line) {
 		if(line.startsWith("$")) {
 			String nmea = line.substring(1);

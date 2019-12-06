@@ -30,6 +30,7 @@ public class TestPINs {
 	// hardware pwm GPIO_18 (PWM0) pin 12
 	@Test
 	public void testPWM18() throws InterruptedException {
+		if (!isRaspberryPI()) return;
 		System.out.println("testPWM18");
 		System.out.println(RaspiBcmPin.GPIO_18.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_18.getName());
@@ -51,6 +52,7 @@ public class TestPINs {
 	 */
 	@Test
 	public void testPWM21() throws InterruptedException {
+		if (!isRaspberryPI()) return;
 		System.out.println("testPWM21");
 		System.out.println(RaspiBcmPin.GPIO_21.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_21.getName());
@@ -72,6 +74,7 @@ public class TestPINs {
 	 */
 	@Test
 	public void testI2C() throws InterruptedException {
+		if (!isRaspberryPI()) return;
 		System.out.println("testI2C");
 		byte dataAddresses[] = { (byte) 0x8C, (byte) 0x8E };
 
@@ -91,6 +94,7 @@ public class TestPINs {
 	 */
 	@Test
 	public void testSerial() throws InterruptedException, IOException {
+		if (!isRaspberryPI()) return;
 		System.out.println("testSerial");
 
 		SerialConfig config = new SerialConfig();
@@ -122,6 +126,7 @@ public class TestPINs {
 	 */
 	@Test
 	public void testGPS() throws Exception {
+		if (!isRaspberryPI()) return;
 		System.out.println("testSerial");
 
 		SerialConfig config = new SerialConfig();
@@ -149,6 +154,10 @@ public class TestPINs {
 
 		Thread.sleep(10000);
 		is.shutdown();
+	}
+	
+	public boolean isRaspberryPI() {
+		return "pi".equals(System.getenv("user"));
 	}
 
 }
