@@ -43,7 +43,7 @@ public class InputSerial implements IPinIn {
 	@Override
 	public IData getValues() {
 		IData result=null; 
-		String str = data.remove();
+		String str = data.poll();
 		if (str!=null) {
 			result = new DataOfString();
 			((DataOfString)result).setString(str);
