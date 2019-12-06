@@ -132,12 +132,17 @@ public class TestPINs {
 		new Thread(new Runnable() {
 			public void run() {
 				GPS gps = new GPS();
+				double time = 0;
 
 				while (true) {
 					IData data = is.getValues();
 					gps.putValue(data);
 
-					System.out.println(gps);
+					// we print the value only if it has changed
+					if (gps.getValue().getTime() != time) {
+						System.out.println(gps);
+						time = gps.getValue().getTime();
+					}
 				}
 			}
 		}).start();
