@@ -103,7 +103,9 @@ public class TestPINs {
 
 				while (true) {
 					IData data = is.getValues();
-					System.out.println(data);
+					if (data!=null) {
+						System.out.println(data);
+					}
 				}
 			}
 		}).start();
