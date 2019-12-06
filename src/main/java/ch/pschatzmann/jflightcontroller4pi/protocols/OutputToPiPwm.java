@@ -1,7 +1,12 @@
 package ch.pschatzmann.jflightcontroller4pi.protocols;
 
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Assert;
+
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.Pin;
 
@@ -19,7 +24,10 @@ public class OutputToPiPwm implements IPinOut {
 
 	public OutputToPiPwm(String pinName){
         gpio = GpioFactory.getInstance();
-        Pin pin = gpio.getProvisionedPin(pinName).getPin();
+        System.out.println("pinName: "+pinName);
+        GpioPin p = gpio.getProvisionedPin(pinName);
+        Assert.assertNotNull(p);
+        Pin pin = p.getPin();
 
         pwm = gpio.provisionSoftPwmOutputPin(pin);
         pwm.setPwmRange(100);
