@@ -75,8 +75,9 @@ public class TestPINs {
 	@Test
 	public void testI2C() throws InterruptedException {
 		if (!isRaspberryPI()) return;
+		int HMC5883L_ADDRESS = 0x1E;
 		System.out.println("testI2C");
-		byte dataAddresses[] = { (byte) 0x8C, (byte) 0x8E };
+		byte dataAddresses[] = { (byte) HMC5883L_ADDRESS, (byte) 0x8E };
 
 		InputFromPiI2C i2c = new InputFromPiI2C(0, (byte) 0x01, dataAddresses);
 		for (int j = 0; j < 100; j++) {
@@ -157,7 +158,7 @@ public class TestPINs {
 	}
 	
 	public boolean isRaspberryPI() {
-		return "pi".equals(System.getenv("user"));
+		return "pi".equals(System.getenv("USER"));
 	}
 
 }
