@@ -35,7 +35,7 @@ public class NMEAParser {
 			String[] tokens = nmea.split(",");
 			String type = tokens[0];
 			if(NMEASentenceParsers.containsKey(type)) {
-				log.info("parsing {}", nmea);
+				log.info("parsing {}", type);
 				NMEASentenceParsers.get(type).parse(tokens, position);
 			}
 		}
