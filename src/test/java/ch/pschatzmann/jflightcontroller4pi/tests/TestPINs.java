@@ -1,6 +1,10 @@
 package ch.pschatzmann.jflightcontroller4pi.tests;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.junit.Test;
 
@@ -30,7 +34,8 @@ public class TestPINs {
 	// hardware pwm GPIO_18 (PWM0) pin 12
 	@Test
 	public void testPWM18() throws InterruptedException {
-		if (!isRaspberryPI()) return;
+		if (!isRaspberryPI())
+			return;
 		System.out.println("testPWM18");
 		System.out.println(RaspiBcmPin.GPIO_18.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_18.getName());
@@ -52,7 +57,8 @@ public class TestPINs {
 	 */
 	@Test
 	public void testPWM21() throws InterruptedException {
-		if (!isRaspberryPI()) return;
+		if (!isRaspberryPI())
+			return;
 		System.out.println("testPWM21");
 		System.out.println(RaspiBcmPin.GPIO_21.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_21.getName());
@@ -74,7 +80,8 @@ public class TestPINs {
 	 */
 	@Test
 	public void testI2C() throws InterruptedException {
-		if (!isRaspberryPI()) return;
+		if (!isRaspberryPI())
+			return;
 		int HMC5883L_ADDRESS = 0x1E;
 		System.out.println("testI2C");
 		byte dataAddresses[] = { (byte) HMC5883L_ADDRESS, (byte) 0x8E };
@@ -95,7 +102,8 @@ public class TestPINs {
 	 */
 	@Test
 	public void testSerial() throws InterruptedException, IOException {
-		if (!isRaspberryPI()) return;
+		if (!isRaspberryPI())
+			return;
 		System.out.println("testSerial");
 
 		SerialConfig config = new SerialConfig();
@@ -108,7 +116,7 @@ public class TestPINs {
 
 				while (true) {
 					IData data = is.getValues();
-					if (data!=null) {
+					if (data != null) {
 						System.out.println(data);
 					}
 				}
@@ -116,7 +124,7 @@ public class TestPINs {
 		}).start();
 
 		Thread.sleep(10000);
-		is.shutdown();		
+		is.shutdown();
 	}
 
 	/**
@@ -127,7 +135,8 @@ public class TestPINs {
 	 */
 	@Test
 	public void testGPS() throws Exception {
-		if (!isRaspberryPI()) return;
+		if (!isRaspberryPI())
+			return;
 		System.out.println("testSerial");
 
 		SerialConfig config = new SerialConfig();
@@ -156,9 +165,44 @@ public class TestPINs {
 		Thread.sleep(10000);
 		is.shutdown();
 	}
-	
+
 	public boolean isRaspberryPI() {
-		return "pi".equals(System.getenv("USER"));
+		String osRelease = osRelease();
+		return osRelease != null && osRelease.contains("Raspbian");
+	}
+
+	/**
+	 * get the operating System release
+	 * 
+	 * @return the first line from /etc/os-release or null
+	 */
+	private static String osRelease() {
+		String os = System.getProperty("os.name");
+		if (os.startsWith("Linux")) {
+			File osRelease = new File("/etc", "os-release");
+			return readFirstLine(osRelease);
+		}
+		return null;
+	}
+
+	/**
+	 * read the first line from the given file
+	 * 
+	 * @param file
+	 * @return the first line
+	 */
+	private static String readFirstLine(File file) {
+		String firstLine = null;
+		try {
+			if (file.canRead()) {
+				FileInputStream fis = new FileInputStream(file);
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis));
+				firstLine = bufferedReader.readLine();
+				fis.close();
+			}
+		} catch (Throwable th) {
+		}
+		return firstLine;
 	}
 
 }
