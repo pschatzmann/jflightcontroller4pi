@@ -96,15 +96,20 @@ public class TestPINs {
 		SerialConfig config = new SerialConfig();
 
 		config.device("/dev/ttyS0").baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
-
 		InputSerial is = new InputSerial(config);
-		for (int j = 0; j < 100; j++) {
-			IData data = is.getValues();
-			if (data != null) {
-				System.out.println(data.toString());
+		new Thread(new Runnable() {
+			public void run() {
+				GPS gps = new GPS();
+
+				while (true) {
+					IData data = is.getValues();
+					System.out.println(data);
+				}
 			}
-		}
-		is.shutdown();
+		}).start();
+
+		Thread.sleep(10000);
+		is.shutdown();		
 	}
 
 	/**
