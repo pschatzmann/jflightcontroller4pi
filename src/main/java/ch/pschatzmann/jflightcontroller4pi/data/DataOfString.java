@@ -10,6 +10,7 @@ package ch.pschatzmann.jflightcontroller4pi.data;
 public class DataOfString implements IData {
 	private String string = new String();
 	
+	
 	@Override
 	public byte[] getBytes(){
 		return (this.string+"\n").getBytes();
@@ -44,6 +45,10 @@ public class DataOfString implements IData {
 	@Override
 	public String toString() {
 		return string;
+	}
+	
+	public void setString(String str) {
+		this.string = str;
 	}
 
 

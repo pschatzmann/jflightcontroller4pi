@@ -2,7 +2,7 @@ package ch.pschatzmann.jflightcontroller4pi.devices;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmOut;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinOut;
 import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
 import ch.pschatzmann.jflightcontroller4pi.scaling.Scaler;
 

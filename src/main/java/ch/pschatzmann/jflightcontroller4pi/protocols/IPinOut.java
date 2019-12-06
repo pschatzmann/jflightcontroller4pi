@@ -1,12 +1,12 @@
 package ch.pschatzmann.jflightcontroller4pi.protocols;
 
 /**
- * Interface for PWM Output
+ * Interface for Pin Output
  * 
  * @author pschatzmann
  *
  */
-public interface IPwmOut {
+public interface IPinOut {
 	/**
 	 * Sets the value
 	 * @param value

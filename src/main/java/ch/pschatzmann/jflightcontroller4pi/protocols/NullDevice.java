@@ -15,7 +15,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  * @author pschatzmann
  *
  */
-public class NullDevice implements IPwmIn, IPwmOut {
+public class NullDevice implements IPinIn, IPinOut {
     private static final Logger log = LoggerFactory.getLogger(NullDevice.class);
 	private IData value;
 	private double doubleValue;

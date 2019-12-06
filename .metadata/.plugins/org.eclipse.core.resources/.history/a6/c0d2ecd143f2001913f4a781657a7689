@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmIn;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinIn;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 
 /**

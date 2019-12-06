@@ -12,7 +12,7 @@ import com.pi4j.io.gpio.Pin;
  *
  */
 
-public class OutputToPiPwm implements IPwmOut {
+public class OutputToPiPwm implements IPinOut {
 	private GpioController gpio;
 	private GpioPinPwmOutput pwm;
 	private double value;
@@ -20,6 +20,7 @@ public class OutputToPiPwm implements IPwmOut {
 	public OutputToPiPwm(String pinName){
         gpio = GpioFactory.getInstance();
         Pin pin = gpio.getProvisionedPin(pinName).getPin();
+
         pwm = gpio.provisionSoftPwmOutputPin(pin);
         pwm.setPwmRange(100);
 	}

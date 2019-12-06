@@ -13,6 +13,7 @@ public class GPSPosition {
 	private double latitude; // 10512.5792,W is longitude in degrees.decimal minutes, west
 	private int quality;
 	private double altitude;
+	private double speed;
 
 	public GPSPosition() {
 	}
@@ -154,5 +155,37 @@ public class GPSPosition {
 		this.quality = fromValue.quality;
 		this.altitude = fromValue.altitude;	
 	}
+	
+	/**
+	 * @return the speed (in Km/h)
+	 */
+	public double getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * @param speed the speed to set (in Km/h)
+	 */
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("time: ");
+		sb.append(this.timestamp);
+		sb.append(" long:");
+		sb.append(longitude);
+		sb.append(" lat:");
+		sb.append(latitude);
+		sb.append(" quality:");
+		sb.append(quality);
+		sb.append(" alt:");
+		sb.append(altitude);
+		sb.append(" speed:");
+		sb.append(speed);
+		return sb.toString();
+	}
+
 
 }

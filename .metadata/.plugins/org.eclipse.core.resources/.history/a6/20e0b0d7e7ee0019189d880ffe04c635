@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmIn;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinIn;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 
 /**

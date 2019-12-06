@@ -9,7 +9,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.data.Data;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmIn;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinIn;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 
 /**

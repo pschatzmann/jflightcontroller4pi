@@ -3,6 +3,9 @@ package ch.pschatzmann.jflightcontroller4pi.navigation;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Parser for NMEA GPS messages
  * see https://gist.github.com/javisantana/1326141/30d6b5b603fa113d7a17bfcc0a8aaa25a107d581
@@ -10,6 +13,7 @@ import java.util.Map;
  *
  */
 public class NMEAParser {
+	private static Logger log = LoggerFactory.getLogger(NMEAParser.class);
 	private static final Map<String, INMEASentenceParser> NMEASentenceParsers = new HashMap<String, INMEASentenceParser>();
 	private GPSPosition position;
 	
@@ -20,6 +24,7 @@ public class NMEAParser {
     	NMEASentenceParsers.put("GPGGL", new GPGGL());
     	NMEASentenceParsers.put("GPRMC", new GPRMC());
     	NMEASentenceParsers.put("GPRMZ", new GPRMZ());
+    	NMEASentenceParsers.put("GPVTG", new GPVTG());
     }
     
     
@@ -30,6 +35,7 @@ public class NMEAParser {
 			String[] tokens = nmea.split(",");
 			String type = tokens[0];
 			if(NMEASentenceParsers.containsKey(type)) {
+				log.info("parsing {}", nmea);
 				NMEASentenceParsers.get(type).parse(tokens, position);
 			}
 		}
@@ -84,8 +90,8 @@ public class NMEAParser {
 			position.setTime(Double.parseDouble(tokens[1]));
 			position.setLatitude(Latitude2Decimal(tokens[3], tokens[4]));
 			position.setLongitude( Longitude2Decimal(tokens[5], tokens[6]));
-//			position.velocity = double.parseDouble(tokens[7]);
-//			position.dir = double.parseDouble(tokens[8]);
+			position.setSpeed(Double.parseDouble(tokens[7]));
+			//position.dir = Double.parseDouble(tokens[8]);
 			return true;
 		}
 	}
@@ -98,5 +104,12 @@ public class NMEAParser {
 		}
 	}
 
+	class GPVTG implements INMEASentenceParser {
+		@Override
+		public boolean parse(String [] tokens, GPSPosition position) {
+			position.setSpeed( Double.parseDouble(tokens[7]));
+			return true;
+		}
+	}
 
 }

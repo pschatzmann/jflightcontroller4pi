@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmOut;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinOut;
 import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
 
 /**
@@ -22,8 +22,8 @@ public class OutDevice implements IOutDeviceEx {
     private static final Logger log = LoggerFactory.getLogger(OutDevice.class);
 	private String pinName = null;
 	private Scaler scaler = new Scaler(-1.0,1.0,0,100.0);
-	private IPwmOut pwmPi;
-	private IPwmOut pwmPiInverted;
+	private IPinOut pwmPi;
+	private IPinOut pwmPiInverted;
 	private ParametersEnum control;
 	private FlightController flightController;
 	private IRecalculate recalculate;
@@ -37,13 +37,13 @@ public class OutDevice implements IOutDeviceEx {
 	public OutDevice() {
 	}
 	
-	public OutDevice(ParametersEnum control,  double defaultSetting, IPwmOut out) {
+	public OutDevice(ParametersEnum control,  double defaultSetting, IPinOut out) {
 		this.control = control;
 		this.defaultValue = defaultSetting;
 		this.setPin(out);
 	}
 
-	public OutDevice( ParametersEnum control, IPwmOut out) {
+	public OutDevice( ParametersEnum control, IPinOut out) {
 		this.control = control;
 		this.setPin(out);
 	}
@@ -111,14 +111,14 @@ public class OutDevice implements IOutDeviceEx {
 		this.scaler.setInputMin(minValue);
 	}
 
-	public IPwmOut getPin() {
+	public IPinOut getPin() {
 		return pwmPi;
 	}
     /**
      * Defines the output hardware device and protocal
      * @param pwmPi
      */
-	public void setPin(IPwmOut pwmPi) {
+	public void setPin(IPinOut pwmPi) {
 		this.pwmPi = pwmPi;
 		double value = scaler.scale(ParametersEnum.PIN, this.defaultValue);
 		this.pwmPi.setValue(value);
@@ -126,7 +126,7 @@ public class OutDevice implements IOutDeviceEx {
 			this.pwmPiInverted.setValue(-value);
 	}
 	
-	public IPwmOut getPwmPiInverted() {
+	public IPinOut getPwmPiInverted() {
 		return pwmPiInverted;
 	}
 
@@ -135,7 +135,7 @@ public class OutDevice implements IOutDeviceEx {
 	 * opposing values e.g 1 and -1
 	 * @param pwmPiInverted
 	 */
-	public void setPwmPiInverted(IPwmOut pwmPiInverted) {
+	public void setPwmPiInverted(IPinOut pwmPiInverted) {
 		this.pwmPiInverted = pwmPiInverted;
 	}
 

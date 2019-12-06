@@ -54,8 +54,10 @@ public class GPS {
 	 * @param line
 	 */
 	public void putValue(IData line) {
-		priorValue.setValue(actualValue);
-		parser.parse(line.toString());
+		if (line != null) {
+			priorValue.setValue(actualValue);
+			parser.parse(line.toString());
+		}
 	}
 
 	/**
@@ -81,6 +83,13 @@ public class GPS {
 			return 0.0;
 		}
 		return actualValue.getSpeed(priorValue);
+	}
+	
+	/**
+	 * Prints the current GPS information
+	 */
+	public String toString() {
+		return this.getValue().toString();
 	}
 
 }

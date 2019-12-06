@@ -19,7 +19,7 @@ import ch.pschatzmann.jflightcontroller4pi.data.IData;
  *
  */
 
-public class InputFromPiSPI implements IPwmIn {
+public class InputFromPiSPI implements IPinIn {
 	private short channelCount = 4; // MCP3004=4, MCP3008=8
 	private short channelNumber = 0; // CS0 or CS1
 	private int channelSpeed = SpiDevice.DEFAULT_SPI_SPEED;

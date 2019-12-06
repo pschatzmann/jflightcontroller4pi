@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
-import ch.pschatzmann.jflightcontroller4pi.protocols.IPwmIn;
+import ch.pschatzmann.jflightcontroller4pi.protocols.IPinIn;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 
 /**
@@ -21,7 +21,7 @@ import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
 public class Sensor implements ISensor {
     private static final Logger log = LoggerFactory.getLogger(Sensor.class);
 	private String name;
-	private IPwmIn in = new NullDevice();
+	private IPinIn in = new NullDevice();
 	private FlightController flightController;
 	private IInputProcessor inputProcessor = new InputProcessor();
 	private char delimiter = ',';
@@ -29,7 +29,7 @@ public class Sensor implements ISensor {
 	public Sensor() {
 	}
 
-	public Sensor(List<ParametersEnum> inputParameters, IPwmIn in) {	
+	public Sensor(List<ParametersEnum> inputParameters, IPinIn in) {	
 		this.inputProcessor = new InputProcessor(inputParameters);
 		this.in = in;
 	}
@@ -49,11 +49,11 @@ public class Sensor implements ISensor {
 		input.close();
 	}
 
-	public IPwmIn getIn() {
+	public IPinIn getIn() {
 		return in;
 	}
 
-	public void setIn(IPwmIn in) {
+	public void setIn(IPinIn in) {
 		this.in = in;
 	}
 

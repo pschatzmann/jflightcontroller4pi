@@ -1,11 +1,17 @@
 package ch.pschatzmann.jflightcontroller4pi.protocols;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.data.DataFactory;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
+import ch.pschatzmann.jflightcontroller4pi.devices.GameConsole;
 
 /**
  * I2C is a useful bus that allows data exchange between microcontrollers and
@@ -18,35 +24,24 @@ import ch.pschatzmann.jflightcontroller4pi.data.IData;
  *
  */
 
-public class InputFromPiI2C implements IPwmIn {
+public class InputFromPiI2C implements IPinIn {
+    private static final Logger log = LoggerFactory.getLogger(InputFromPiI2C.class);
 	private I2CDevice device;
-	private int bus = I2CBus.BUS_0;
-	private byte deviceAddess = 0x39;
-	private byte controlAddress = (byte) 0x80;
-	private byte powerUp = (byte) 0x03;
-	private byte powerDown = (byte) 0x00;
 	private byte dataAddresses[] = {(byte) 0x8C, (byte) 0x8E};
+	private I2CBus i2c;
 
-
-	public InputFromPiI2C(String pinName) {
+	public InputFromPiI2C(int bus, byte deviceNo, byte[]addresses ) {
 		try {
-
+			this.dataAddresses = addresses;
+			
 			// get the I2C bus to communicate on
-			I2CBus i2c = I2CFactory.getInstance(bus);
+			i2c = I2CFactory.getInstance(bus);
 
-			// create an I2C device for an individual device on the bus that you want to
-			// communicate with in this example we will use the default address for the TSL2561 chip which is
-			// 0x39.
-			I2CDevice device = i2c.getDevice(deviceAddess);
-						
+			device = i2c.getDevice(deviceNo);						
 
-			// next we want to start taking light measurements, so we need to power up the
-			// sensor
-			device.write(controlAddress, powerUp);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
-
 	}
 
 	@Override
@@ -69,9 +64,9 @@ public class InputFromPiI2C implements IPwmIn {
 	@Override
 	public void shutdown() {
 		try {
-			device.write(controlAddress, powerDown);
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			i2c.close();
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
 		}
 	}
 
@@ -81,46 +76,6 @@ public class InputFromPiI2C implements IPwmIn {
 
 	public void setDevice(I2CDevice device) {
 		this.device = device;
-	}
-
-	public int getBus() {
-		return bus;
-	}
-
-	public void setBus(int bus) {
-		this.bus = bus;
-	}
-
-	public byte getDeviceAddess() {
-		return deviceAddess;
-	}
-
-	public void setDeviceAddess(byte deviceAddess) {
-		this.deviceAddess = deviceAddess;
-	}
-
-	public byte getControlAddress() {
-		return controlAddress;
-	}
-
-	public void setControlAddress(byte controlAddress) {
-		this.controlAddress = controlAddress;
-	}
-
-	public byte getPowerUp() {
-		return powerUp;
-	}
-
-	public void setPowerUp(byte powerUp) {
-		this.powerUp = powerUp;
-	}
-
-	public byte getPowerDown() {
-		return powerDown;
-	}
-
-	public void setPowerDown(byte powerDown) {
-		this.powerDown = powerDown;
 	}
 
 	public byte[] getDataAddresses() {
