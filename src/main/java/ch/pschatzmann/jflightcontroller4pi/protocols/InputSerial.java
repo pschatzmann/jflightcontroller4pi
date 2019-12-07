@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialConfig;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataEventListener;
@@ -17,10 +18,17 @@ import ch.pschatzmann.jflightcontroller4pi.data.DataOfString;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.navigation.GPS;
 
+/**
+ * IPinIn implementation which handles a serial input.
+ * 
+ * @author pschatzmann
+ *
+ */
+
 public class InputSerial implements IPinIn {
 	private static Logger log = LoggerFactory.getLogger(InputSerial.class);
 	private ConcurrentLinkedQueue<String> data = new ConcurrentLinkedQueue();
-	private  com.pi4j.io.serial.Serial serial;
+	private Serial serial;
 	
 	public InputSerial(SerialConfig config) throws IOException{
          serial = SerialFactory.createInstance();

@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 
 import org.junit.Test;
 
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPin;
+import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.RaspiBcmPin;
 import com.pi4j.io.serial.Baud;
 import com.pi4j.io.serial.DataBits;
@@ -16,6 +20,7 @@ import com.pi4j.io.serial.Parity;
 import com.pi4j.io.serial.SerialConfig;
 import com.pi4j.io.serial.SerialPort;
 import com.pi4j.io.serial.StopBits;
+import com.pi4j.wiringpi.Gpio;
 
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.navigation.GPS;
@@ -31,6 +36,36 @@ import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
  */
 public class TestPINs {
 
+	/**
+	 * Basic PWM scenario using raw pi4j calls on GPIO_18
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void testPWM() throws InterruptedException {
+		// setup PWM to 50 HZ
+		Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_MODE_MS);
+		Gpio.pwmSetClock(50);
+		// set range from 0 to 1000
+		Gpio.pwmSetRange(1000);
+
+		GpioController ctl = GpioFactory.getInstance();
+		GpioPin pin = ctl.getProvisionedPin(RaspiBcmPin.GPIO_18);
+		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(pin.getPin());
+
+		for (int j = 0; j < 10; j++) {
+			pwm.setPwm(0);
+			Thread.sleep(1000);
+
+			pwm.setPwm(500);
+			Thread.sleep(1000);
+
+			pwm.setPwm(1000);
+			Thread.sleep(1000);
+		}
+
+		ctl.shutdown();
+	}
+
 	// hardware pwm GPIO_18 (PWM0) pin 12
 	@Test
 	public void testPWM18() throws InterruptedException {
@@ -39,21 +74,22 @@ public class TestPINs {
 		System.out.println("testPWM18");
 		System.out.println(RaspiBcmPin.GPIO_18.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_18.getName());
-		
-		for (int j=0;j<10;j++) {
+
+		// our managed range is between -1.0 and 1.0
+		for (int j = 0; j < 10; j++) {
 			pwm.setValue(-1);
 			Thread.sleep(1000);
 
 			pwm.setValue(0);
 			Thread.sleep(1000);
-			
+
 			pwm.setValue(1);
 			Thread.sleep(1000);
 		}
-		
+
 		pwm.setValue(0);
 		Thread.sleep(5000);
-		
+
 		pwm.shutdown();
 	}
 
@@ -117,6 +153,8 @@ public class TestPINs {
 
 		config.device("/dev/ttyS0").baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
 		InputSerial is = new InputSerial(config);
+
+		// read data and process it in a separate thread
 		new Thread(new Runnable() {
 			public void run() {
 				GPS gps = new GPS();
