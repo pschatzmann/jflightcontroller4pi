@@ -8,6 +8,8 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.RaspiBcmPin;
+import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.wiringpi.Gpio;
 
 import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
@@ -65,18 +67,16 @@ public class OutputToPiPwm implements IPinOut {
 		Gpio.pwmSetRange(maxScale);
 
 		gpio = GpioFactory.getInstance();
-		GpioPin p = gpio.getProvisionedPin(pinName);
-		if (p == null) {
-			log.error("The pin {} does not exist", pinName);
+		Pin pin = RaspiPin.getPinByName(pinName);
+		if (pin==null) {
+			log.error("The pin {} does not exist",pinName);
 			return;
 		}
-
-		Pin pin = p.getPin();
 		if (softPWM) {
 			pwm = gpio.provisionSoftPwmOutputPin(pin);
 
 		} else {
-			pwm = gpio.provisionPwmOutputPin(pin, 50);
+			pwm = gpio.provisionPwmOutputPin(pin);
 		}
 	}
 

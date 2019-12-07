@@ -13,6 +13,7 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.RaspiBcmPin;
+import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.serial.Baud;
 import com.pi4j.io.serial.DataBits;
 import com.pi4j.io.serial.FlowControl;
@@ -52,8 +53,7 @@ public class TestPINs {
 		Gpio.pwmSetRange(1000);
 
 		GpioController ctl = GpioFactory.getInstance();
-		GpioPin pin = ctl.getProvisionedPin(RaspiBcmPin.GPIO_18);
-		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(pin.getPin());
+		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(RaspiPin.GPIO_01);
 
 		for (int j = 0; j < 10; j++) {
 			pwm.setPwm(0);
