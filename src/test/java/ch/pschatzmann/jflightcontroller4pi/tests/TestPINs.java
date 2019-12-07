@@ -41,7 +41,10 @@ public class TestPINs {
 	 * 
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testPWM() throws InterruptedException {
+		if (!isRaspberryPI())
+			return;
 		// setup PWM to 50 HZ
 		Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_MODE_MS);
 		Gpio.pwmSetClock(50);
