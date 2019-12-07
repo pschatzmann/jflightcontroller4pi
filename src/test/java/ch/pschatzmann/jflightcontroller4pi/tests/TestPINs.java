@@ -53,7 +53,7 @@ public class TestPINs {
 		Gpio.pwmSetRange(1000);
 
 		GpioController ctl = GpioFactory.getInstance();
-		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(RaspiPin.GPIO_01);
+		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(RaspiPin.GPIO_18);
 
 		for (int j = 0; j < 10; j++) {
 			pwm.setPwm(0);
