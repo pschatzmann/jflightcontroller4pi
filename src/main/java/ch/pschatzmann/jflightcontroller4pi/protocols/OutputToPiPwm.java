@@ -34,7 +34,6 @@ public class OutputToPiPwm implements IPinOut {
 	private Scaler scaler;
 	private int maxScale = 1000;  // defines internal precision. We can manage up to 1000 steps.
 	private int frequenceyHZ = 50; // PWM frequency
-	private boolean softPWM = false;
 	private double min = -1.0;
 	private double max = 1.0;
 
@@ -72,11 +71,13 @@ public class OutputToPiPwm implements IPinOut {
 			log.error("The pin {} does not exist",pinName);
 			return;
 		}
-		if (softPWM) {
-			pwm = gpio.provisionSoftPwmOutputPin(pin);
-
-		} else {
-			pwm = gpio.provisionPwmOutputPin(pin);
+		
+		try {
+			pwm = gpio.provisionPwmOutputPin(pin);			
+			log.info("Using hardware PWM");
+		} catch(Exception ex) {
+			pwm = gpio.provisionSoftPwmOutputPin(pin);	
+			log.info("Using software PWM");
 		}
 	}
 
@@ -118,20 +119,6 @@ public class OutputToPiPwm implements IPinOut {
 		this.pinName = pinName;
 	}
 
-	/**
-	 * @return the softPWM
-	 */
-	public boolean isSoftPWM() {
-		return softPWM;
-	}
-
-	/**
-	 * @param softPWM
-	 *            the softPWM to set
-	 */
-	public void setSoftPWM(boolean softPWM) {
-		this.softPWM = softPWM;
-	}
 
 	/**
 	 * @return the maxScale

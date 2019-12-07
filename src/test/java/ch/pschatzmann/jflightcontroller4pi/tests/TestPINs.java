@@ -46,14 +46,21 @@ public class TestPINs {
 	public void testPWM() throws InterruptedException {
 		if (!isRaspberryPI())
 			return;
+
+		GpioController gpio = GpioFactory.getInstance();
 		// setup PWM to 50 HZ
 		Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_MODE_MS);
 		Gpio.pwmSetClock(50);
 		// set range from 0 to 1000
 		Gpio.pwmSetRange(1000);
+		
+		GpioPinPwmOutput pwm = null;
 
-		GpioController ctl = GpioFactory.getInstance();
-		GpioPinPwmOutput pwm = ctl.provisionPwmOutputPin(RaspiPin.GPIO_18);
+		try {
+			pwm = gpio.provisionPwmOutputPin(RaspiPin.GPIO_18);			
+		} catch(Exception ex) {
+			pwm = gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_18);			
+		}
 
 		for (int j = 0; j < 10; j++) {
 			pwm.setPwm(0);
@@ -66,7 +73,7 @@ public class TestPINs {
 			Thread.sleep(1000);
 		}
 
-		ctl.shutdown();
+		gpio.shutdown();
 	}
 
 	// hardware pwm GPIO_18 (PWM0) pin 12
