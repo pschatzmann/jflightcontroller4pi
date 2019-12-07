@@ -39,14 +39,21 @@ public class TestPINs {
 		System.out.println("testPWM18");
 		System.out.println(RaspiBcmPin.GPIO_18.getName());
 		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_18.getName());
-		for (int j = 0; j < 100; j++) {
-			pwm.setValue(j);
-			Thread.sleep(500);
+		
+		for (int j=0;j<10;j++) {
+			pwm.setValue(-1);
+			Thread.sleep(1000);
+
+			pwm.setValue(0);
+			Thread.sleep(1000);
+			
+			pwm.setValue(1);
+			Thread.sleep(1000);
 		}
-		for (int j = 100; j > 0; j--) {
-			pwm.setValue(j);
-			Thread.sleep(500);
-		}
+		
+		pwm.setValue(0);
+		Thread.sleep(5000);
+		
 		pwm.shutdown();
 	}
 
