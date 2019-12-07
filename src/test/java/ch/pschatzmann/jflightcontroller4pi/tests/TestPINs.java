@@ -63,12 +63,15 @@ public class TestPINs {
 		}
 
 		for (int j = 0; j < 10; j++) {
+			System.out.println("min");
 			pwm.setPwm(0);
 			Thread.sleep(1000);
 
+			System.out.println("neutral");
 			pwm.setPwm(500);
 			Thread.sleep(1000);
 
+			System.out.println("max");
 			pwm.setPwm(1000);
 			Thread.sleep(1000);
 		}
@@ -223,7 +226,9 @@ public class TestPINs {
 
 	public boolean isRaspberryPI() {
 		String osRelease = osRelease();
-		return osRelease != null && osRelease.contains("Raspbian");
+		boolean result = osRelease != null && osRelease.contains("Raspbian");
+		System.out.println("The system is a Raspberry pi: "+result);
+		return result;
 	}
 
 	/**
