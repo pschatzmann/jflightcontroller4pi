@@ -66,8 +66,8 @@ public class IMUDevice implements IOutDevice {
 
 	@Override
 	public void setup(FlightController flightController) {
-		this.flightController = flightController;
 		log.info("Setting up IMU");
+		this.flightController = flightController;
 		this.flightController.setImu(this);
 	}
 

@@ -17,6 +17,7 @@
             	<ref bean="gameConsole" />
             	<ref bean="datagramReader" />                
             	<ref bean="datagramWriter" />    
+             	<ref bean="imu" />
         	</list>
 	  	</property>
 	  	<property name="modes">
