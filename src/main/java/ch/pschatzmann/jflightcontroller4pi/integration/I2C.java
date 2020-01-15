@@ -117,9 +117,21 @@ public class I2C {
 	public void read(int addr, int len, int[] buffer) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
-		for (int i = 0; i < len; i++) {
-			buffer[i] = (int) (((byteBuffer[i * 2] << 8) | (byteBuffer[(i * 2) + 1])));
+		toIntArray(byteBuffer, buffer, len);
+	}
+	
+	public void toIntArray(byte[] byteBuffer, int[] buffer, int intLen) {		
+		for (int i = 0; i < intLen; i++) {
+			buffer[i] = (int) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
 		}
+	}
+	
+	public int toInt(byte b1, byte b2) {
+		return (int) (((b1 << 8) | (b2)));
+	}
+
+	public int toIntUnsigned(byte b1, byte b2) {
+		return ((b1 & 0xFF) * 256) + (b2 & 0xFF);
 	}
 
 	/**

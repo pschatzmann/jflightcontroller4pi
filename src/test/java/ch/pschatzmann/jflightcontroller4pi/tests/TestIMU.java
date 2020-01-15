@@ -107,24 +107,13 @@ public class TestIMU {
 		double B4 = AC4 * (X3 + 32768) / 32768.0;
 		double B7 = ((pres - B3) * (25000.0));
 		double pressure = 0.0;
-		if(B7 < 2147483648L)
-		{
-			pressure = (B7 * 2) / B4;
-		}
-		else
-		{
-			pressure = (B7 / B4) * 2;
-		}
+		pressure = ((double)B7 * 2.0) / (double)B4;
 		X1 = (pressure / 256.0) * (pressure / 256.0);
 		X1 = (X1 * 3038.0) / 65536.0;
 		X2 = ((-7357) * pressure) / 65536.0;
 		pressure = (pressure + (X1 + X2 + 3791) / 16.0) / 100;
 		
-		// Calculate Altitude
-		double altitude = 44330 * (1 - Math.pow((pressure / 1013.25), 0.1903));
-		
 		// Output data to screen
-		System.out.printf("Altitude : %.2f m %n", altitude);
 		System.out.printf("Pressure : %.2f hPa %n", pressure);
 		System.out.printf("Temperature in Celsius : %.2f C %n", cTemp);
 		System.out.printf("Temperature in Fahrenheit : %.2f F %n", fTemp);

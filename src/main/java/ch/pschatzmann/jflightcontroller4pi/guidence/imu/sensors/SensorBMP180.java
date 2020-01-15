@@ -48,8 +48,15 @@ public class SensorBMP180 implements ISensor {
 		this.flightController = flightController;
 		// configure the BMP180 (barometer)
 		i2c.write(0xe0,(byte) 0xb6); // reset
-		i2c.read(0xAA, 11, values);
-
+		byte[] bytes = new byte[22];
+		i2c.read(0xAA, 11, bytes);
+		// convert to ints
+		i2c.toIntArray(bytes, values, 11);
+		// special logic for unsigned values
+		values[AC4] = i2c.toIntUnsigned(bytes[6], bytes[7]);
+		values[AC5] = i2c.toIntUnsigned(bytes[8], bytes[9]);
+		values[AC6] = i2c.toIntUnsigned(bytes[10], bytes[11]);
+				
 		// Compute floating-point polynominals:
 		c3 = 160.0 * Math.pow(2, -15) * values[AC3];
 		c4 = Math.pow(10, -3) * Math.pow(2, -15) * values[AC4];
