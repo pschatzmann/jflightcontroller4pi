@@ -101,7 +101,7 @@ public class I2C {
 	 */
 	public void read(byte addr, int len, short[] buffer) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
-		read(addr, len * 3, byteBuffer);
+		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
 			buffer[i] = (short) (((byteBuffer[i * 2] << 8) | (byteBuffer[(i * 2) + 1])));
 		}
