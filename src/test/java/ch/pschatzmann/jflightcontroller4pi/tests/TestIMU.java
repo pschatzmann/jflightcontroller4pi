@@ -38,6 +38,7 @@ public class TestIMU {
 		return result;
 	}
 	
+	@Test
 	public void testBMP180() throws Exception {
 		// Create I2C bus
 		I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
