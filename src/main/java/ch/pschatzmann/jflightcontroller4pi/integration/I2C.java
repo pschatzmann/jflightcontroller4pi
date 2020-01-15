@@ -120,24 +120,41 @@ public class I2C {
 		toIntArray(byteBuffer, buffer, len);
 	}
 	
+	/**
+	 * Converts an array of bytes to an array of (signed) ints
+	 * @param byteBuffer
+	 * @param buffer
+	 * @param intLen
+	 */
 	public void toIntArray(byte[] byteBuffer, int[] buffer, int intLen) {		
 		for (int i = 0; i < intLen; i++) {
 			buffer[i] = (int) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
 		}
 	}
 	
+	/**
+	 * Converts 2 bytes to a int
+	 * @param b1
+	 * @param b2
+	 * @return
+	 */
 	public int toInt(byte b1, byte b2) {
 		return (int) (((b1 << 8) | (b2)));
 	}
 
+	/**
+	 * Converts a 2 byte unsigned c int to a java int
+	 * @param b1
+	 * @param b2
+	 * @return
+	 */
 	public int toIntUnsigned(byte b1, byte b2) {
 		return ((b1 & 0xFF) * 256) + (b2 & 0xFF);
 	}
 
 	/**
-	 * Java does not support unsigned ints. So we use doubles (constructed of 2
-	 * bytes) instead instead
-	 * 
+	 * Provides array of 2 byte ints to doubles so that we can use the values
+	 * directly in floating point operations 
 	 * @param addr
 	 * @param len
 	 * @param buffer
@@ -147,7 +164,7 @@ public class I2C {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
-			buffer[i] = (double) (((byteBuffer[i * 2] << 8) | (byteBuffer[(i * 2) + 1])));
+			buffer[i] = (double) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);;
 		}
 	}
 
