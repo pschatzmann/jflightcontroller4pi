@@ -47,8 +47,8 @@ public class SensorBMP180 implements ISensor {
 		log.info("setup "+this.getName());
 		this.flightController = flightController;
 		// configure the BMP180 (barometer)
-		i2c.write((byte)0xe0,(byte) 0xb6); // reset
-		i2c.read((byte)0xAA, 11, values);
+		i2c.write(0xe0,(byte) 0xb6); // reset
+		i2c.read(0xAA, 11, values);
 
 		// Compute floating-point polynominals:
 		c3 = 160.0 * Math.pow(2, -15) * values[AC3];

@@ -49,29 +49,28 @@ public class I2C {
 		}
 	}
 
-	/**
-	 * Writes a single byte
-	 * 
-	 * @param b
-	 * @throws IOException
-	 */
-	public void write(byte b) throws IOException {
-		if (device != null) {
-			device.write(b);
-		}
-	}
+//	/**
+//	 * Writes a single byte
+//	 * 
+//	 * @param b
+//	 * @throws IOException
+//	 */
+//	public void write(byte b) throws IOException {
+//		if (device != null) {
+//			device.write(b);
+//		}
+//	}
 
 	/**
-	 * Writes a 2 bytes
+	 * Writes a byte at the address
 	 * 
 	 * @param i
 	 * @param j
 	 * @throws IOException
 	 */
-	public void write(byte b1, byte b2) throws IOException {
+	public void write(int addr, byte b2) throws IOException {
 		if (device != null) {
-			device.write(b1);
-			device.write(b2);
+			device.write(addr, b2);
 		}
 	}
 
@@ -83,11 +82,9 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(byte addr, int len, byte[] buffer) throws IOException {
+	public void read(int addr, int len, byte[] buffer) throws IOException {
 		if (device != null) {
-			device.write(addr);
-			this.sleep(20);
-			device.read(buffer, 0, len);
+			device.read(addr, buffer, 0, len);
 		}
 	}
 
@@ -100,7 +97,7 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(byte addr, int len, short[] buffer) throws IOException {
+	public void read(int addr, int len, short[] buffer) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
@@ -117,7 +114,7 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(byte addr, int len, int[] buffer) throws IOException {
+	public void read(int addr, int len, int[] buffer) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
@@ -134,7 +131,7 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(byte addr, int len, double[] buffer) throws IOException {
+	public void read(int addr, int len, double[] buffer) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
@@ -148,7 +145,7 @@ public class I2C {
 	 * @return
 	 * @throws IOException
 	 */
-	public float read3(byte addr) throws IOException {
+	public float read3(int addr) throws IOException {
 		byte byteBuffer[] = new byte[3];
 		read(addr, 3, byteBuffer);
 		return (float) ((byteBuffer[0] << 16 | byteBuffer[1] << 8 | byteBuffer[2]) / 256.0);
