@@ -32,6 +32,7 @@ public class SensorMPU6050 implements ISensor {
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
+		log.info("setup "+this.getName());
 		this.flightController = flightController;
 		// configure the MPU6050 (gyro/accelerometer)
 		i2c.write((byte)0x6B,(byte) 0x00); // exit sleep

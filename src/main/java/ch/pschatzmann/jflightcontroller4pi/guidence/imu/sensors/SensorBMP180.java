@@ -44,6 +44,7 @@ public class SensorBMP180 implements ISensor {
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
+		log.info("setup "+this.getName());
 		this.flightController = flightController;
 		// configure the BMP180 (barometer)
 		i2c.write((byte)0xe0,(byte) 0xb6); // reset

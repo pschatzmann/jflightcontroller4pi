@@ -33,6 +33,7 @@ public class SensorQMC5883 implements ISensor {
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
+		log.info("setup "+this.getName());
 		this.flightController = flightController;
 		i2c.write((byte) 0x09, (byte)0b10000101); // control register 1
 	}

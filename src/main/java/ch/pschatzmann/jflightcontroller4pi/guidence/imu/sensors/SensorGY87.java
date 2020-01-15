@@ -34,8 +34,8 @@ public class SensorGY87 implements ISensor {
 		log.info("setup "+this.getName());
 		mpu6050.setup(flightController);
 		mpu6050.enableMagnetometer();
-		qmc5883.setup(flightController);
 		bmp180.setup(flightController);
+		qmc5883.setup(flightController);
 	}
 
 	@Override

@@ -45,22 +45,22 @@ public class TestIMU {
 		}
 	}
 
-	@Test
-	public void testIMUDevice() throws IOException, InterruptedException {
-		FlightController fc = new FlightController();
-		ISensor sensor = new SensorGY87();
-		IMUDevice imu = new IMUDevice();
-		fc.addDevices(Arrays.asList(sensor, imu));
-
-		new Thread(() -> {
-			// execute control loop in the background
-			fc.run();
-		}).start();
-
-		for (int j = 0; j < 30; j++) {
-			Thread.sleep(1000);
-			System.out.println(imu);
-		}
-	}
+//	@Test
+//	public void testIMUDevice() throws IOException, InterruptedException {
+//		FlightController fc = new FlightController();
+//		ISensor sensor = new SensorGY87();
+//		IMUDevice imu = new IMUDevice();
+//		fc.addDevices(Arrays.asList(sensor, imu));
+//
+//		new Thread(() -> {
+//			// execute control loop in the background
+//			fc.run();
+//		}).start();
+//
+//		for (int j = 0; j < 30; j++) {
+//			Thread.sleep(1000);
+//			System.out.println(imu);
+//		}
+//	}
 
 }
