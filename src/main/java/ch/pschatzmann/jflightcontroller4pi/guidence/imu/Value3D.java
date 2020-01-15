@@ -59,5 +59,15 @@ public class Value3D {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.x());
+		sb.append("/");
+		sb.append(this.y());
+		sb.append("/");
+		sb.append(this.z());
+		return sb.toString();
+	}
 
 }
