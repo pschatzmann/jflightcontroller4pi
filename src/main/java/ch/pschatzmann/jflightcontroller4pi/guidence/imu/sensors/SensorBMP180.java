@@ -70,9 +70,9 @@ public class SensorBMP180 implements ISensor {
 
 		calculateBaseline();
 		if (this.flightController!=null) {
+			log.info("The current baseline presure is set to {}",baselinePressure);
 			flightController.setValue(ParametersEnum.PRESSUREBASELINE, baselinePressure);
 		}
-
 
 	}
 
@@ -114,9 +114,9 @@ public class SensorBMP180 implements ISensor {
 
 	public float[] getValues() throws IOException {
 		// start conversion of the temperature sensor
-		i2c.write((byte)0xF4,(byte) 0x2E);
+		i2c.write(0xF4,(byte) 0x2E);
 		i2c.sleep(5);
-		i2c.read((byte)0xF6, 1, value);
+		i2c.read(0xF6, 1, value);
 
 		// extract the raw value
 		double dtu = (float) value[0];
@@ -125,9 +125,9 @@ public class SensorBMP180 implements ISensor {
 		baro_temp_c = (float) (a + (mc / (a + md)));
 
 		// start conversion of the pressure sensor
-		i2c.write((byte)0xF4,(byte) 0xB4); // 0x34 | 1<<6);
+		i2c.write(0xF4,(byte) 0xB4); // 0x34 | 1<<6);
 		i2c.sleep(12);
-		double pressure = i2c.read3((byte)0xF6);
+		double pressure = i2c.read3(0xF6);
 
 		double s = baro_temp_c - 25.0;
 		double x = (cx2 * Math.pow(s, 2)) + (cx1 * s) + cx0;
