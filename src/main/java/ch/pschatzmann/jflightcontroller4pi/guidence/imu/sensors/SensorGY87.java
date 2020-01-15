@@ -2,9 +2,13 @@ package ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
+import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
 
 /**
  * 10 DOF (degree of freedom) boards and all sensor handling is by i2c bus It
@@ -20,12 +24,14 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
  *
  */
 public class SensorGY87 implements ISensor {
+	private static final Logger log = LoggerFactory.getLogger(SensorGY87.class);
 	private SensorBMP180 bmp180 = new SensorBMP180();
 	private SensorQMC5883 qmc5883 = new SensorQMC5883();
 	private SensorMPU6050 mpu6050 = new SensorMPU6050();
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
+		log.info("setup "+this.getName());
 		mpu6050.setup(flightController);
 		mpu6050.enableMagnetometer();
 		qmc5883.setup(flightController);
@@ -34,6 +40,7 @@ public class SensorGY87 implements ISensor {
 
 	@Override
 	public void shutdown() {
+		log.info("shutdown "+this.getName());
 		mpu6050.shutdown();
 		qmc5883.shutdown();
 		bmp180.shutdown();

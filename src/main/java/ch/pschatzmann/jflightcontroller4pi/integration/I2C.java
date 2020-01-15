@@ -36,7 +36,7 @@ public class I2C {
 	}
 
 	/**
-	 * Setup itc device at indicated address at default bus
+	 * Setup itc device at indicated address at default bus (BUS_1)
 	 * 
 	 * @param addr
 	 */
