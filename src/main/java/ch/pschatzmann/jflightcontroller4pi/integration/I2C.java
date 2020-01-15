@@ -86,6 +86,7 @@ public class I2C {
 	public void read(byte addr, int len, byte[] buffer) throws IOException {
 		if (device != null) {
 			device.write(addr);
+			this.sleep(20);
 			device.read(buffer, 0, len);
 		}
 	}
