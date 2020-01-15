@@ -48,6 +48,7 @@ public class SensorMPU6050 implements ISensor {
 	 * @throws IOException
 	 */
 	public void enableMagnetometer() throws IOException {
+		log.info("enableMagnetometer");
 		i2c.write((byte)0x6A, (byte)0x00); // disable i2c master mode
 		i2c.write((byte)0x37, (byte)0x02); // enable i2c master bypass mode
 	}

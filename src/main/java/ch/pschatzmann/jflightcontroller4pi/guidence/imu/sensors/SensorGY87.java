@@ -37,7 +37,7 @@ public class SensorGY87 implements ISensor {
 			mpu6050.setup(flightController);
 			mpu6050.enableMagnetometer();
 			bmp180.setup(flightController);
-			qmc5883.setup(flightController);
+			//qmc5883.setup(flightController);
 			this.isSetup = true;
 		} else {
 			log.warn("SensorGY87 is already set");
@@ -60,8 +60,8 @@ public class SensorGY87 implements ISensor {
 	@Override
 	public void processInput() {
 		mpu6050.processInput();
-		qmc5883.processInput();
 		bmp180.processInput();
+		//qmc5883.processInput();
 	}
 	
 	public Value3D getAccelerometer() {
