@@ -28,14 +28,20 @@ public class SensorGY87 implements ISensor {
 	private SensorBMP180 bmp180 = new SensorBMP180();
 	private SensorQMC5883 qmc5883 = new SensorQMC5883();
 	private SensorMPU6050 mpu6050 = new SensorMPU6050();
+	private boolean isSetup = false;
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
-		log.info("setup "+this.getName());
-		mpu6050.setup(flightController);
-		mpu6050.enableMagnetometer();
-		bmp180.setup(flightController);
-		qmc5883.setup(flightController);
+		if (!isSetup) {
+			log.info("setup "+this.getName());
+			mpu6050.setup(flightController);
+			mpu6050.enableMagnetometer();
+			bmp180.setup(flightController);
+			qmc5883.setup(flightController);
+			this.isSetup = true;
+		} else {
+			log.warn("SensorGY87 is already set");
+		}
 	}
 
 	@Override
