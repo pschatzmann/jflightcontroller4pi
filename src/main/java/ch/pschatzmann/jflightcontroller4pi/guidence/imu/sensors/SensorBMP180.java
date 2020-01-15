@@ -153,7 +153,7 @@ public class SensorBMP180 implements ISensor {
 	 * @return temperature in celsius
 	 */
 	public float getTemperature() {
-		return this.pressure_pa;
+		return this.baro_temp_c;
 	}
 	
 	public String toString() {
