@@ -35,6 +35,7 @@ public class SensorQMC5883 implements ISensor {
 	public void setup(FlightController flightController) throws IOException {
 		log.info("setup "+this.getName());
 		this.flightController = flightController;
+		// read id
 		byte[] id = new byte[3];
 		i2c.read((byte)0x10, 3, id);  
 		if (id[0]=='H' && id[1]=='4' && id[2]=='3' ){
