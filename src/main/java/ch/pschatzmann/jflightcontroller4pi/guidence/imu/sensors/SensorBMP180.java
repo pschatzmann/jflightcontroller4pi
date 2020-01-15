@@ -69,7 +69,9 @@ public class SensorBMP180 implements ISensor {
 		p2 = 3038.0 * 100.0 * Math.pow(2, -36);
 
 		calculateBaseline();
-		flightController.setValue(ParametersEnum.PRESSUREBASELINE, baselinePressure);
+		if (this.flightController!=null) {
+			flightController.setValue(ParametersEnum.PRESSUREBASELINE, baselinePressure);
+		}
 
 
 	}
