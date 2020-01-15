@@ -107,12 +107,10 @@ public class SensorGY87 implements ISensor {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append(System.lineSeparator());
 		sb.append(mpu6050);
-		sb.append(System.lineSeparator());
 		sb.append(qmc5883);
-		sb.append(System.lineSeparator());
 		sb.append(bmp180);
-		sb.append(System.lineSeparator());
 		return sb.toString();
 	}
 
