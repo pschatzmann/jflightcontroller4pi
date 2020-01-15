@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * Converts a 3d Magnetometer output into Degrees and Headings.

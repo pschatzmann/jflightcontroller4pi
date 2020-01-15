@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.navigation.gps;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation.gps;
 
 
 public class GPSPositionPlan extends GPSPosition {

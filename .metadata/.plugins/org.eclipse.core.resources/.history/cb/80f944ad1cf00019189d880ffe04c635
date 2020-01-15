@@ -1,7 +1,7 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
-import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass.Heading;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**

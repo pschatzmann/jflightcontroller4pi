@@ -1,5 +1,6 @@
 package ch.pschatzmann.jflightcontroller4pi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -104,7 +105,11 @@ public class FlightController {
 	}
 
 	private void setupDevice(IDevice device) {
-		device.setup(this);
+		try {
+			device.setup(this);
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+		}
 	}
 
 	/**

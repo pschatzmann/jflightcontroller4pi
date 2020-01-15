@@ -15,7 +15,7 @@ So we can define this device as follows:
 			<ref bean="pinI2C"/>
 		</property>
 		
-	  	<property name="inputProcessor" ref="ch.pschatzmann.jflightcontroller4pi.navigation.GPS"/>		
+	  	<property name="inputProcessor" ref="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPS"/>		
 	</bean>
 
 And finally we need to define the Input Pins

@@ -4,5 +4,6 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 
 public interface IInputProcessor {
-	void processInput(FlightController controller, IData input, char delimiter);
+	void processInput(FlightController controller, IData input);
+	boolean isValid(IData input);
 }

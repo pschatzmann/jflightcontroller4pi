@@ -1,5 +1,5 @@
 /**
  * Update GPS Sensor information
  */
-package ch.pschatzmann.jflightcontroller4pi.navigation.gps;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation.gps;
 

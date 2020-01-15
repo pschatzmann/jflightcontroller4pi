@@ -41,7 +41,7 @@ public class TestFlightGear {
 		ctl.setControlLoop(new ControlLoopWithTimers(ctl));
 		IFieldDefinitions def = new FieldDefinitions(
 				Arrays.asList(ParametersEnum.SENSORROLL, ParametersEnum.SENSORPITCH, ParametersEnum.SENSORYAW,
-						ParametersEnum.SENSORSPEED, ParametersEnum.SENSORHEADING, ParametersEnum.SENSORALTITUDE));
+						ParametersEnum.SENSORSPEED, ParametersEnum.SENSORHEADING, ParametersEnum.SENSORPRESSURE));
 
 		DatagramReader r = new DatagramReader(def, 7001);
 		ctl.addDevices(Arrays.asList(r));

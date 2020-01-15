@@ -13,7 +13,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.wiringpi.Gpio;
 
 import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
-import ch.pschatzmann.jflightcontroller4pi.navigation.NMEAParser;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.NMEAParser;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**

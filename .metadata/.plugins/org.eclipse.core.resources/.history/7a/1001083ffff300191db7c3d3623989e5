@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.navigation;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

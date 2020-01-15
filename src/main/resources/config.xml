@@ -41,10 +41,10 @@
 	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
 	</bean>
 
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice" >
 	</bean>
 	
-	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.navigation.AutoPilot" >
+	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot" >
 	</bean>
 	
 
@@ -216,6 +216,7 @@
         	</bean>
         </property>
 	</bean>
+
 
 	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" >
 	  	<property name="port" value="7000"/>

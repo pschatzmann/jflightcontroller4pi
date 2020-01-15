@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu.gps;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu.gps;
 
 import java.util.HashMap;
 import java.util.Map;

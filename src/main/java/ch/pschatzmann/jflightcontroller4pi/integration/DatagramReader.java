@@ -5,6 +5,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +18,11 @@ import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.devices.IInputProcessor;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.devices.InputProcessor;
+import ch.pschatzmann.jflightcontroller4pi.devices.InputProcessorWithPrefix;
 
 /**
- * Read values from a UDP Port (e.g. from JSBSim) into the ParameterStore
+ * Read values from a UDP Port (e.g. from JSBSim) into the ParameterStore. We can support multiple
+ * protocols (by setting the input processors. If nothing is defined we set up the default protocols.
  * 
  * @author pschatzmann
  *
@@ -25,7 +31,7 @@ public class DatagramReader implements ISensor {
 	private static final Logger log = LoggerFactory.getLogger(DatagramReader.class);
 	private IFieldDefinitions inputFields = new FieldDefinitions();
 	private FlightController flightController;
-	private IInputProcessor inputProcessor;
+	private Collection<IInputProcessor> inputProcessors;
 	private char delimiter = ',';
 	private DatagramChannel channel;
 	private ByteBuffer buffer = ByteBuffer.allocate(1023);
@@ -64,9 +70,7 @@ public class DatagramReader implements ISensor {
 	public void setup(FlightController flightController) {
 		this.flightController = flightController;
 		try {
-			if (this.inputProcessor == null) {
-				this.inputProcessor = new InputProcessor(inputFields.getFieldNames());
-			}
+			setupProtocols();
 
 			if (this.channel == null) {
 				channel = DatagramChannel.open();
@@ -81,6 +85,18 @@ public class DatagramReader implements ISensor {
 			log.info("The datagram reader has been started on port {}", this.port);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
+		}
+	}
+
+	/**
+	 * If no protocols have been set up we use the InputProcessor and InputProcessorWithPrefix
+	 */
+	protected void setupProtocols() {
+		if (this.inputProcessors == null) {
+			log.info("Setting up default protocols");
+			this.inputProcessors = new ArrayList();
+			this.inputProcessors.add(new InputProcessor(inputFields.getFieldNames()));
+			this.inputProcessors.add(new InputProcessorWithPrefix());
 		}
 	}
 
@@ -126,9 +142,17 @@ public class DatagramReader implements ISensor {
 
 	}
 
+	/**
+	 * Process data aginst each protocol (input processor)
+	 * @param line
+	 */
 	protected void processInputLine(IData line) {
 		try {
-			inputProcessor.processInput(flightController, line, delimiter);
+			for (IInputProcessor ip : inputProcessors) {
+				if (ip.isValid(line)) {
+					ip.processInput(flightController, line);
+				}
+			}
 		} catch(Exception ex) {
 			log.error("Could not process the following line: '{}'", line.toString(), ex);
 		}
@@ -150,12 +174,12 @@ public class DatagramReader implements ISensor {
 		this.port = port;
 	}
 
-	public IInputProcessor getInputProcessor() {
-		return inputProcessor;
+	public Collection<IInputProcessor> getInputProcessors() {
+		return inputProcessors;
 	}
 
-	public void setInputProcessor(IInputProcessor inputProcessor) {
-		this.inputProcessor = inputProcessor;
+	public void setInputProcessors(Collection<IInputProcessor> inputProcessor) {
+		this.inputProcessors = inputProcessor;
 	}
 
 	/**

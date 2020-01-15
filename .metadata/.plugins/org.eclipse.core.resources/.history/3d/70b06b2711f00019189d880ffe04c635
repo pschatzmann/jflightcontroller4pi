@@ -1,6 +1,6 @@
-package ch.pschatzmann.jflightcontroller4pi.navigation.gps;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation.gps;
 
-import ch.pschatzmann.jflightcontroller4pi.imu.gps.copy.GPSPosition;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.gps.copy.GPSPosition;
 
 public class GPSPositionPlan extends GPSPosition {
 	double speed;

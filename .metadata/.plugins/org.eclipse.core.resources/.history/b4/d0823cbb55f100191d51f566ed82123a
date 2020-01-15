@@ -29,11 +29,11 @@
 	    <property name="flightController" ref="flightController"/>
 	</bean>
 
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice" >
 	    <property name="flightController" ref="flightController"/>
 	</bean>
 	
-	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.navigation.AutoPilot" >
+	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot" >
 	    <property name="flightController" ref="flightController"/>
 	</bean>
 	

@@ -1,0 +1,20 @@
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
+
+
+/**
+ * GPS Position for Flight Plan with a target speed to destination.
+ * 
+ * @author pschatzmann
+ *
+ */
+public class GPSPositionPlan extends GPSPosition {
+	double speed;
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+}

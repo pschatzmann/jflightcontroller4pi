@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParameterValue;

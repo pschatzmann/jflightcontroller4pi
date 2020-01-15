@@ -14,6 +14,10 @@ import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.RaspiBcmPin;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.i2c.I2CBus;
+import com.pi4j.io.i2c.I2CDevice;
+import com.pi4j.io.i2c.I2CFactory;
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 import com.pi4j.io.serial.Baud;
 import com.pi4j.io.serial.DataBits;
 import com.pi4j.io.serial.FlowControl;
@@ -24,8 +28,7 @@ import com.pi4j.io.serial.StopBits;
 import com.pi4j.wiringpi.Gpio;
 
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
-import ch.pschatzmann.jflightcontroller4pi.navigation.GPS;
-import ch.pschatzmann.jflightcontroller4pi.protocols.InputFromPiI2C;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPS;
 import ch.pschatzmann.jflightcontroller4pi.protocols.InputSerial;
 import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
 
@@ -129,26 +132,6 @@ public class TestPINs {
 		pwm.shutdown();
 	}
 
-	/**
-	 * BCM2 (pin 3) and BCM3 (pin 5) for bus 0
-	 * 
-	 * @throws InterruptedException
-	 */
-	@Test
-	public void testI2C() throws InterruptedException {
-		if (!isRaspberryPI())
-			return;
-		int HMC5883L_ADDRESS = 0x1E;
-		System.out.println("testI2C");
-		byte dataAddresses[] = { (byte) HMC5883L_ADDRESS, (byte) 0x8E };
-
-		InputFromPiI2C i2c = new InputFromPiI2C(0, (byte) 0x01, dataAddresses);
-		for (int j = 0; j < 100; j++) {
-			IData data = i2c.getValues();
-			System.out.println(data.toString());
-		}
-		i2c.shutdown();
-	}
 
 	/**
 	 * The mini UART is mapped to the TXD (GPIO 14) and RXD (GPIO 15)

@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * API for GPS data which provides the actual location, direction and speed

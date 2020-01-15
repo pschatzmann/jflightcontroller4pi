@@ -1,5 +1,5 @@
 /**
  * A simple Parameter Store which provides timing and history information.
  */
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 

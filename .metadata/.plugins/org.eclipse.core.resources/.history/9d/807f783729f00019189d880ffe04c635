@@ -1,5 +1,5 @@
 /**
  * Implementation of different Flight Modes
  */
-package ch.pschatzmann.jflightcontroller4pi.navigation;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 

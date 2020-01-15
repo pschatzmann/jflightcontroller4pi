@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.navigation;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 
 import java.util.ArrayList;
 import java.util.List;

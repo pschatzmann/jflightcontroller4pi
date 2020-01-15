@@ -92,7 +92,7 @@ The IMU is calculating the following output parameters with the help of the inpu
 
 We define our IMU (device) and make it available to the stabilizedMode
 
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice" >
 	    <property name="flightController" ref="flightController"/>
 	</bean>
 	

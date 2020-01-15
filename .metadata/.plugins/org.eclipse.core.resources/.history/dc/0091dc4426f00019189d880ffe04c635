@@ -1,13 +1,13 @@
-package ch.pschatzmann.jflightcontroller4pi.navigation;
+package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
-import ch.pschatzmann.jflightcontroller4pi.imu.IMU;
-import ch.pschatzmann.jflightcontroller4pi.navigation.gps.GPSPosition;
-import ch.pschatzmann.jflightcontroller4pi.navigation.gps.GPSPositionPlan;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMU;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.gps.GPSPosition;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.gps.GPSPositionPlan;
 
 /**
  * Navigation with the help of GPS coordinates

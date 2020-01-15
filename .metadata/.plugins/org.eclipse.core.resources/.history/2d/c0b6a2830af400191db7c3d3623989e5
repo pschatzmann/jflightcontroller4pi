@@ -98,7 +98,7 @@ We implemented a software IMU which reports a body's specific force, angular rat
 
 Finally we can define our IMU (device) in XML and make it available to the stabilizedMode
 
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice" >
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice" >
 	    <property name="flightController" ref="flightController"/>
 	</bean>
 	

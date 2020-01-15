@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.devices;
 
+import java.io.IOException;
+
 /**
  * Input Device
  * 
@@ -8,7 +10,7 @@ package ch.pschatzmann.jflightcontroller4pi.devices;
  */
 public interface ISensor extends IDevice {
 	/**
-	 * Process the Input from a Sensor
-	 */
-	void processInput();
+	 * Process the Input from a Sensor by updating the values (in the parameter store)
+	 * */
+	void processInput() ;
 }

@@ -21,6 +21,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  */
 public class InputProcessor implements IInputProcessor {
 	private static final Logger log = LoggerFactory.getLogger(InputProcessor.class);
+	private char delimiter=',';
 	@SuppressWarnings("unchecked")
 	private List<ParametersEnum> inputParameters = Collections.EMPTY_LIST;
 
@@ -32,7 +33,7 @@ public class InputProcessor implements IInputProcessor {
 	}
 
 	@Override
-	public void processInput(FlightController flightController, IData input, char delimiter) {
+	public void processInput(FlightController flightController, IData input) {
 		if (log.isDebugEnabled()) log.debug(input.toString());
 		double values[] = input.splitDouble(delimiter, inputParameters.size());
 		for (int j = 0; j < values.length; j++) {
@@ -49,6 +50,26 @@ public class InputProcessor implements IInputProcessor {
 
 	public void setInputParameters(Collection<ParametersEnum> inputParameters) {
 		this.inputParameters = new ArrayList<ParametersEnum>(inputParameters);
+	}
+
+	@Override
+	public boolean isValid(IData input) {
+		double values[] = input.splitDouble(delimiter, inputParameters.size());
+		return false;
+	}
+
+	/**
+	 * @return the delimiter
+	 */
+	public char getDelimiter() {
+		return delimiter;
+	}
+
+	/**
+	 * @param delimiter the delimiter to set
+	 */
+	public void setDelimiter(char delimiter) {
+		this.delimiter = delimiter;
 	}
 
 

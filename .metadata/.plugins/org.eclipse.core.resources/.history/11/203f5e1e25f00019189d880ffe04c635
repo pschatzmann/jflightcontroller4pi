@@ -12,7 +12,7 @@ import ch.pschatzmann.jflightcontroller4pi.control.IControlLoop;
 import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
-import ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
 import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore;

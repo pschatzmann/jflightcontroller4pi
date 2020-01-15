@@ -11,7 +11,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
 import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
-import ch.pschatzmann.jflightcontroller4pi.navigation.AutoPilot;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot;
 
 /**
  * Generic Flight Mode implementation which can be configured e.g. with Spring. We manage the devices

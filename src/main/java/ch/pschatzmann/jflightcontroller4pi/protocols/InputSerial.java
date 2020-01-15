@@ -16,7 +16,7 @@ import com.pi4j.io.serial.SerialFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.data.DataOfString;
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
-import ch.pschatzmann.jflightcontroller4pi.navigation.GPS;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPS;
 
 /**
  * IPinIn implementation which handles a serial input.

@@ -1,9 +1,9 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.pschatzmann.jflightcontroller4pi.imu.gps.GPSPosition;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.gps.GPSPosition;
 
 /**
  * Parser for NMEA GPS messages

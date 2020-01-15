@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * Implementation of Madgwick's IMU and AHRS algorithms. See:

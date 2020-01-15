@@ -23,7 +23,7 @@ Pins PI Zero:
 			<ref bean="pinI2C"/>
 		</property>
 		
-	  	<parser name="name" ref="ch.pschatzmann.jflightcontroller4pi.navigation.NMEASentenceParser"/>
+	  	<parser name="name" ref="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.NMEASentenceParser"/>
 		
 	</bean>
 	

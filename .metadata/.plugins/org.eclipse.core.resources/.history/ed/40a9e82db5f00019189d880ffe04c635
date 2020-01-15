@@ -15,7 +15,7 @@ Beitian BN-880Q GPS+GLONASS Dual GPS Antenna Module FLASH TTL Level 9600bps for 
 			<ref bean="pinI2C"/>
 		</property>
 		
-	  	<parser name="name" ref="ch.pschatzmann.jflightcontroller4pi.navigation.NMEASentenceParser"/>
+	  	<parser name="name" ref="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.NMEASentenceParser"/>
 		
 	</bean>
 

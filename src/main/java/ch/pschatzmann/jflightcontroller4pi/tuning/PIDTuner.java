@@ -13,9 +13,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
-import ch.pschatzmann.jflightcontroller4pi.imu.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.GraphiteMetrics;
 import ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule;

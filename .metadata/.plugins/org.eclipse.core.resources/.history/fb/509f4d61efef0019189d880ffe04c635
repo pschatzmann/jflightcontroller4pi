@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * 3 D value. Accelerometer and Gyro and Magnetometers are providing their output in values for the x, y and z axis.

@@ -1,4 +1,4 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * see https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles

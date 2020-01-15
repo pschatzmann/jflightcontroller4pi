@@ -34,6 +34,12 @@ public class Sensor implements ISensor {
 		this.in = in;
 	}
 
+	public Sensor(List<ParametersEnum> inputParameters, IPinIn in, char delimiter) {	
+		this.inputProcessor = new InputProcessor(inputParameters);
+		((InputProcessor)this.inputProcessor).setDelimiter(delimiter);
+		this.in = in;
+	}
+
 	@Override
 	public void setup(FlightController flightController) {
 		this.flightController = flightController;
@@ -44,7 +50,7 @@ public class Sensor implements ISensor {
 		// get the input from the sensors
 		IData input = in.getValues();
 		// process the input
-		inputProcessor.processInput(flightController, input, delimiter);
+		inputProcessor.processInput(flightController, input);
 		// release the memory
 		input.close();
 	}

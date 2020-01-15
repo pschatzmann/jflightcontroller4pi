@@ -7500,7 +7500,7 @@ org.eclipse.swt.SWTException: Widget is disposed
 !ENTRY org.eclipse.jdt.core 4 4 2019-10-16 09:33:47.271
 !MESSAGE Exception occurred during compilation unit conversion:
 ----------------------------------- SOURCE BEGIN -------------------------------------
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * Converts the 3d magentometer output into
@@ -7657,7 +7657,7 @@ java.lang.IllegalArgumentException
 !ENTRY org.eclipse.jdt.core 4 4 2019-10-16 09:47:01.836
 !MESSAGE Exception occurred during compilation unit conversion:
 ----------------------------------- SOURCE BEGIN -------------------------------------
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * Converts the 3d magentometer output into
@@ -7850,14 +7850,14 @@ java.lang.IllegalArgumentException
 !ENTRY org.eclipse.jdt.core 4 4 2019-10-16 17:40:40.387
 !MESSAGE Exception occurred during compilation unit conversion:
 ----------------------------------- SOURCE BEGIN -------------------------------------
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
-import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass.Heading;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
@@ -8545,7 +8545,7 @@ java.lang.IllegalArgumentException
 !ENTRY org.eclipse.jdt.core 4 4 2019-10-17 17:31:09.881
 !MESSAGE Exception occurred during compilation unit conversion:
 ----------------------------------- SOURCE BEGIN -------------------------------------
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
  * We try to estimate the speed with the help of the accelerometer

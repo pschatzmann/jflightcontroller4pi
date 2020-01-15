@@ -1,6 +1,6 @@
-package ch.pschatzmann.jflightcontroller4pi.imu;
+package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
-import ch.pschatzmann.jflightcontroller4pi.imu.Compass.Heading;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass.Heading;
 
 /**
  * Implementation of Madgwick's IMU and AHRS algorithms. See:

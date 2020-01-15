@@ -63,7 +63,7 @@ Fortunately we have an Input Processor which handles NMEA, so we can define this
 			<ref bean="pinI2C1"/>
 		</property>
 		
-	  	<property name="inputProcessor" ref="ch.pschatzmann.jflightcontroller4pi.navigation.GPSInputProcessor"/>		
+	  	<property name="inputProcessor" ref="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPSInputProcessor"/>		
 	</bean>
 
 And we need to configure the related Input Pins to use I2C1

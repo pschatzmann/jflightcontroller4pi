@@ -2,12 +2,13 @@ ch.pschatzmann.jflightcontroller4pi
 ch.pschatzmann.jflightcontroller4pi.control
 ch.pschatzmann.jflightcontroller4pi.data
 ch.pschatzmann.jflightcontroller4pi.devices
-ch.pschatzmann.jflightcontroller4pi.imu
+ch.pschatzmann.jflightcontroller4pi.guidence.imu
+ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors
+ch.pschatzmann.jflightcontroller4pi.guidence.navigation
+ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates
 ch.pschatzmann.jflightcontroller4pi.integration
 ch.pschatzmann.jflightcontroller4pi.loop
 ch.pschatzmann.jflightcontroller4pi.modes
-ch.pschatzmann.jflightcontroller4pi.navigation
 ch.pschatzmann.jflightcontroller4pi.parameters
 ch.pschatzmann.jflightcontroller4pi.protocols
-ch.pschatzmann.jflightcontroller4pi.tests
 ch.pschatzmann.jflightcontroller4pi.tuning

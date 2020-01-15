@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.devices;
 
+import java.io.IOException;
+
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 
 /**
@@ -11,8 +13,9 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 public interface IDevice {
 	/**
 	 * Initialize the device
+	 * @throws IOException 
 	 */
-	void setup(FlightController flightController);
+	void setup(FlightController flightController) throws IOException;
 	/**
 	 * Shutdown the device
 	 */
