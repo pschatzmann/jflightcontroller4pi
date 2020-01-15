@@ -35,7 +35,13 @@ public class SensorQMC5883 implements ISensor {
 	public void setup(FlightController flightController) throws IOException {
 		log.info("setup "+this.getName());
 		this.flightController = flightController;
-		i2c.write((byte) 0x09, (byte)0b10000101); // control register 1
+		byte[] id = new byte[3];
+		i2c.read((byte)0x10, 3, id);  
+		if (id[0]=='H' && id[1]=='4' && id[2]=='3' ){
+			i2c.write((byte) 0x09, (byte)0b10000101); // control register 1
+		} else {
+			log.error("The device is not a QMC5883");
+		}
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public class SensorQMC5883 implements ISensor {
 	}
 
 	public int[] getValues() throws IOException {
-		i2c.read((byte)0x00, 6, values);
+		i2c.read((byte)0x00, 3, values);
 		return values;
 	}
 
