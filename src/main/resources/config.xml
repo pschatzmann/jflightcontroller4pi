@@ -41,7 +41,7 @@
 	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" >
 	</bean>
 
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUDevice" >
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice" >
 	</bean>
 	
 	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot" >
@@ -210,7 +210,7 @@
 						<value>SENSORYAW</value>
 						<value>SENSORSPEED</value>
 						<value>SENSORHEADING</value>
-						<value>SENSORALTITUDE</value>
+						<value>ALTITUDE</value>
 		        	</list>
 		        </property>
         	</bean>

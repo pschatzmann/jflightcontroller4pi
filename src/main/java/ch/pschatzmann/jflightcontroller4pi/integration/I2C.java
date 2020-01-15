@@ -42,7 +42,7 @@ public class I2C {
 	 */
 	public I2C(int addr) {
 		try {
-			I2CBus i2c = I2CFactory.getInstance(I2CBus.BUS_2);
+			I2CBus i2c = I2CFactory.getInstance(I2CBus.BUS_1);
 			device = i2c.getDevice(addr);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);

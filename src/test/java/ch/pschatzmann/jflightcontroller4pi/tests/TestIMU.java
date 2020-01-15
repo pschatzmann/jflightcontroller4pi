@@ -1,8 +1,10 @@
 package ch.pschatzmann.jflightcontroller4pi.tests;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
@@ -18,9 +20,21 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87;
  */
 public class TestIMU {
 
+	@Before
+	public void beforeMethod() {
+		org.junit.Assume.assumeTrue(i2cExists());
+	}
+
+	private boolean i2cExists() {
+		boolean result = new File("/dev/i2c-1").exists();
+		if (!result) {
+			System.out.println("I2C not available on your system - Tests ignored");
+		}
+		return result;
+	}
+
 	@Test
 	public void testGy87() throws IOException, InterruptedException {
-
 		ISensor sensor = new SensorGY87();
 		sensor.setup(null);
 
