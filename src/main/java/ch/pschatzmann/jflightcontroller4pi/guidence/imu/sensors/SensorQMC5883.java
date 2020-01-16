@@ -37,9 +37,9 @@ public class SensorQMC5883 implements ISensor {
 		this.flightController = flightController;
 		// oversampling 256 - 01
 		// range 8G - 01
-		// continues read - 01
 		// 10 hz - 00
-		i2c.write((byte) 0x09, (byte)0b01010100); // control register 1
+		// continues read - 01
+		i2c.write((byte) 0x09, (byte)0b01010001); // control register 1
 	}
 
 	@Override
