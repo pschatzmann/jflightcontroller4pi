@@ -50,7 +50,7 @@ public class SensorBMP180 implements ISensor {
 		// configure the BMP180 (barometer)
 		i2c.write(0xe0,(byte) 0xb6); // reset
 		byte[] bytes = new byte[22];
-		i2c.read(0xAA, 11, bytes);
+		i2c.read(0xAA, 22, bytes);
 		// convert to ints
 		i2c.toIntArray(bytes, values, 11);
 		// special logic for unsigned values
