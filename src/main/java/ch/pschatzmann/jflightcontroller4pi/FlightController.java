@@ -104,7 +104,7 @@ public class FlightController {
 		newDevices.forEach(device -> setupDevice(device));
 	}
 
-	private void setupDevice(IDevice device) {
+	protected void setupDevice(IDevice device) {
 		try {
 			device.setup(this);
 		} catch (IOException e) {

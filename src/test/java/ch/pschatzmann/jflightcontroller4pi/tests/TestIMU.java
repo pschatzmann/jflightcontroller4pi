@@ -35,7 +35,7 @@ public class TestIMU {
 
 	@Before
 	public void beforeMethod() {
-		org.junit.Assume.assumeTrue(i2cExists());
+		//org.junit.Assume.assumeTrue(i2cExists());
 	}
 
 	private boolean i2cExists() {
@@ -66,20 +66,20 @@ public class TestIMU {
 		IMUDevice imu = new IMUDevice();
 		fc.addDevices(Arrays.asList(sensor, imu));
 		
-		OutDevice rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
-		OutDevice elevator = new OutDevice( ParametersEnum.ELEVATOR,  0.0, new NullDevice());
-		OutDevice aileron = new OutDevice( ParametersEnum.AILERON,  0.0, new NullDevice());
-		OutDevice throttle = new OutDevice( ParametersEnum.THROTTLE, new NullDevice());
-		throttle.setMinValue(0.0);
-		throttle.setDefaultValue(0.0);
-		
-		List<IRecalculate> rules = new ArrayList<IRecalculate>();
-		rules.add(new ManualModeRule(fc, rudder,ParametersEnum.YAW));
-		rules.add(new ManualModeRule(fc, elevator,ParametersEnum.PITCH));
-		rules.add(new ManualModeRule(fc, aileron,ParametersEnum.ROLL ));
-		rules.add(new ManualModeRule(fc, throttle,ParametersEnum.SPEED));
-
-		fc.setMode(new FlightMode(rules));
+//		OutDevice rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
+//		OutDevice elevator = new OutDevice( ParametersEnum.ELEVATOR,  0.0, new NullDevice());
+//		OutDevice aileron = new OutDevice( ParametersEnum.AILERON,  0.0, new NullDevice());
+//		OutDevice throttle = new OutDevice( ParametersEnum.THROTTLE, new NullDevice());
+//		throttle.setMinValue(0.0);
+//		throttle.setDefaultValue(0.0);
+//		
+//		List<IRecalculate> rules = new ArrayList<IRecalculate>();
+//		rules.add(new ManualModeRule(fc, rudder,ParametersEnum.YAW));
+//		rules.add(new ManualModeRule(fc, elevator,ParametersEnum.PITCH));
+//		rules.add(new ManualModeRule(fc, aileron,ParametersEnum.ROLL ));
+//		rules.add(new ManualModeRule(fc, throttle,ParametersEnum.SPEED));
+//
+//		fc.setMode(new FlightMode(rules));
 		
 
 		new Thread(() -> {

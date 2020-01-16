@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
@@ -53,7 +54,7 @@ public class ControlLoop implements IControlLoop {
 		while (active) {
 			try {
 				processSensors();
-				processOutEx();
+				processOut();
 				
 				if (sleepMs>0) {
 					Thread.sleep(sleepMs);	
@@ -77,10 +78,10 @@ public class ControlLoop implements IControlLoop {
 			.forEach(sensor -> ((ISensor)sensor).processInput());
 	}
 	
-	protected void processOutEx() {
+	protected void processOut() {
 		this.controller.getDevices().stream()
-			.filter(d -> d instanceof IOutDeviceEx)
-			.forEach(sensor -> ((IOutDeviceEx)sensor).processOutput());
+			.filter(d -> d instanceof IOutDevice)
+			.forEach(sensor -> ((IOutDevice)sensor).processOutput());
 	}
 
 	
