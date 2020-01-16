@@ -24,7 +24,7 @@ public class SensorMPU6050 implements ISensor {
 	private static final Logger log = LoggerFactory.getLogger(SensorMPU6050.class);
 	private I2C i2c = new I2C(0x68); // (Accelerometers/Gyroscope)
 	private FlightController flightController;
-	private short rx_buffer[] = new short[10];
+	private int rx_buffer[] = new int[10];
 	private float accelFactor;
 	private Value3D accelerometer = new Value3D();;
 	private Value3D gyro = new Value3D();
@@ -65,14 +65,14 @@ public class SensorMPU6050 implements ISensor {
 	@Override
 	public void processInput() {
 		try {
-			i2c.read((byte)0x3B, 10, rx_buffer);
-			short accel_x = rx_buffer[0];
-			short accel_y = rx_buffer[1];
-			short accel_z = rx_buffer[2];
-			short mpu_temp = rx_buffer[3];
-			short gyro_x = rx_buffer[4];
-			short gyro_y = rx_buffer[5];
-			short gyro_z = rx_buffer[6];
+			i2c.read(0x3B, 10, rx_buffer);
+			int accel_x = rx_buffer[0];
+			int accel_y = rx_buffer[1];
+			int accel_z = rx_buffer[2];
+			int mpu_temp = rx_buffer[3];
+			int gyro_x = rx_buffer[4];
+			int gyro_y = rx_buffer[5];
+			int gyro_z = rx_buffer[6];
 
 			// convert temperature reading into degrees Celsius
 			temperature = mpu_temp / 340.0f + 36.53f;

@@ -76,26 +76,9 @@ public class I2C {
 		}
 	}
 
-	/**
-	 * Reads an indicated number of bytes (*2) at the indicated address and
-	 * converts them to 2 byte shorts
-	 * 
-	 * @param addr
-	 * @param len
-	 * @param buffer
-	 * @throws IOException
-	 */
-	public void read(int addr, int len, short[] buffer) throws IOException {
-		byte byteBuffer[] = new byte[len * 2];
-		read(addr, len * 2, byteBuffer);
-		for (int i = 0; i < len; i++) {
-			buffer[i] = (short) (((byteBuffer[i * 2] << 8) | (byteBuffer[(i * 2) + 1])));
-		}
-	}
 
 	/**
-	 * Java does not support unsigned ints. So we are forced to use int
-	 * (constructed of 2 bytes) instead instead
+	 * Reads signed 2 byte values
 	 * 
 	 * @param addr
 	 * @param len
@@ -103,9 +86,26 @@ public class I2C {
 	 * @throws IOException
 	 */
 	public void read(int addr, int len, int[] buffer) throws IOException {
+		read(addr, len, buffer, true);
+	}
+
+	/**
+	 * Reads singed or unsigned 2 byte values
+	 * 
+	 * @param addr
+	 * @param len
+	 * @param buffer
+	 * @param signed
+	 * @throws IOException
+	 */
+	public void read(int addr, int len, int[] buffer, boolean signed) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
-		toIntArray(byteBuffer, buffer, len);
+		if (signed) {
+			toIntArray(byteBuffer, buffer, len);
+		} else {
+			toUnsignedIntArray(byteBuffer, buffer, len);			
+		}
 	}
 	
 	/**
@@ -119,6 +119,13 @@ public class I2C {
 			buffer[i] = (int) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
 		}
 	}
+	
+	public void toUnsignedIntArray(byte[] byteBuffer, int[] buffer, int intLen) {		
+		for (int i = 0; i < intLen; i++) {
+			buffer[i] = (int) toIntUnsigned(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
+		}
+	}
+
 	
 	/**
 	 * Converts 2 bytes to a int
