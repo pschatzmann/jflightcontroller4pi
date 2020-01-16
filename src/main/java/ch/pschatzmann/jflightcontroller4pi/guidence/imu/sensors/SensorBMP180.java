@@ -160,24 +160,22 @@ public class SensorBMP180 implements ISensor {
 		// start conversion of the temperature sensor
 		i2c.write(0xF4,(byte) 0x2E);
 		i2c.sleep(5);
-		byte[] tempBytes = new byte[2];
-		i2c.read(0xF6, 1, tempBytes);
+		double[] tu = new double[1];
+		i2c.read(0xF6, 1, tu);
 
 		// extract the raw value
-		double dtu = (double) tempBytes[0];
-		double tu = (tempBytes[0] * 256 + tempBytes[1]);
-		double a = c5 * (tu - c6);
+		double a = c5 * (tu[0] - c6);
 		baro_temp_c = (double) (a + (mc / (a + md)));
 
 		// start conversion of the pressure sensor
 		i2c.write(0xF4,(byte) 0xB4); // 0x34 | 1<<6);
 		i2c.sleep(12);
-		double pressure = i2c.read3(0xF6);
+		double pu = i2c.read3(0xF6);
 
 		double s = baro_temp_c - 25.0;
 		double x = (cx2 * Math.pow(s, 2)) + (cx1 * s) + cx0;
 		double y = (cy2 * Math.pow(s, 2)) + (cy1 * s) + cy0;
-		double z = (pressure - x) / y;
+		double z = (pu - x) / y;
 
 		// convert the pressure reading
 		pressure_pa =  (double) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
