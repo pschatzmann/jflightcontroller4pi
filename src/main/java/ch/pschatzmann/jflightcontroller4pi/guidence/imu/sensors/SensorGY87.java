@@ -59,6 +59,7 @@ public class SensorGY87 implements ISensor {
 
 	@Override
 	public void processInput() {
+		log.info("processInput");
 		mpu6050.processInput();
 		bmp180.processInput();
 		qmc5883.processInput();

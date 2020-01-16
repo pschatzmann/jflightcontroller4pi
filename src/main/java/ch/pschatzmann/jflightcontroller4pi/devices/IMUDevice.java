@@ -79,6 +79,7 @@ public class IMUDevice implements IOutDevice {
 
 	@Override
 	public void processOutput() {
+		log.info("processOutput");
 		// load latest values from the parameters
 		readParameters(gyro, ParametersEnum.GYROX, ParametersEnum.GYROY, ParametersEnum.GYROZ);
 		readParameters(accelerometer, ParametersEnum.ACCELEROMETERX, ParametersEnum.ACCELEROMETERY, ParametersEnum.ACCELEROMETERZ);
