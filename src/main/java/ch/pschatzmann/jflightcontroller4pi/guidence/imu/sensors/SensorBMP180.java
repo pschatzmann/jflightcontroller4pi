@@ -161,7 +161,7 @@ public class SensorBMP180 implements ISensor {
 		i2c.write(0xF4,(byte) 0x2E);
 		i2c.sleep(5);
 		double[] tu = new double[1];
-		i2c.read(0xF6, 1, tu);
+		i2c.read(0xF6, 1, tu, true);
 
 		// extract the raw value
 		double a = c5 * (tu[0] - c6);

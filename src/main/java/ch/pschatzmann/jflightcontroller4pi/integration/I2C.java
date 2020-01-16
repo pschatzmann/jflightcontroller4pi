@@ -156,11 +156,15 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(int addr, int len, double[] buffer) throws IOException {
+	public void read(int addr, int len, double[] buffer, boolean signed) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
-			buffer[i] = (double) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);;
+			if (signed) {
+				buffer[i] = (double) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
+			} else {
+				buffer[i] = (double) toIntUnsigned(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);				
+			}
 		}
 	}
 

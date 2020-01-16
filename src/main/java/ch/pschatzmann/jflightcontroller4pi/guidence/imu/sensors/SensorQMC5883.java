@@ -27,8 +27,8 @@ public class SensorQMC5883 implements ISensor {
 	private FlightController flightController;
 	private double valuesRaw[] = new double[3];
 	private double values[] = new double[3];
-	// we will report the sensor data in gauss
-	private double factor = 1.0 / 4.35;
+	// we will report the sensor data in gauss dependent on range 2GA->1.22; 8G->4.35
+	private double factor = 1.0 / 4.35;  
 	private Value3D magnetometer = new Value3D();
 	// by default we measure 10 times
 	private int numberOfMeasurements = 10;
@@ -38,11 +38,11 @@ public class SensorQMC5883 implements ISensor {
 	public void setup(FlightController flightController) throws IOException {
 		log.info("setup "+this.getName());
 		this.flightController = flightController;
-		// oversampling 256 - 01
-		// range 8G - 01
-		// 10 hz - 00
-		// continues read - 01
-		i2c.write((byte) 0x09, (byte)0b01010001); // control register 1
+		// Oversampling: 512 - 00 / 256 - 01 / 128 - 10 / 64 - 11
+		// Range: range 2G - 00 / 8G - 01  
+		// Output data rate: 10Hz - 00 / 50Hz 01 / 100Hz - 10 /  200Hz - 11
+		// Mode: continues read - 01 / standby - 00
+		i2c.write((byte) 0x09, (byte)0b11011001); // control register 1
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class SensorQMC5883 implements ISensor {
 		// check status bit
 		i2c.read(0x06, 1, status);
 		if ((status[0] & 1) == 1) {
-			i2c.read(0x00, 3, valuesRaw);
+			i2c.read(0x00, 3, valuesRaw, false);
 		} else {
 			log.info("SensorQMC5883 data not ready");
 		}
