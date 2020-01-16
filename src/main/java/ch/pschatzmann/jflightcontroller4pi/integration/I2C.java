@@ -175,11 +175,11 @@ public class I2C {
 	 * @return
 	 * @throws IOException
 	 */
-	public float read3(int addr) throws IOException {
+	public double read3(int addr) throws IOException {
 		byte byteBuffer[] = new byte[3];
 		read(addr, 3, byteBuffer);
 		//return (float) ((byteBuffer[0] << 16 | byteBuffer[1] << 8 | byteBuffer[2]) / 256.0);
-		return (float) ((byteBuffer[0] * 256 + byteBuffer[1] + byteBuffer[2]) / 256.0);
+		return (double) (((byteBuffer[0] * 256) + byteBuffer[1] + ((double)byteBuffer[2] / 256.0)));
 	}
 
 	/**
