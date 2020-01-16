@@ -35,7 +35,11 @@ public class SensorQMC5883 implements ISensor {
 	public void setup(FlightController flightController) throws IOException {
 		log.info("setup "+this.getName());
 		this.flightController = flightController;
-		i2c.write((byte) 0x09, (byte)0b10000101); // control register 1
+		// oversampling 256 - 01
+		// range 8G - 01
+		// continues read - 01
+		// 10 hz - 00
+		i2c.write((byte) 0x09, (byte)0b01010100); // control register 1
 	}
 
 	@Override
@@ -65,7 +69,12 @@ public class SensorQMC5883 implements ISensor {
 	}
 
 	public int[] getValues() throws IOException {
-		i2c.read((byte)0x00, 3, values);
+		byte status[] = new byte[1];
+		// check status bit
+		i2c.read(0x06, 1, status);
+		if ((status[0] & 1) == 1) {
+			i2c.read(0x00, 3, values);
+		}
 		return values;
 	}
 

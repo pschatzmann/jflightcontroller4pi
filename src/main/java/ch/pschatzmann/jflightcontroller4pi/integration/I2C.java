@@ -49,18 +49,6 @@ public class I2C {
 		}
 	}
 
-//	/**
-//	 * Writes a single byte
-//	 * 
-//	 * @param b
-//	 * @throws IOException
-//	 */
-//	public void write(byte b) throws IOException {
-//		if (device != null) {
-//			device.write(b);
-//		}
-//	}
-
 	/**
 	 * Writes a byte at the address
 	 * 
@@ -179,7 +167,7 @@ public class I2C {
 		byte byteBuffer[] = new byte[3];
 		read(addr, 3, byteBuffer);
 		//return (float) ((byteBuffer[0] << 16 | byteBuffer[1] << 8 | byteBuffer[2]) / 256.0);
-		log.info("read3: {} {} {}", byteBuffer[0],byteBuffer[1],byteBuffer[2]);
+		//log.info("read3: {} {} {}", byteBuffer[0],byteBuffer[1],byteBuffer[2]);
 		return (double) ((((byteBuffer[0]& 0xFF) * 256.0) + (byteBuffer[1]& 0xFF) + ((double)(byteBuffer[2]& 0xFF) / 256.0)));
 	}
 
