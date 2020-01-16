@@ -30,6 +30,7 @@ public class SensorQMC5883 implements ISensor {
 	// we will report the sensor data in gauss
 	private double factor = 1.0 / 4.35;
 	private Value3D magnetometer = new Value3D();
+	// by default we measure 10 times
 	private int numberOfMeasurements = 10;
 
 
@@ -57,7 +58,7 @@ public class SensorQMC5883 implements ISensor {
 	public void processInput() {
 		try {
 			double values[] = getValues();
-			magnetometer.set(valuesRaw[0], valuesRaw[1], valuesRaw[2]);
+			magnetometer.set(values[0], values[1], values[2]);
 
 			// update parameters
 			if (flightController!=null) {
@@ -80,6 +81,7 @@ public class SensorQMC5883 implements ISensor {
 		values[1]=0;
 		values[2]=0;
 		for (int j=0;j<this.getNumberOfMeasurements();j++) {
+			getValuesRaw();
 			values[0]+=valuesRaw[0];
 			values[1]+=valuesRaw[1];
 			values[2]+=valuesRaw[2];
