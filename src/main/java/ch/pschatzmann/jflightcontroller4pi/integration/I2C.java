@@ -140,7 +140,7 @@ public class I2C {
 	 */
 	public int toInt(byte b1, byte b2) {
 		//return (int) (((b1 << 8) | (b2)));
-		return (b1 * 256) + b2;
+		return (b1 * 256) + (b2 & 0xFF);
 	}
 
 	/**
