@@ -85,6 +85,7 @@ public class SensorQMC5883 implements ISensor {
 			values[0]+=valuesRaw[0];
 			values[1]+=valuesRaw[1];
 			values[2]+=valuesRaw[2];
+			i2c.sleep(11);
 		}
 		values[0]=values[0]/this.getNumberOfMeasurements()*factor;
 		values[1]=values[1]/this.getNumberOfMeasurements()*factor;
