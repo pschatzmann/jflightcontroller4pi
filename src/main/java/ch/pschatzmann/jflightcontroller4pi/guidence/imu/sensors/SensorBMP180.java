@@ -16,6 +16,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  * This is used to update the current altitude and temperature parameter values.
  * .
  * https://cdn-shop.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+ * http://wmrx00.sourceforge.net/Arduino/BMP085-Calcs.pdf
  * 
  * @author pschatzmann
  *
@@ -40,7 +41,7 @@ public class SensorBMP180 implements ISensor {
 	private double value[] = new double[1];
 	private double md, mc, a, b1, c3, c4, c6, c5, p0, p1, p2, cx0, cx1, cx2, cy0, cy1, cy2;
 	private double baselinePressure;
-	private float baro_temp_c, pressure_pa;
+	private double baro_temp_c, pressure_pa;
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
@@ -145,7 +146,7 @@ public class SensorBMP180 implements ISensor {
 	@Override
 	public void processInput() {
 		try {
-			float values[] = getValues();
+			double values[] = getValues();
 			if (flightController!=null) {
 				flightController.setValue(ParametersEnum.SENSORPRESSURE, pressure_pa);
 				flightController.setValue(ParametersEnum.TEMPERATURE, baro_temp_c);
@@ -155,17 +156,18 @@ public class SensorBMP180 implements ISensor {
 		}
 	}
 
-	public float[] getValues() throws IOException {
+	public double[] getValues() throws IOException {
 		// start conversion of the temperature sensor
 		i2c.write(0xF4,(byte) 0x2E);
 		i2c.sleep(5);
-		i2c.read(0xF6, 1, value);
+		byte[] tempBytes = new byte[2];
+		i2c.read(0xF6, 1, tempBytes);
 
 		// extract the raw value
-		double dtu = (float) value[0];
-		double tu = (values[0] * 256 + values[1]);
+		double dtu = (double) tempBytes[0];
+		double tu = (tempBytes[0] * 256 + tempBytes[1]);
 		double a = c5 * (tu - c6);
-		baro_temp_c = (float) (a + (mc / (a + md)));
+		baro_temp_c = (double) (a + (mc / (a + md)));
 
 		// start conversion of the pressure sensor
 		i2c.write(0xF4,(byte) 0xB4); // 0x34 | 1<<6);
@@ -178,8 +180,8 @@ public class SensorBMP180 implements ISensor {
 		double z = (pressure - x) / y;
 
 		// convert the pressure reading
-		pressure_pa =  (float) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
-		float result[] = { pressure_pa, baro_temp_c };
+		pressure_pa =  (double) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
+		double result[] = { pressure_pa, baro_temp_c };
 		return result;
 	}
 	
@@ -187,7 +189,7 @@ public class SensorBMP180 implements ISensor {
 	 * Provides the pressure from the last processInput() call
 	 * @return pressure in pascal
 	 */
-	public float getPressure() {
+	public double getPressure() {
 		return this.pressure_pa;
 	}
 
@@ -195,7 +197,7 @@ public class SensorBMP180 implements ISensor {
 	 * Provides temperature from the last processInput() call
 	 * @return temperature in celsius
 	 */
-	public float getTemperature() {
+	public double getTemperature() {
 		return this.baro_temp_c;
 	}
 	

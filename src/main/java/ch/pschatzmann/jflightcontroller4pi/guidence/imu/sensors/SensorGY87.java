@@ -72,11 +72,11 @@ public class SensorGY87 implements ISensor {
 		return mpu6050.getGyro();
 	}
 
-	public float getTemperature() {
+	public double getTemperature() {
 		return bmp180.getTemperature();
 	}
 	
-	public float getPressure() {
+	public double getPressure() {
 		return bmp180.getPressure();
 	}
 	
