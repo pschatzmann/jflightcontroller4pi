@@ -180,7 +180,7 @@ public class I2C {
 		read(addr, 3, byteBuffer);
 		//return (float) ((byteBuffer[0] << 16 | byteBuffer[1] << 8 | byteBuffer[2]) / 256.0);
 		log.info("read3: {} {} {}", byteBuffer[0],byteBuffer[1],byteBuffer[2]);
-		return (double) (((byteBuffer[0] * 256.0) + byteBuffer[1] + ((double)byteBuffer[2] / 256.0)));
+		return (double) ((((byteBuffer[0]& 0xFF) * 256.0) + (byteBuffer[1]& 0xFF) + ((double)(byteBuffer[2]& 0xFF) / 256.0)));
 	}
 
 	/**
