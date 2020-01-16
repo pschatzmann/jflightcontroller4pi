@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Timer;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,11 +31,15 @@ public class TestFlightGear {
 	
 	@BeforeClass
 	public static void startup() {
-		fgl.start();
-		
+		fgl.start();		
 	}
 	
-	
+	@Before
+	public void beforeMethod() {
+		// execute tests only if TEST_FLGHTGEAR has been set to true
+		org.junit.Assume.assumeTrue("true".equalsIgnoreCase(System.getProperty("TEST_FLGHTGEAR")));
+	}
+		
 	@Test
 	public void testReceive() {
 		FlightController ctl = new FlightController();

@@ -56,7 +56,8 @@ public class SensorBMP180 implements ISensor {
 		values[AC4] = i2c.toIntUnsigned(bytes[6], bytes[7]);
 		values[AC5] = i2c.toIntUnsigned(bytes[8], bytes[9]);
 		values[AC6] = i2c.toIntUnsigned(bytes[10], bytes[11]);
-				
+		logPoly();
+		
 		// Compute floating-point polynominals:
 		c3 = 160.0 * Math.pow(2, -15) * values[AC3];
 		c4 = Math.pow(10, -3) * Math.pow(2, -15) * values[AC4];
@@ -64,22 +65,57 @@ public class SensorBMP180 implements ISensor {
 		c5 = (Math.pow(2, -15) / 160.0) * values[AC5];
 		c6 = values[AC6];
 		mc = (Math.pow(2, 11) / Math.pow(160, 2)) * values[MC];
-		md = values[MD] / 160.0;
+		md = (double)values[MD] / 160.0;
 		cx0 = values[AC1];
 		cx1 = 160.0 * Math.pow(2, -13) * values[AC2];
 		cx2 = Math.pow(160, 2) * Math.pow(2, -25) * values[VB2];
-		cy0 = c4 * Math.pow(2.0, 15);
-		cy1 = c4 * c3;
-		cy2 = c4 * b1;
+		cy0 = (double)c4 * Math.pow(2.0, 15);
+		cy1 = (double)c4 * c3;
+		cy2 = (double)c4 * b1;
 		p0 = (3791.0 - 8.0) / 1600.0;
 		p1 = 1.0 - 7357.0 * Math.pow(2, -20);
 		p2 = 3038.0 * 100.0 * Math.pow(2, -36);
-
+		logFactors();
+		
 		calculateBaseline();
 		if (this.flightController!=null) {
 			log.info("The current baseline presure is set to {}",baselinePressure);
 			flightController.setValue(ParametersEnum.PRESSUREBASELINE, baselinePressure);
 		}
+	}
+	
+	private void logPoly() {
+	    log.info("AC1: {}", values[AC1]);
+	    log.info("AC2: {}", values[AC2]);
+	    log.info("AC3: {}", values[AC3]);
+	    log.info("AC4: {}", values[AC4]);
+	    log.info("AC5: {}", values[AC5]);
+	    log.info("AC6: {}", values[AC6]);
+	    log.info("VB1: {}", values[VB1]);
+	    log.info("VB2: {}", values[VB2]);
+	    log.info("MB: {}", values[MB]);
+	    log.info("MC: {}", values[MC]);
+	    log.info("MD: {}", values[MD]);
+	}
+	
+	private void logFactors() {
+	    log.info("c3: {}", c3);
+	    log.info("c4: {}", c4);
+	    log.info("c5: {}", c5);
+	    log.info("c6: {}", c6);
+	    log.info("b1: {}", b1);
+	    log.info("mc: {}", mc);
+	    log.info("md: {}", md);
+
+	    log.info("x0: {}", cx0);
+	    log.info("x1: {}", cx1);
+	    log.info("x2: {}", cx2);
+	    log.info("y0: {}", cy0);
+	    log.info("y1: {}", cy1);
+	    log.info("y2: {}", cy2);
+	    log.info("p0: {}", p0);
+	    log.info("p1: {}", p1);
+	    log.info("p2: {}", p2);
 
 	}
 
