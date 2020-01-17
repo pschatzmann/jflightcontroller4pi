@@ -11,6 +11,7 @@ import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
 import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoop;
+import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers;
 import ch.pschatzmann.jflightcontroller4pi.loop.IControlLoop;
 import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
 import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
@@ -36,7 +37,7 @@ public class FlightController {
 	private IFlightMode mode = new FlightMode(Collections.emptyList()); // assign value to prevent npe
 	private Collection<IFlightMode> modes = Collections.emptyList();
 	private IOutDevice imu, autoPilot;
-	private IControlLoop controlLoop = new ControlLoop(this); // use default implementation
+	private IControlLoop controlLoop; 
 
 	/**
 	 * Default Constructor
@@ -71,6 +72,21 @@ public class FlightController {
 		this.mode = mode;
 		mode.setup(this);
 	}
+	
+	/**
+	 * Changes the flight mode to the indicated name
+	 */
+	public void setMode(String mode) {
+		for (IFlightMode m : this.getModes()) {
+			if (m.getName().equals(mode)) {
+				this.setMode(m);
+				return;
+			}
+		}
+		
+		log.error("The mode '{}' does not exist - command was ignored", mode);
+	}
+	
 
 	/**
 	 * Provides the currently defined devices
@@ -198,8 +214,11 @@ public class FlightController {
 	 * 
 	 * @param controlLoop
 	 */
-	public void setControlLoop(IControlLoop controlLoop) {
-		this.controlLoop = controlLoop;
+	public void setControlLoop(IControlLoop cl) {
+		this.controlLoop = cl;
+		if (cl!=null) {
+			cl.setup(this);
+		}
 	}
 
 	/**
@@ -254,7 +273,7 @@ public class FlightController {
 	}
 
 	/**
-	 * Process inputs and outputs...
+	 * Process inputs and outputs. This method is blocking!
 	 */
 	public void run() {
 		if (mode != null) {
@@ -263,7 +282,18 @@ public class FlightController {
 			log.info("No flight mode!");
 		}
 
-		controlLoop.run();
+		// setup default control loop
+		if(this.controlLoop==null) {
+			this.setControlLoop(new ControlLoopWithTimers());
+		}
+		
+		this.controlLoop.run();
+	}
+	
+
+	public void stop() {
+		if (controlLoop!=null)
+			controlLoop.stop();
 	}
 
 	/**
@@ -271,7 +301,8 @@ public class FlightController {
 	 */
 	public void shutdown() {
 		log.info("shutdown");
-		this.controlLoop.stop();
+		if (controlLoop!=null)
+			this.controlLoop.stop();
 
 		devices.forEach(device -> {
 			device.shutdown();

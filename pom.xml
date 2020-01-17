@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ch.pschatzmann</groupId>
@@ -108,15 +110,25 @@
 			<artifactId>commons-net</artifactId>
 			<version>3.6</version>
 		</dependency>
+		
+		<!-- Mavlink  -->
+		<dependency>
+			<groupId>io.dronefleet.mavlink</groupId>
+			<artifactId>mavlink</artifactId>
+			<version>1.1.7</version>
+		</dependency>
 
 	</dependencies>
 
 	<distributionManagement>
 		<repository>
-			<id>github</id>
-			<name>GitHub OWNER Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/pschatzmann/jflightcontroller4pi</url>
+			<id>release</id>
+			<url>http://nuc.local:8081/repository/maven-releases</url>
 		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://nuc.local:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 
 </project>

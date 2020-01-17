@@ -17,17 +17,13 @@ public class Main {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		String configFileName = getConfigFileName(args);
-		ApplicationContext context;
-		// We use Spring so that we can configure the functionality
-		if (new File("configFileName").exists())
-			context = new FileSystemXmlApplicationContext(configFileName);
-		else 
-			context = new ClassPathXmlApplicationContext(configFileName);
-		
-		FlightController flightController = (FlightController) context.getBean("flightController");
-		
-		// just display the current mode as information
-		log.info("The flight controller is in the following mode: '{}'",flightController.getMode());
+		start(configFileName);
+
+	}
+
+
+	public static FlightController start(String configFileName) {
+		FlightController flightController = getFlightController(configFileName);
 		
 		// shutdown all devices if we exit the program
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -52,9 +48,29 @@ public class Main {
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);;
 		}
-
+		
+		return flightController;
 	}
 
+	public static FlightController getFlightController() {
+		return getFlightController("config.xml");
+	}
+
+	public static FlightController getFlightController(String configFileName) {
+		ApplicationContext context;
+		// We use Spring so that we can configure the functionality
+		if (new File("configFileName").exists())
+			context = new FileSystemXmlApplicationContext(configFileName);
+		else 
+			context = new ClassPathXmlApplicationContext(configFileName);
+		
+		FlightController flightController = (FlightController) context.getBean("flightController");
+		
+		// just display the current mode as information
+		log.info("The flight controller is in the following mode: '{}'",flightController.getMode());
+		return flightController;
+	}
+	
 	private static String getConfigFileName(String[] args) {
 		String config = "config.xml";
 		if (args.length>0) {

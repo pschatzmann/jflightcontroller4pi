@@ -35,14 +35,12 @@ public class TestEtc {
 		r.setActive(true);
 		
 		// use nun blocking control loop for the junit test
-		IControlLoop cl = new ControlLoopWithTimers(ctl,false);
+		IControlLoop cl = new ControlLoopWithTimers(false);
 		ctl.setControlLoop(cl);
 
-		new Thread(() -> {
-			ctl.run();
-		}).start();
-		
-		ctl.sleep(50000);
+		ctl.run();
+		ctl.sleep(10000);
+		ctl.stop();
 		
 		Assert.assertTrue(r.getRecordCount()>0);
 		

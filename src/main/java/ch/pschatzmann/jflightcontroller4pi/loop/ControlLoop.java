@@ -28,11 +28,9 @@ public class ControlLoop implements IControlLoop {
 	 */
 	public ControlLoop() {}
 
-	/**
-	 * Default Constructor
-	 * @param controller
-	 */
-	public ControlLoop(FlightController controller) {
+	
+	@Override
+	public void setup(FlightController controller) {
 		this.controller = controller;
 	}
 

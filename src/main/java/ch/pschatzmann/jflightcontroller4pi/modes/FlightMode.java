@@ -56,7 +56,7 @@ public class FlightMode implements IFlightMode {
 		recalcCollection.stream().map(c -> c.getDevice()).forEach(dev -> this.devices.add(dev));
 		
 		// make the devices known to the controller
-		flightController.addDevices(this.getDevices());
+		flightController.addDevices(this.devices);
 				
 		// set the new calculation rules in the devices
 		recalcCollection.forEach(rule -> rule.getDevice().setRecalculate(rule));

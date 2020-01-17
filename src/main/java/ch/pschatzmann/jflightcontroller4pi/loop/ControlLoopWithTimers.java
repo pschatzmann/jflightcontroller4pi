@@ -37,21 +37,13 @@ public class ControlLoopWithTimers implements IControlLoop {
 	 */
 	public ControlLoopWithTimers() {}
 
-	/**
-	 * Default Constructor
-	 * @param controller
-	 */
-	public ControlLoopWithTimers(FlightController controller) {
-		this.controller = controller;
-	}
 	
 	/**
 	 * Constructor for testing
 	 * @param controller
 	 * @param blocking
 	 */
-	public ControlLoopWithTimers(FlightController controller, boolean blocking) {
-		this.controller = controller;
+	public ControlLoopWithTimers(boolean blocking) {
 		this.blocking = blocking;
 	}
 	
@@ -170,6 +162,11 @@ public class ControlLoopWithTimers implements IControlLoop {
 
 	public void setBlocking(boolean blocking) {
 		this.blocking = blocking;
+	}
+
+	@Override
+	public void setup(FlightController controller) {
+		this.controller = controller;
 	}
 
 }

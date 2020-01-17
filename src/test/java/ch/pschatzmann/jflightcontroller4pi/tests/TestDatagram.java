@@ -46,7 +46,7 @@ public class TestDatagram {
 		new Timer().schedule(Utils.timerTask(() -> ctl.shutdown()), 5000);
 		
 		// start a non blocking control loop
-		ctl.setControlLoop(new ControlLoopWithTimers(ctl, false));
+		ctl.setControlLoop(new ControlLoopWithTimers(false));
 		ctl.setValue(ParametersEnum.RUDDER, 0.123);
 
 		new Thread(() -> {

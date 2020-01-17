@@ -29,6 +29,9 @@ public class SensorGY87 implements ISensor {
 	private SensorQMC5883 qmc5883 = new SensorQMC5883();
 	private SensorMPU6050 mpu6050 = new SensorMPU6050();
 	private boolean isSetup = false;
+	
+	public SensorGY87(){
+	}
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {

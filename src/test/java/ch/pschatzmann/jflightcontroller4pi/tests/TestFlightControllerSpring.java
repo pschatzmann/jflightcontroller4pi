@@ -42,7 +42,7 @@ public class TestFlightControllerSpring {
 		ctl = (FlightController) context.getBean("flightController");
 		
 		// select mode
-		ctl.selectMode("stabilizedMode");
+		ctl.selectMode("manualMode");
 
 		// determine control planes
 		rudder = (OutDevice)ctl.getControlDevice(ParametersEnum.RUDDER);
@@ -57,20 +57,21 @@ public class TestFlightControllerSpring {
 		w.setActive(false);
 		
 		// use nun blocking control loop for the junit test
-		IControlLoop cl = new ControlLoopWithTimers(ctl,false);
+		IControlLoop cl = new ControlLoopWithTimers(false);
 		ctl.setControlLoop(cl);
 
 		new Thread(() -> {
 			ctl.run();
 		}).start();
 		
-		//ctl.sleep(100000);
+		ctl.sleep(10000);
 				
 	}
 
 	@AfterClass
 	public static void cleanup() {
-		ctl.shutdown();
+		if (ctl!=null)
+			ctl.shutdown();
 	}
 
 	
@@ -176,6 +177,14 @@ public class TestFlightControllerSpring {
 		ctl.setValue(ParametersEnum.SPEED, 0.0);
 		ctl.sleep(sleep);
 		Assert.assertEquals(0.0, ctl.getValue(ParametersEnum.SPEED).value, 0.001);
+
+	}
+	
+	
+	@Test
+	public void testIMU() {
+		ctl.setMode("stabilizedMode");
+		Assert.assertNotNull(ctl.getDevice("IMUDevice"));
 
 	}
 

@@ -74,11 +74,19 @@ public class IMUDevice implements IOutDevice {
 	@Override
 	public void shutdown() {
 		log.info("shutdown");
+		if (this.getFlightController()==null) {
+			log.error("The IMUDevice has not been set up");
+			return;
+		}
 		this.getFlightController().setImu(null);
 	}
 
 	@Override
 	public void processOutput() {
+		if (this.getFlightController()==null) {
+			log.error("The IMUDevice has not been set up");
+			return;
+		}
 		log.debug("processOutput");
 		// load latest values from the parameters
 		readParameters(gyro, ParametersEnum.GYROX, ParametersEnum.GYROY, ParametersEnum.GYROZ);
@@ -135,9 +143,13 @@ public class IMUDevice implements IOutDevice {
 	 */
 	private void readParameters(Value3D dev, ParametersEnum x, ParametersEnum y, ParametersEnum z) {
 		double v[] = dev.vector();
-		v[0] = flightController.getValue(x).value;
-		v[1] = flightController.getValue(y).value;
-		v[2] = flightController.getValue(z).value;
+		try {
+			v[0] = flightController.getValue(x).value;
+			v[1] = flightController.getValue(y).value;
+			v[2] = flightController.getValue(z).value;
+		} catch(Exception ex) {
+			// ignore NPE
+		}
 	}
 
 	public FlightController getFlightController() {
@@ -229,6 +241,9 @@ public class IMUDevice implements IOutDevice {
 	 * Prints all the relevant values 
 	 */
 	public String toString() {
+		if (flightController==null) {
+			return "IMUDevice";
+		}
 		StringBuffer sb = new StringBuffer();
 		sb.append(flightController.getValue(ParametersEnum.SENSORPITCH).value);
 		sb.append("/");

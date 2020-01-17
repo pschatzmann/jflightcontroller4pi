@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
+import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoop;
 import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
 import ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
@@ -37,6 +38,8 @@ public class TestFlightControllerManual {
 	@Before
 	public void setup() {
 		ctl = new FlightController();
+		ctl.setControlLoop(new ControlLoop());
+		
 		rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
 		elevator = new OutDevice( ParametersEnum.ELEVATOR,  0.0, new NullDevice());
 		aileron = new OutDevice( ParametersEnum.AILERON,  0.0, new NullDevice());

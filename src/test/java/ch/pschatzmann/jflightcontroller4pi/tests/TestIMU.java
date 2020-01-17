@@ -35,7 +35,7 @@ public class TestIMU {
 
 	@Before
 	public void beforeMethod() {
-		//org.junit.Assume.assumeTrue(i2cExists());
+		org.junit.Assume.assumeTrue(i2cExists());
 	}
 
 	private boolean i2cExists() {
@@ -52,7 +52,7 @@ public class TestIMU {
 		ISensor sensor = new SensorGY87();
 		sensor.setup(null);
 
-		for (int j = 0; j < 30; j++) {
+		for (int j = 0; j < 10; j++) {
 			sensor.processInput();
 			Thread.sleep(1000);
 			System.out.println(sensor);
@@ -65,32 +65,14 @@ public class TestIMU {
 		ISensor sensor = new SensorGY87();
 		IMUDevice imu = new IMUDevice();
 		fc.addDevices(Arrays.asList(sensor, imu));
-		
-//		OutDevice rudder = new OutDevice(ParametersEnum.RUDDER,  0.0, new NullDevice());
-//		OutDevice elevator = new OutDevice( ParametersEnum.ELEVATOR,  0.0, new NullDevice());
-//		OutDevice aileron = new OutDevice( ParametersEnum.AILERON,  0.0, new NullDevice());
-//		OutDevice throttle = new OutDevice( ParametersEnum.THROTTLE, new NullDevice());
-//		throttle.setMinValue(0.0);
-//		throttle.setDefaultValue(0.0);
-//		
-//		List<IRecalculate> rules = new ArrayList<IRecalculate>();
-//		rules.add(new ManualModeRule(fc, rudder,ParametersEnum.YAW));
-//		rules.add(new ManualModeRule(fc, elevator,ParametersEnum.PITCH));
-//		rules.add(new ManualModeRule(fc, aileron,ParametersEnum.ROLL ));
-//		rules.add(new ManualModeRule(fc, throttle,ParametersEnum.SPEED));
-//
-//		fc.setMode(new FlightMode(rules));
-		
+				
+		fc.run();
 
-		new Thread(() -> {
-			// execute control loop in the background
-			fc.run();
-		}).start();
-
-		for (int j = 0; j < 30; j++) {
+		for (int j = 0; j < 10; j++) {
 			Thread.sleep(1000);
 			System.out.println(imu);
 		}
+		fc.stop();
 	}
 
 }

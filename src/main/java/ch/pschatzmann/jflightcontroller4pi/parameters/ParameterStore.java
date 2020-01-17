@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.parameters;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -66,6 +68,25 @@ public class ParameterStore {
 		ParameterValues values = store[parametersEnum.ordinal()];
 		return values.getAvg();
 		
+	}
+	
+	/**
+	 * Converts the parameters to a map
+	 * @return
+	 */
+	public Map<String,Double> toMap() {
+		Map<String,Double> result = new TreeMap();
+		for (ParametersEnum v : ParametersEnum.values()) {
+			ParameterValue pv = this.getValue(v);
+			if (pv!=null) {
+				result.put(v.name(), pv.value);
+			}
+		}
+		return result;
+	}
+	
+	public String toString() {
+		return this.getClass().getSimpleName();
 	}
 
 

@@ -43,7 +43,7 @@ public class TestFlightGear {
 	@Test
 	public void testReceive() {
 		FlightController ctl = new FlightController();
-		ctl.setControlLoop(new ControlLoopWithTimers(ctl));
+		ctl.setControlLoop(new ControlLoopWithTimers());
 		IFieldDefinitions def = new FieldDefinitions(
 				Arrays.asList(ParametersEnum.SENSORROLL, ParametersEnum.SENSORPITCH, ParametersEnum.SENSORYAW,
 						ParametersEnum.SENSORSPEED, ParametersEnum.SENSORHEADING, ParametersEnum.SENSORPRESSURE));
@@ -110,7 +110,7 @@ public class TestFlightGear {
 	@Test
 	public void testSend() {
 		FlightController ctl = new FlightController();
-		ctl.setControlLoop(new ControlLoopWithTimers(ctl));
+		ctl.setControlLoop(new ControlLoopWithTimers());
 		IFieldDefinitions def = new FieldDefinitions(Arrays.asList(ParametersEnum.AILERON, ParametersEnum.ELEVATOR,
 				ParametersEnum.THROTTLE, ParametersEnum.RUDDER));
 

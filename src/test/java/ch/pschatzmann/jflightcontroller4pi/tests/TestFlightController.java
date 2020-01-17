@@ -57,7 +57,7 @@ public class TestFlightController {
 	
 	@Test
 	public void testControlLoopWithTimers() {
-		ctl.setControlLoop(new ControlLoopWithTimers(ctl));
+		ctl.setControlLoop(new ControlLoopWithTimers());
 		Assert.assertTrue(ctl.getControlLoop() instanceof ControlLoopWithTimers);
 		Assert.assertTrue(ctl.getControlLoop().isStopped());
 		// schedule shutdown in 1 sec
@@ -70,7 +70,7 @@ public class TestFlightController {
 
 	@Test
 	public void testControlLoop() {
-		ctl.setControlLoop(new ControlLoop(ctl));
+		ctl.setControlLoop(new ControlLoop());
 		Assert.assertTrue(ctl.getControlLoop() instanceof ControlLoop);
 		Assert.assertTrue(ctl.getControlLoop().isStopped());
 		// schedule shutdown in 1 sec

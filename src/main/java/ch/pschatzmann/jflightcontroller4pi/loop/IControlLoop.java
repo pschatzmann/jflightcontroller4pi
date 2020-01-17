@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.loop;
 
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
+
 /**
  * Support for different alternative implementations of the control loop
  * 
@@ -21,6 +23,12 @@ public interface IControlLoop {
 	 * Checks if the control loop has been stopped
 	 */
 	boolean isStopped();
+
+	/**
+	 * Assings the flight controller to the control loop
+	 * @param controller
+	 */
+	void setup(FlightController controller);
 	
 	
 

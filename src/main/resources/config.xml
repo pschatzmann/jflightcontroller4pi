@@ -17,7 +17,7 @@
             	<ref bean="gameConsole" />
             	<ref bean="datagramReader" />                
             	<ref bean="datagramWriter" />    
-             	<ref bean="imu" />
+            	<ref bean="mavlinkReader" />    
         	</list>
 	  	</property>
 	  	<property name="modes">
@@ -43,6 +43,9 @@
 	</bean>
 
 	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice" >
+	</bean>
+
+	<bean id="sensors" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87" >
 	</bean>
 	
 	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot" >
@@ -123,6 +126,7 @@
 	  	</property>	 
 	  	<property name="devices">
 	  		<list>
+            	<ref bean="sensors" />
             	<ref bean="imu" />
         	</list>
 	  	</property>	 
@@ -235,6 +239,10 @@
         	</bean>
 	  	</property>
 	</bean>						
+
+	<bean id="mavlinkReader" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkReader" >
+	</bean>
+
 
 	<!-- JMX -->
 	<bean id="jmx" class="ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore" >
