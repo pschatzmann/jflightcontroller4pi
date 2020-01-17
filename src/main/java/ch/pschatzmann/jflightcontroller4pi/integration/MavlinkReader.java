@@ -20,6 +20,9 @@ import io.dronefleet.mavlink.Mavlink2Message;
 import io.dronefleet.mavlink.MavlinkConnection;
 import io.dronefleet.mavlink.MavlinkMessage;
 import io.dronefleet.mavlink.common.Heartbeat;
+import io.dronefleet.mavlink.common.MavAutopilot;
+import io.dronefleet.mavlink.common.MavState;
+import io.dronefleet.mavlink.common.MavType;
 
 /**
  * Simple Mavlink command handler
@@ -68,8 +71,9 @@ public class MavlinkReader implements ISensor {
 			if (sc == null || !sc.isConnected()) {
 				sc = ssc.accept();
 				if (sc != null) {
-					System.out.println("Mavlink connected");
 					connection = MavlinkConnection.create(Channels.newInputStream(sc), Channels.newOutputStream(sc));
+					System.out.println("Mavlink connected");
+					sendHeatBeat();
 				}
 			}
 
@@ -79,11 +83,29 @@ public class MavlinkReader implements ISensor {
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
-		System.out.println("processInput - END");
+	}
+	
+	private void sendHeatBeat() {
+		int systemId = 255;
+		int componentId = 0;
+		Heartbeat heartbeat = Heartbeat.builder()
+		          .type(MavType.MAV_TYPE_GCS)
+		          .autopilot(MavAutopilot.MAV_AUTOPILOT_INVALID)
+		          .systemStatus(MavState.MAV_STATE_UNINIT)
+		          .mavlinkVersion(3)
+		          .build();
+
+		// Write an unsigned heartbeat
+		try {
+			connection.send2(systemId, componentId, heartbeat);
+		} catch (IOException e) {
+			log.error("Could not send via mavlink", e);
+		}
 
 	}
 
 	private void processMessage() {
+		log.info("processMessage");
 		MavlinkMessage message;
 		while ((message = next()) != null) {
 			log.info(message.toString());
