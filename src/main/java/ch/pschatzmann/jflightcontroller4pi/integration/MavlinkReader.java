@@ -40,7 +40,7 @@ public class MavlinkReader implements ISensor {
 	@Override
 	public void setup(FlightController flightController) throws IOException {
 		this.flightController = flightController;
-		ServerSocketChannel ssc = ServerSocketChannel.open();
+		ssc = ServerSocketChannel.open();
 		ssc.socket().bind(new InetSocketAddress(port));
 		ssc.configureBlocking(false);
 		log.info("Mavlink is available on port {}", port);
