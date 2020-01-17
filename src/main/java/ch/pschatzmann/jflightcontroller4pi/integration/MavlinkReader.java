@@ -19,10 +19,14 @@ import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import io.dronefleet.mavlink.Mavlink2Message;
 import io.dronefleet.mavlink.MavlinkConnection;
 import io.dronefleet.mavlink.MavlinkMessage;
+import io.dronefleet.mavlink.common.GlobalPositionInt;
 import io.dronefleet.mavlink.common.Heartbeat;
 import io.dronefleet.mavlink.common.MavAutopilot;
+import io.dronefleet.mavlink.common.MavModeFlag;
 import io.dronefleet.mavlink.common.MavState;
+import io.dronefleet.mavlink.common.MavSysStatusSensor;
 import io.dronefleet.mavlink.common.MavType;
+import io.dronefleet.mavlink.common.SysStatus;
 
 /**
  * Simple Mavlink command handler
@@ -39,6 +43,8 @@ public class MavlinkReader implements ISensor {
 	private ByteBuffer buffer = ByteBuffer.allocate(1023);
 	private ServerSocketChannel ssc;
 	private SocketChannel sc;
+	int systemId = 255;
+	int componentId = 0;
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
@@ -74,11 +80,34 @@ public class MavlinkReader implements ISensor {
 				if (sc != null) {
 					connection = MavlinkConnection.create(Channels.newInputStream(sc), Channels.newOutputStream(sc));
 					System.out.println("Mavlink connected");
+					
 					sendHeatBeat();
+					
+					SysStatus status = SysStatus.builder()
+							.onboardControlSensorsPresent(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_ACCEL)
+							.onboardControlSensorsPresent(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_GYRO)
+							.onboardControlSensorsPresent(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_MAG)
+							.onboardControlSensorsPresent(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE)
+							.build();
+					connection.send2(systemId, componentId, status);
+
+					status = SysStatus.builder()
+							.onboardControlSensorsEnabled(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_ACCEL)
+							.onboardControlSensorsEnabled(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_GYRO)
+							.onboardControlSensorsEnabled(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_3D_MAG)
+							.onboardControlSensorsEnabled(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE)
+							.build();
+					connection.send2(systemId, componentId, status);
+
+					
+					GlobalPositionInt gps  = GlobalPositionInt.builder().lat(462000000).lon(72500000).alt(503000).build();
+					connection.send2(systemId, componentId, gps);
+
 				}
 			}
 
 			if (connection != null) {
+				sendHeatBeat();
 				processMessage();
 			}
 		} catch (Exception ex) {
@@ -87,12 +116,11 @@ public class MavlinkReader implements ISensor {
 	}
 	
 	private void sendHeatBeat() {
-		int systemId = 255;
-		int componentId = 0;
 		Heartbeat heartbeat = Heartbeat.builder()
-		          .type(MavType.MAV_TYPE_GCS)
-		          .autopilot(MavAutopilot.MAV_AUTOPILOT_INVALID)
-		          .systemStatus(MavState.MAV_STATE_UNINIT)
+		          .type(MavType.MAV_TYPE_GENERIC)
+		          .baseMode(MavModeFlag.MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
+		          .autopilot(MavAutopilot.MAV_AUTOPILOT_GENERIC)
+		          .systemStatus(MavState.MAV_STATE_ACTIVE)
 		          .mavlinkVersion(3)
 		          .build();
 
