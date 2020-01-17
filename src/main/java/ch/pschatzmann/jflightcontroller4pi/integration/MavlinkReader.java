@@ -69,6 +69,7 @@ public class MavlinkReader implements ISensor {
 	public void processInput() {
 		try {
 			if (sc == null || !sc.isConnected()) {
+				connection = null;
 				sc = ssc.accept();
 				if (sc != null) {
 					connection = MavlinkConnection.create(Channels.newInputStream(sc), Channels.newOutputStream(sc));
