@@ -380,7 +380,9 @@ public class MavlinkDevice implements IDevice {
 
 	private void close() {
 		try {
-			socket.close();
+			if (socket!=null) {
+				socket.close();
+			}
 		} catch (IOException e1) {
 		}
 
