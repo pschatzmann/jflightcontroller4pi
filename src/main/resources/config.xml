@@ -14,12 +14,12 @@
             	<ref bean="throttle" />    
             	<ref bean="elevator" />    
             	<ref bean="jmx" />
-            	<ref bean="gameConsole" />
+            <!-- 	<ref bean="gameConsole" />  -->
             	<ref bean="datagramReader" />                
             	<ref bean="datagramWriter" />    
-            	<ref bean="mavlinkReader" />    
             	<ref bean="sensors" />
             	<ref bean="imu" />
+            	<ref bean="mavlinkDevice" />    
         	</list>
 	  	</property>
 	  	<property name="modes">
@@ -242,7 +242,7 @@
 	  	</property>
 	</bean>						
 
-	<bean id="mavlinkReader" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkDevice" >
+	<bean id="mavlinkDevice" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkDevice" >
 	</bean>
 
 

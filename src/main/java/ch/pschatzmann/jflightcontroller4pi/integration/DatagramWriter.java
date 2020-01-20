@@ -63,6 +63,7 @@ public class DatagramWriter implements IOutDevice {
 	 **/
 	@Override
 	public void setup(FlightController flightController) {
+		log.info("setup");;
 		this.flightController = flightController;
 		try {
 			if (ip==null) {

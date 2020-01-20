@@ -68,6 +68,7 @@ public class DatagramReader implements ISensor {
 	 */
 	@Override
 	public void setup(FlightController flightController) {
+		log.info("setup");;
 		this.flightController = flightController;
 		try {
 			setupProtocols();
