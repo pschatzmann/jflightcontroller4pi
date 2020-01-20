@@ -3,6 +3,7 @@ package ch.pschatzmann.jflightcontroller4pi.integration;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,10 +31,12 @@ import io.dronefleet.mavlink.common.AutopilotVersion;
 import io.dronefleet.mavlink.common.CommandAck;
 import io.dronefleet.mavlink.common.CommandLong;
 import io.dronefleet.mavlink.common.GlobalPositionInt;
+import io.dronefleet.mavlink.common.GpsInput;
 import io.dronefleet.mavlink.common.Heartbeat;
 import io.dronefleet.mavlink.common.ManualControl;
 import io.dronefleet.mavlink.common.MavAutopilot;
 import io.dronefleet.mavlink.common.MavCmd;
+import io.dronefleet.mavlink.common.MavEstimatorType;
 import io.dronefleet.mavlink.common.MavModeFlag;
 import io.dronefleet.mavlink.common.MavParamType;
 import io.dronefleet.mavlink.common.MavProtocolCapability;
@@ -43,6 +46,7 @@ import io.dronefleet.mavlink.common.MavSysStatusSensor;
 import io.dronefleet.mavlink.common.MavType;
 import io.dronefleet.mavlink.common.MissionCount;
 import io.dronefleet.mavlink.common.MissionRequestList;
+import io.dronefleet.mavlink.common.Odometry;
 import io.dronefleet.mavlink.common.ParamRequestList;
 import io.dronefleet.mavlink.common.ParamRequestRead;
 import io.dronefleet.mavlink.common.ParamSet;
@@ -77,6 +81,7 @@ public class MavlinkDevice implements IDevice {
 		log.info("setup");
 		this.flightController = flightController;
 		serverSocket = new ServerSocket(port);
+				
 		log.info("Mavlink is available on port {}", port);
 
 		// make sure that we have an open connection
@@ -150,18 +155,35 @@ public class MavlinkDevice implements IDevice {
 	}
 
 	protected void sendIMU() throws IOException {
+		// Raw IMU values
 		RawImu imu = RawImu.builder().xacc(value(ParametersEnum.ACCELEROMETERX)).yacc(value(ParametersEnum.ACCELEROMETERY))
 				.zacc(value(ParametersEnum.ACCELEROMETERZ)).xgyro(value(ParametersEnum.GYROX)).ygyro(value(ParametersEnum.GYROY))
 				.zgyro(value(ParametersEnum.GYROZ)).xmag(value(ParametersEnum.MAGNETOMETERX)).ymag(value(ParametersEnum.MAGNETOMETERY))
 				.zmag(value(ParametersEnum.MAGNETOMETERZ)).temperature(value(ParametersEnum.TEMPERATURE)).build();
 		connection.send2(systemId, componentId, imu);
 		
+		// IMU pitch/roll/yaw
 		float pitch = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORPITCH).value);
 		float roll = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORROLL).value);
 		float yaw = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORYAW).value);
 		long time =   System.currentTimeMillis() - bootTime;
 		Attitude att = Attitude.builder().pitch((float) pitch).roll(roll).yaw(yaw).timeBootMs(time).build();
 		connection.send2(systemId, componentId, att);
+		log.info("pitch: {} / roll: {} / yaw: {}",pitch, roll, yaw);
+
+		// Estimated GPS
+//		int alt = (int) this.flightController.getValue(ParametersEnum.ALTITUDE).value;
+//		int lat =  (int) (this.flightController.getValue(ParametersEnum.IMULATITUDE).value * 10E7);
+//		int lng =  (int) (this.flightController.getValue(ParametersEnum.IMULONGITUDE).value* 10E7);
+//		int hdg = (int)(this.flightController.getValue(ParametersEnum.SENSORHEADING).value);
+//		
+		//GlobalPositionInt pos = GlobalPositionInt.builder().hdg(hdg).relativeAlt(alt).lat(lat).lon(lng).timeBootMs(time).build();
+		//connection.send2(systemId, componentId, pos);
+		
+//		GpsInput gpsInput = GpsInput.builder().gpsId(10).fixType(0).lat(lat).lon(lng).alt(alt).satellitesVisible(11).build();
+//		connection.send2(systemId, componentId, gpsInput);
+		
+				
 		
 	};
 

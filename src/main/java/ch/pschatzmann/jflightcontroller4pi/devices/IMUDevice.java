@@ -12,6 +12,7 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Quaternion;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Velocity;
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.CompassNavigation;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoordinate;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass.Heading;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParameterValue;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
@@ -108,8 +109,10 @@ public class IMUDevice implements IOutDevice {
 
 		// calculate the position
 		navigation.recordHeading(this.getDirection(), speed.getSpeed());
-		setParameter(ParametersEnum.IMULATITUDE, navigation.getPosition().getX());
-		setParameter(ParametersEnum.IMULONGITUDE, navigation.getPosition().getY());
+		
+		ICoordinate pos = navigation.toPosition3D(navigation.getPosition());
+		setParameter(ParametersEnum.IMULATITUDE, pos.getX());
+		setParameter(ParametersEnum.IMULONGITUDE, pos.getY());
 
 		// calculate altitude above ground
 		ParameterValue base = flightController.getValue(ParametersEnum.PRESSUREBASELINE);

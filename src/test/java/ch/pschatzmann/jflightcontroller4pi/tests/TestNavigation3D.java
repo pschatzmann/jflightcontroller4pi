@@ -29,7 +29,6 @@ public class TestNavigation3D {
 	}
 		
 
-	
 	@Test
 	public void testCoordinate() throws InterruptedException {
 		Coordinate3DValue c = new Coordinate3DValue(40,26,45);

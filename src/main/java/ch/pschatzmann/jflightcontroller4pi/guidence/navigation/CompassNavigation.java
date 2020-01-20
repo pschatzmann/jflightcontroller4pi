@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.Coordinate2D;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.Coordinate3D;
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoordinate;
 
 /**
@@ -19,6 +21,7 @@ public class CompassNavigation {
 	private INavigation navigation = new Navigation2D();
 	private ICoordinate actualPos = navigation.newCoordinate();
 	private ICoordinate homePos = navigation.newCoordinate();
+	private Coordinate3D homePos3D = new Coordinate3D(46.2097, 7.2572);
 
 	/**
 	 * Performs update with infor from the IMU
@@ -78,11 +81,26 @@ public class CompassNavigation {
 	}
 	
 	/**
-	 * Returns the coordinates of the current position 
+	 * Returns the coordinates of the current position in 2d coordinates 
 	 * @return
 	 */
 	public ICoordinate getPosition() {
 		return this.actualPos;
+	}	
+	
+	/**
+	 * Translates the 2D coordinates to 3D coordinates. 
+	 * @return
+	 */
+	public Coordinate3D toPosition3D(ICoordinate pos) {
+		ICoordinate result = pos;
+		if (pos instanceof Coordinate2D) {
+			double earthDiameter = 12742; // km = 360 deg
+			double x = this.homePos3D.getX() + pos.getX()/12742.0/360.0;
+			double y = this.homePos3D.getY() + pos.getY()/12742.0/360.0;
+			result = new Coordinate3D(x,y);
+		}
+		return (Coordinate3D) result;
 	}	
 	
 	/**
@@ -91,7 +109,11 @@ public class CompassNavigation {
 	 * @param lng
 	 */
 	public void setHomePosition(ICoordinate c) {
-		this.homePos = c;
+		if (c instanceof Coordinate3D) {
+			this.homePos3D = (Coordinate3D) c;
+		} else {
+			this.homePos = c;
+		}
 		this.actualPos = navigation.newCoordinate(c);
 	}
 	
