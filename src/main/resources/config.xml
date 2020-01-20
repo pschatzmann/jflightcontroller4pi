@@ -18,6 +18,8 @@
             	<ref bean="datagramReader" />                
             	<ref bean="datagramWriter" />    
             	<ref bean="mavlinkReader" />    
+            	<ref bean="sensors" />
+            	<ref bean="imu" />
         	</list>
 	  	</property>
 	  	<property name="modes">
