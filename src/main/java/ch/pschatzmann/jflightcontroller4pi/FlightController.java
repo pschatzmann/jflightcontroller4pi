@@ -35,7 +35,7 @@ public class FlightController {
 	private Collection<IDevice> devices = new ArrayList<IDevice>();
 	private ParameterStore parameterStore = new ParameterStore();
 	private IFlightMode mode = new FlightMode(Collections.emptyList()); // assign value to prevent npe
-	private Collection<IFlightMode> modes = Collections.emptyList();
+	private List<IFlightMode> modes = Collections.emptyList();
 	private IOutDevice imu, autoPilot;
 	private IControlLoop controlLoop; 
 
@@ -71,6 +71,8 @@ public class FlightController {
 		this.mode.shutdown();
 		this.mode = mode;
 		mode.setup(this);
+		// update the mode as parameter
+		this.setValue(ParametersEnum.FLIGHTMODE, this.getModes().indexOf(mode));
 	}
 	
 	/**
@@ -182,11 +184,11 @@ public class FlightController {
 		this.parameterStore = parameterStore;
 	}
 
-	public Collection<IFlightMode> getModes() {
+	public List<IFlightMode> getModes() {
 		return modes;
 	}
 
-	public void setModes(Collection<IFlightMode> modes) {
+	public void setModes(List<IFlightMode> modes) {
 		this.modes = modes;
 	}
 
@@ -271,6 +273,7 @@ public class FlightController {
 	public void setAutoPilot(IOutDevice autoPilot) {
 		this.autoPilot = autoPilot;
 	}
+
 
 	/**
 	 * Process inputs and outputs. This method is blocking!

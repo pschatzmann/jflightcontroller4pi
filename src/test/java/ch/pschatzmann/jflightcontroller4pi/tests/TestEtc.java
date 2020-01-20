@@ -45,4 +45,11 @@ public class TestEtc {
 		Assert.assertTrue(r.getRecordCount()>0);
 		
 	}
+	
+	@Test
+	public void testCast() {
+		Assert.assertEquals(2, (int)2.0);
+		Assert.assertEquals(2.0, (float)2,0.001);
+	}
+
 }

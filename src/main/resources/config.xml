@@ -240,7 +240,7 @@
 	  	</property>
 	</bean>						
 
-	<bean id="mavlinkReader" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkReader" >
+	<bean id="mavlinkReader" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkDevice" >
 	</bean>
 
 

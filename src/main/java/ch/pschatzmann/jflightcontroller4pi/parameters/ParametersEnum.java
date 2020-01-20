@@ -16,8 +16,7 @@ public enum ParametersEnum {
 	PRESSUREBASELINE, SENSORPRESSURE, ALTITUDE,
 	// control planes
 	RUDDER, AILERON, ELEVATOR, THROTTLE, MODE,
-
-	// => Non Scaled Parameters
+	// non Scaled Parameters
 	GYROX, GYROY, GYROZ, 
 	ACCELEROMETERX, ACCELEROMETERY, ACCELEROMETERZ, 
 	MAGNETOMETERX, MAGNETOMETERY, MAGNETOMETERZ,
@@ -29,6 +28,8 @@ public enum ParametersEnum {
 	// Other sensor data
 	TEMPERATURE,
 	// represent an individual pin
-	PIN, NA
+	PIN, NA,
+	// flight mode
+	FLIGHTMODE
 	
 }
