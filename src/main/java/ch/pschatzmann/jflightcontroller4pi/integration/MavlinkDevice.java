@@ -75,6 +75,7 @@ public class MavlinkDevice implements IDevice {
 	private long lastHartBeat;
 	private int version = 200;
 	private long bootTime = System.currentTimeMillis();
+	private boolean setup = true;
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
@@ -119,17 +120,15 @@ public class MavlinkDevice implements IDevice {
 		// send messages
 		new Thread() {
 			public void run() {
-				try {
-					if (connection != null) {
-						sendHeatBeat();
-						sendStatus();
-					}
-				} catch (IOException e1) {
-				}
-
 				while (true) {
 					try {
 						if (connection != null) {
+							log.info("send...");
+							if (setup) {
+								sendHeatBeat();
+								sendStatus();
+								setup = false;
+							}
 							sendIMU();
 							sendHeatBeat();
 						}
@@ -386,6 +385,7 @@ public class MavlinkDevice implements IDevice {
 		}
 
 		connection = null;
+		setup = true;
 	}
 
 
