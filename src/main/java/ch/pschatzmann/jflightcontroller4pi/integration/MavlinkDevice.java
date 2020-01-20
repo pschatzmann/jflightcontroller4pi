@@ -25,6 +25,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import io.dronefleet.mavlink.Mavlink2Message;
 import io.dronefleet.mavlink.MavlinkConnection;
 import io.dronefleet.mavlink.MavlinkMessage;
+import io.dronefleet.mavlink.common.Attitude;
 import io.dronefleet.mavlink.common.AutopilotVersion;
 import io.dronefleet.mavlink.common.CommandAck;
 import io.dronefleet.mavlink.common.CommandLong;
@@ -69,6 +70,7 @@ public class MavlinkDevice implements IDevice {
 	private boolean isArmed = false;
 	private long lastHartBeat;
 	private int version = 200;
+	private long bootTime = System.currentTimeMillis();
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
@@ -153,7 +155,14 @@ public class MavlinkDevice implements IDevice {
 				.zgyro(value(ParametersEnum.GYROZ)).xmag(value(ParametersEnum.MAGNETOMETERX)).ymag(value(ParametersEnum.MAGNETOMETERY))
 				.zmag(value(ParametersEnum.MAGNETOMETERZ)).temperature(value(ParametersEnum.TEMPERATURE)).build();
 		connection.send2(systemId, componentId, imu);
-
+		
+		float pitch = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORPITCH).value);
+		float roll = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORROLL).value);
+		float yaw = (float) Math.toRadians(this.flightController.getValue(ParametersEnum.SENSORYAW).value);
+		long time =   System.currentTimeMillis() - bootTime;
+		Attitude att = Attitude.builder().pitch((float) pitch).roll(roll).yaw(yaw).timeBootMs(time).build();
+		connection.send2(systemId, componentId, att);
+		
 	};
 
 	protected int value(ParametersEnum p) {
@@ -288,7 +297,7 @@ public class MavlinkDevice implements IDevice {
 				break;
 			case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
 				log.debug("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES");
-				ack = CommandAck.builder().command(MavCmd.MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES).result(MavResult.MAV_RESULT_ACCEPTED).build();
+				ack = CommandAck.builder().command(MavCmd.MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES.MAV_CMD_AQ_TELEMETRY.MAV_CMD_RETURN_TO_BASE).result(MavResult.MAV_RESULT_ACCEPTED).build();
 				send(ack);
 				AutopilotVersion apv = AutopilotVersion.builder().capabilities(MavProtocolCapability.MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION).build();
 				send(apv);

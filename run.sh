@@ -8,7 +8,7 @@ fi
 
 # run the jar
 echo "Starting..."
-INTERFACE=wlan0
+INTERFACE=en1
 PORT=7002
 IP=$(ifconfig $INTERFACE | grep inet | grep -v inet6 | awk '{print $2}')
 echo "You can connect with your JMX console to $IP:$PORT"
