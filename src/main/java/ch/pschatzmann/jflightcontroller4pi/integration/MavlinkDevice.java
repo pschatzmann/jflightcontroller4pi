@@ -71,7 +71,7 @@ public class MavlinkDevice implements IDevice {
 	private static final Logger log = LoggerFactory.getLogger(MavlinkDevice.class);
 	private FlightController flightController;
 	private int port = 14550; 
-	private int systemId = 1;
+	private int systemId = 1; // this device
 	private int componentId = 1;
 	private MavlinkConnection connection;
 	private boolean isArmed = false;
@@ -181,7 +181,6 @@ public class MavlinkDevice implements IDevice {
 
 	}
 
-
 	protected void sendHeatBeat() {
 		Heartbeat heartbeat = Heartbeat.builder().type(MavType.MAV_TYPE_GENERIC).baseMode(getMavModeFlag()).customMode(0)
 				.autopilot(MavAutopilot.MAV_AUTOPILOT_GENERIC).systemStatus(getMavState()).mavlinkVersion(version).build();
@@ -222,6 +221,12 @@ public class MavlinkDevice implements IDevice {
 	protected void processMessage(MavlinkMessage message) {
 		Object payload = getPayload(message);
 		
+		if (message.getOriginSystemId()==systemId) {
+			log.warn("Message received from same system - this is ignored!");
+			return;
+		}
+		
+		
 		if (payload instanceof SystemTime) {
 			SystemTime time = (SystemTime) payload;
 			log.info("time {}", time.timeUnixUsec());
@@ -259,8 +264,6 @@ public class MavlinkDevice implements IDevice {
 			// return the actual parameter value
 			ParamValue parValue = ParamValue.builder().paramId(par.name()).paramType(MavParamType.MAV_PARAM_TYPE_REAL64).paramValue((float) this.flightController.getValue(par).value).build();
 			send(parValue);
-			
-			
 		} else if (payload instanceof MissionRequestList) {
 			log.debug("MissionRequestList");
 			MissionCount mc = MissionCount.builder().count(0).build();
@@ -277,7 +280,7 @@ public class MavlinkDevice implements IDevice {
 			CommandAck ack;
 			switch (cmd.command().entry()) {
 			case MAV_CMD_COMPONENT_ARM_DISARM:
-				log.debug("MAV_CMD_COMPONENT_ARM_DISARM");
+				log.info("MAV_CMD_COMPONENT_ARM_DISARM");
 				boolean active = (cmd.param1() == 1.0f);
 				this.setArmed(active);
 				log.info("armed {}", active);
