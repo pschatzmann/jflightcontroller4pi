@@ -35,6 +35,7 @@ import io.dronefleet.mavlink.common.Attitude;
 import io.dronefleet.mavlink.common.AutopilotVersion;
 import io.dronefleet.mavlink.common.CommandAck;
 import io.dronefleet.mavlink.common.CommandLong;
+import io.dronefleet.mavlink.common.FollowTarget;
 import io.dronefleet.mavlink.common.GlobalPositionInt;
 import io.dronefleet.mavlink.common.GpsInput;
 import io.dronefleet.mavlink.common.Heartbeat;
@@ -182,7 +183,7 @@ public class MavlinkDevice implements IDevice {
 	}
 
 	protected void sendHeatBeat() {
-		Heartbeat heartbeat = Heartbeat.builder().type(MavType.MAV_TYPE_GENERIC).baseMode(getMavModeFlag()).customMode(0)
+		Heartbeat heartbeat = Heartbeat.builder().type(MavType.MAV_TYPE_VTOL_QUADROTOR.MAV_TYPE_GENERIC).baseMode(getMavModeFlag()).customMode(0)
 				.autopilot(MavAutopilot.MAV_AUTOPILOT_GENERIC).systemStatus(getMavState()).mavlinkVersion(version).build();
 
 		// Write an unsigned heartbeat
@@ -275,6 +276,12 @@ public class MavlinkDevice implements IDevice {
 			flightController.setValue(ParametersEnum.RUDDER, mc.r()/1000.0);
 			flightController.setValue(ParametersEnum.ELEVATOR, mc.x()/-1000.0);
 			flightController.setValue(ParametersEnum.AILERON, mc.y()/1000.0);
+		} else if (payload instanceof FollowTarget) {
+			log.info("FollowTarget {} -> not implemente!",payload.toString());
+			FollowTarget ft = (FollowTarget) payload;
+			
+			
+	
 		} else if (payload instanceof CommandLong) {
 			CommandLong cmd = (CommandLong) payload;
 			CommandAck ack;
