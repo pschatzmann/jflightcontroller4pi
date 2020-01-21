@@ -272,10 +272,15 @@ public class MavlinkDevice implements IDevice {
 		} else if (payload instanceof ManualControl) {
 			log.debug("ManualControl");
 			ManualControl mc = (ManualControl) payload;
-			flightController.setValue(ParametersEnum.THROTTLE, mc.z()/1000.0);
-			flightController.setValue(ParametersEnum.RUDDER, mc.r()/1000.0);
-			flightController.setValue(ParametersEnum.ELEVATOR, mc.x()/-1000.0);
-			flightController.setValue(ParametersEnum.AILERON, mc.y()/1000.0);
+			if (isValid(mc.z()))
+				flightController.setValue(ParametersEnum.THROTTLE, mc.z()/1000.0);
+			if (isValid(mc.r()))
+				flightController.setValue(ParametersEnum.RUDDER, mc.r()/1000.0);
+			if (isValid(mc.x()))
+				flightController.setValue(ParametersEnum.ELEVATOR, mc.x()/-1000.0);
+			if (isValid(mc.y()))
+				flightController.setValue(ParametersEnum.AILERON, mc.y()/1000.0);
+			
 		} else if (payload instanceof FollowTarget) {
 			log.info("FollowTarget {} -> not implemente!",payload.toString());
 			FollowTarget ft = (FollowTarget) payload;
@@ -315,6 +320,11 @@ public class MavlinkDevice implements IDevice {
 			log.info("Unhandled Message: {} {}", payload.getClass().getSimpleName(), message);
 		}
 	}
+
+	private boolean isValid(int y) {
+		return y >= -1000 && y <= 1000; 
+	}
+
 
 	private boolean setMode(float mode) {
 		try {
