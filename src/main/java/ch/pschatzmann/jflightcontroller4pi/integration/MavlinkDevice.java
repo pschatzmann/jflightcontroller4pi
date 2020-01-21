@@ -177,11 +177,13 @@ public class MavlinkDevice implements IDevice {
 					.onboardControlSensorsEnabled(MavSysStatusSensor.MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE).build();
 			send(status);
 		}
+		
+
 	}
 
 
 	protected void sendHeatBeat() {
-		Heartbeat heartbeat = Heartbeat.builder().type(MavType.MAV_TYPE_QUADROTOR).baseMode(getMavModeFlag()).customMode(0)
+		Heartbeat heartbeat = Heartbeat.builder().type(MavType.MAV_TYPE_GENERIC).baseMode(getMavModeFlag()).customMode(0)
 				.autopilot(MavAutopilot.MAV_AUTOPILOT_GENERIC).systemStatus(getMavState()).mavlinkVersion(version).build();
 
 		// Write an unsigned heartbeat
