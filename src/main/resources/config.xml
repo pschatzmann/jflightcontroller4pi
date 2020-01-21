@@ -14,11 +14,11 @@
             	<ref bean="throttle" />    
             	<ref bean="elevator" />    
             	<ref bean="jmx" />
-            <!-- 	<ref bean="gameConsole" />  -->
+            <!-- 	<ref bean="gameConsole" /> 
             	<ref bean="datagramReader" />                
             	<ref bean="datagramWriter" />    
             	<ref bean="sensors" />
-            	<ref bean="imu" />
+            	<ref bean="imu" />  -->
             	<ref bean="mavlinkDevice" />    
         	</list>
 	  	</property>

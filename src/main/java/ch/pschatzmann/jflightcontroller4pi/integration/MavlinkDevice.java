@@ -3,11 +3,16 @@ package ch.pschatzmann.jflightcontroller4pi.integration;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.DatagramChannel;
@@ -57,7 +62,7 @@ import io.dronefleet.mavlink.common.SysStatus;
 import io.dronefleet.mavlink.common.SystemTime;
 
 /**
- * Simple Mavlink command handler
+ * Simple Mavlink command handler which uses UDP to communicated
  * 
  * @author pschatzmann
  *
@@ -65,49 +70,33 @@ import io.dronefleet.mavlink.common.SystemTime;
 public class MavlinkDevice implements IDevice {
 	private static final Logger log = LoggerFactory.getLogger(MavlinkDevice.class);
 	private FlightController flightController;
-	private int port = 5760;
+	private int port = 14550; 
 	private int systemId = 1;
 	private int componentId = 1;
-	private ServerSocket serverSocket;
-	private Socket socket;
 	private MavlinkConnection connection;
 	private boolean isArmed = false;
 	private long lastHartBeat;
 	private int version = 200;
 	private long bootTime = System.currentTimeMillis();
 	private boolean setup = true;
+	private DatagramSocket socket;
+	private UDPInputStream is;
+	private UDPOutputStream out;
 
 	@Override
 	public void setup(FlightController flightController) throws IOException {
 		log.info("setup");
 		this.flightController = flightController;
-		serverSocket = new ServerSocket(port);
-				
+		socket = new DatagramSocket(port);
+		is = new UDPInputStream(socket);
+		out = new UDPOutputStream(socket);
+		connection = MavlinkConnection.create(is, out);
 		log.info("Mavlink is available on port {}", port);
-
-		// make sure that we have an open connection
-		new Thread() {
-			public void run() {
-				while (true) {
-					setupThread();
-					while (connection != null && socket.isConnected()) {
-						try {
-							Thread.sleep(5000);
-						} catch (InterruptedException e) {
-						}
-					}
-					try {
-						socket.close();
-						connection = null;
-					} catch (IOException e) {
-					}
-				}
-			}
-		}.start();
 
 		// read and process messages
 		new Thread() {
 			public void run() {
+				log.info("setting up Mavlink read thread");
 				while (true) {
 					MavlinkMessage message = next();
 					if (message != null) {
@@ -120,9 +109,11 @@ public class MavlinkDevice implements IDevice {
 		// send messages
 		new Thread() {
 			public void run() {
+				log.info("setting up Mavlink read thread");
 				while (true) {
 					try {
-						if (connection != null) {
+						if (connection != null && is.getAddress()!=null) {
+							out.setAddress(is.getAddress());
 							log.info("send...");
 							if (setup) {
 								sendHeatBeat();
@@ -132,8 +123,12 @@ public class MavlinkDevice implements IDevice {
 							sendIMU();
 							sendHeatBeat();
 						}
-						Thread.sleep(1000);
 					} catch (Exception e) {
+						log.error(e.getMessage(),e);
+					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
 					}
 				}
 			}
@@ -142,16 +137,6 @@ public class MavlinkDevice implements IDevice {
 
 	}
 
-	protected void setupThread() {
-		try {
-			log.info("Waiting for new connection");
-			socket = serverSocket.accept();
-			connection = MavlinkConnection.create(socket.getInputStream(), socket.getOutputStream());
-			log.info("Connected");
-		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
-		}
-	}
 
 	protected void sendIMU() throws IOException {
 		// Raw IMU values
@@ -168,21 +153,7 @@ public class MavlinkDevice implements IDevice {
 		long time =   System.currentTimeMillis() - bootTime;
 		Attitude att = Attitude.builder().pitch((float) pitch).roll(roll).yaw(yaw).timeBootMs(time).build();
 		connection.send2(systemId, componentId, att);
-		log.info("pitch: {} / roll: {} / yaw: {}",pitch, roll, yaw);
-
-		// Estimated GPS
-//		int alt = (int) this.flightController.getValue(ParametersEnum.ALTITUDE).value;
-//		int lat =  (int) (this.flightController.getValue(ParametersEnum.IMULATITUDE).value * 10E7);
-//		int lng =  (int) (this.flightController.getValue(ParametersEnum.IMULONGITUDE).value* 10E7);
-//		int hdg = (int)(this.flightController.getValue(ParametersEnum.SENSORHEADING).value);
-//		
-		//GlobalPositionInt pos = GlobalPositionInt.builder().hdg(hdg).relativeAlt(alt).lat(lat).lon(lng).timeBootMs(time).build();
-		//connection.send2(systemId, componentId, pos);
-		
-//		GpsInput gpsInput = GpsInput.builder().gpsId(10).fixType(0).lat(lat).lon(lng).alt(alt).satellitesVisible(11).build();
-//		connection.send2(systemId, componentId, gpsInput);
-		
-				
+		log.info("pitch: {} / roll: {} / yaw: {}",pitch, roll, yaw);				
 		
 	};
 
@@ -379,11 +350,12 @@ public class MavlinkDevice implements IDevice {
 	}
 
 	private void close() {
+		log.info("close");
 		try {
 			if (socket!=null) {
 				socket.close();
 			}
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 		}
 
 		connection = null;
@@ -411,8 +383,9 @@ public class MavlinkDevice implements IDevice {
 		log.info("shutdown");
 		close();
 		try {
-			serverSocket.close();
-		} catch (IOException e) {
+			//serverSocket.close();
+			socket.close();
+		} catch (Exception e) {
 		}
 
 	}
@@ -440,5 +413,6 @@ public class MavlinkDevice implements IDevice {
 	public void setArmed(boolean isArmed) {
 		this.isArmed = isArmed;
 	}
+	
 
 }

@@ -21,7 +21,6 @@ public class Main {
 
 	}
 
-
 	public static FlightController start(String configFileName) {
 		FlightController flightController = getFlightController(configFileName);
 		
