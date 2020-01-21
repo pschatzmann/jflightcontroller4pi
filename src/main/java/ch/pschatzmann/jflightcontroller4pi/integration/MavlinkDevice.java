@@ -109,7 +109,7 @@ public class MavlinkDevice implements IDevice {
 		// send messages
 		new Thread() {
 			public void run() {
-				log.info("setting up Mavlink read thread");
+				log.info("setting up Mavlink write thread");
 				while (true) {
 					try {
 						if (connection != null && is.getAddress()!=null) {
