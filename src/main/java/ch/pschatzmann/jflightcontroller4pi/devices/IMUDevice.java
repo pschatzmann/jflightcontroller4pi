@@ -1,5 +1,14 @@
 package ch.pschatzmann.jflightcontroller4pi.devices;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +20,7 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMU;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Quaternion;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Velocity;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87;
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.CompassNavigation;
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoordinate;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass.Heading;
@@ -23,11 +33,13 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  * speed; Estimates the position; Determines altidude above ground from the
  * measured air pressure difference.
  * 
+ * The processing is running with it's own timer where the frequency is defined in the IMU.
+ * 
  * 
  * @author pschatzmann
  *
  */
-public class IMUDevice implements IOutDevice {
+public class IMUDevice implements IDevice {
 	private static Logger log = LoggerFactory.getLogger(IMUDevice.class);
 	private FlightController flightController;
 	private ICompass compass = new Compass();
@@ -35,13 +47,17 @@ public class IMUDevice implements IOutDevice {
 	private Value3D accelerometer = new Value3D();
 	private Value3D magnetometer = new Value3D();
 	private IIMU imu = new IMU();
+	private Collection<ISensor> sensors = new ArrayList();
 	private Velocity speed = new Velocity();
 	private CompassNavigation navigation = new CompassNavigation();
+	private Timer timer;
+	private List<Map<String,Number>> history = new ArrayList();
+	private long historySize = 50000;
+	
 
-	public IMUDevice(FlightController fc) {
-		this.flightController = fc;
-	}
-
+	/**
+	 * Default constructor
+	 */
 	public IMUDevice() {
 	}
 
@@ -70,6 +86,26 @@ public class IMUDevice implements IOutDevice {
 		log.info("setup");;
 		this.flightController = flightController;
 		this.flightController.setImu(this);
+		
+		if (this.sensors.size()>0) {		
+			// setup IMU sensors
+			this.sensors.forEach(s ->s.setup(flightController));
+	
+			// setup timer
+		    TimerTask task = new TimerTask() {
+			        public void run() {
+			        	sensors.forEach(s -> s.processInput());
+			    		updateParameters();
+			        }
+			    };
+			    
+	        //running timer task as daemon thread
+	        Timer timer = new Timer(true);
+	        timer.scheduleAtFixedRate(task, 0, (long)(imu.getSampleFreq()*1000.0));
+		} else {
+			log.error("There are no Sensors for the IMU");
+		}
+		
 	}
 
 	@Override
@@ -79,11 +115,15 @@ public class IMUDevice implements IOutDevice {
 			log.error("The IMUDevice has not been set up");
 			return;
 		}
+		if (this.timer!=null) {
+			timer.cancel();
+		}
+		
 		this.getFlightController().setImu(null);
 	}
 
-	@Override
-	public void processOutput() {
+
+	protected void updateParameters() {
 		if (this.getFlightController()==null) {
 			log.error("The IMUDevice has not been set up");
 			return;
@@ -98,10 +138,14 @@ public class IMUDevice implements IOutDevice {
 		Quaternion q = this.getQuaternion();
 
 		// Update the new IMU parameters
-		setParameter(ParametersEnum.SENSORPITCH, q.getPitch());
-		setParameter(ParametersEnum.SENSORROLL, q.getRoll());
-		setParameter(ParametersEnum.SENSORYAW, q.getYaw());
-		setParameter(ParametersEnum.SENSORHEADING, this.getDirection());
+		double pitch = q.getPitch();
+		double roll = q.getRoll();
+		double yaw = q.getYaw();
+		setParameter(ParametersEnum.SENSORPITCH, pitch);
+		setParameter(ParametersEnum.SENSORROLL,roll);
+		setParameter(ParametersEnum.SENSORYAW, yaw);
+		double direction = this.getDirection();
+		setParameter(ParametersEnum.SENSORHEADING, direction);
 
 		// estimate for velocity
 		speed.recordAccelerometer(flightController, accelerometer);
@@ -115,15 +159,55 @@ public class IMUDevice implements IOutDevice {
 		setParameter(ParametersEnum.IMULONGITUDE, pos.getY());
 
 		// calculate altitude above ground
+		ParameterValue pressure = flightController.getValue(ParametersEnum.SENSORPRESSURE);
 		ParameterValue base = flightController.getValue(ParametersEnum.PRESSUREBASELINE);
+		double altitude = 0;
 		if (base != null) {
-			ParameterValue pressure = flightController.getValue(ParametersEnum.SENSORPRESSURE);
 			if (pressure != null) {
-				double altitude = altitude(pressure.value, base.value);
+				altitude = altitude(pressure.value, base.value);
 				setParameter(ParametersEnum.ALTITUDE, altitude);
 			}
 		}
+		
+		// make history available to analyse the data
+		recordHistory(pitch, roll, yaw, direction, pos, pressure, altitude);
+		
+	}
 
+	protected void recordHistory(double pitch, double roll, double yaw, double direction, ICoordinate pos, ParameterValue pressure, double altitude) {
+		// record history
+		if (this.getHistorySize()>0) {
+			Map<String, Number> rec = new TreeMap();
+			rec.put("TIME", System.currentTimeMillis());
+			rec.put(ParametersEnum.GYROX.name(), gyro.x());
+			rec.put(ParametersEnum.GYROY.name(), gyro.y());
+			rec.put(ParametersEnum.GYROZ.name(), gyro.z());
+			rec.put(ParametersEnum.ACCELEROMETERX.name(), accelerometer.x());
+			rec.put(ParametersEnum.ACCELEROMETERY.name(), accelerometer.y());
+			rec.put(ParametersEnum.ACCELEROMETERZ.name(), accelerometer.z());
+			rec.put(ParametersEnum.MAGNETOMETERX.name(), magnetometer.x());
+			rec.put(ParametersEnum.MAGNETOMETERY.name(), magnetometer.y());
+			rec.put(ParametersEnum.MAGNETOMETERZ.name(), magnetometer.z());
+			rec.put(ParametersEnum.SENSORPRESSURE.name(), pressure.value);
+			
+			rec.put(ParametersEnum.IMULATITUDE.name(), pos.getX());
+			rec.put(ParametersEnum.IMULONGITUDE.name(), pos.getY());
+			
+			rec.put(ParametersEnum.ALTITUDE.name(), altitude);
+			
+			
+			rec.put(ParametersEnum.SENSORPITCH.name(), pitch);
+			rec.put(ParametersEnum.SENSORROLL.name(), roll);
+			rec.put(ParametersEnum.SENSORYAW.name(), yaw);
+			rec.put(ParametersEnum.SENSORHEADING.name(), direction);
+
+
+			
+			this.history.add(rec);
+			if (this.history.size()>=this.getHistorySize()) {
+				this.history.remove(0);
+			}
+		}
 	}
 
 	/**
@@ -241,6 +325,48 @@ public class IMUDevice implements IOutDevice {
 	}
 	
 	/**
+	 * @return the sensors
+	 */
+	public Collection<ISensor> getSensors() {
+		return sensors;
+	}
+
+	/**
+	 * @param sensors the sensors to set
+	 */
+	public void setSensors(Collection<ISensor> sensors) {
+		this.sensors = sensors;
+	}
+
+	/**
+	 * @return the history
+	 */
+	public List<Map<String, Number>> getHistory() {
+		return history;
+	}
+
+	/**
+	 * @param history the history to set
+	 */
+	public void setHistory(List<Map<String, Number>> history) {
+		this.history = history;
+	}
+
+	/**
+	 * @return the historySize
+	 */
+	public long getHistorySize() {
+		return historySize;
+	}
+
+	/**
+	 * @param historySize the historySize to set
+	 */
+	public void setHistorySize(long historySize) {
+		this.historySize = historySize;
+	}
+
+	/**
 	 * Prints all the relevant values 
 	 */
 	public String toString() {
@@ -266,5 +392,6 @@ public class IMUDevice implements IOutDevice {
 		sb.append(System.lineSeparator());
 		return sb.toString();
 	}
+
 
 }

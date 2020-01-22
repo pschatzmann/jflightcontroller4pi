@@ -5,7 +5,7 @@ package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
  * accelerometer and magnetometer information form the parameter store
  * 
  * Implementation of Madgwick's IMU and AHRS algorithms. See:
- * http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
+ * https://x-io.co.uk/open-source-imu-and-ahrs-algorithms/
  * 
  * @author pschatzmann
  *
@@ -245,7 +245,8 @@ public class IMU implements IIMU {
 	 * @param x
 	 * @return
 	 */
-	double invSqrt(double x) {
+	public static double invSqrt(double x) {
+		if (x<0) return Float.NaN;
 		int i = Float.floatToRawIntBits((float)x);
 		float y = Float.intBitsToFloat(0x5f3759df - (i >> 1));
 		return y * (1.5F - 0.5F * x * y * y);

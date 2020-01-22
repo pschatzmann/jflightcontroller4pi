@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +20,13 @@ import ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMU;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87;
 import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
 import ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
+import junit.framework.Assert;
 
 /**
  * Tests for the Gy87 Sensor and the IMU
@@ -35,7 +38,7 @@ public class TestIMU {
 
 	@Before
 	public void beforeMethod() {
-		org.junit.Assume.assumeTrue(i2cExists());
+		//org.junit.Assume.assumeTrue(i2cExists());
 	}
 
 	private boolean i2cExists() {
@@ -73,6 +76,17 @@ public class TestIMU {
 			System.out.println(imu);
 		}
 		fc.stop();
+	}
+	
+	@Test
+	public void testFastInvSqrRoot() {
+		
+			float value = 0.15625f;
+			Assert.assertEquals(1.0/Math.sqrt(value), IMU.invSqrt(value),0.01);
+
+			value = -0.15625f;
+			Assert.assertEquals(1.0/Math.sqrt(value), IMU.invSqrt(value),0.01);
+
 	}
 
 }

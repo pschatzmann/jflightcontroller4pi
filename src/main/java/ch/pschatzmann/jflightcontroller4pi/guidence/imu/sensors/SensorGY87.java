@@ -33,7 +33,7 @@ public class SensorGY87 implements ISensor {
 	}
 
 	@Override
-	public void setup(FlightController flightController) throws IOException {
+	public void setup(FlightController flightController) {
 		log.info("setup "+this.getName());
 		mpu6050.setup(flightController);
 		mpu6050.enableMagnetometer();

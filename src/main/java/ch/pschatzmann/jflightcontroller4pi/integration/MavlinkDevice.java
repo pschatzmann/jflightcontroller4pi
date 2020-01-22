@@ -85,56 +85,60 @@ public class MavlinkDevice implements IDevice {
 	private UDPOutputStream out;
 
 	@Override
-	public void setup(FlightController flightController) throws IOException {
+	public void setup(FlightController flightController)  {
 		log.info("setup");
-		this.flightController = flightController;
-		socket = new DatagramSocket(port);
-		is = new UDPInputStream(socket);
-		out = new UDPOutputStream(socket);
-		connection = MavlinkConnection.create(is, out);
-		log.info("Mavlink is available on port {}", port);
-
-		// read and process messages
-		new Thread() {
-			public void run() {
-				log.info("setting up Mavlink read thread");
-				while (true) {
-					MavlinkMessage message = next();
-					if (message != null) {
-						processMessage(message);
-					}
-				}
-			};
-		}.start();
-
-		// send messages
-		new Thread() {
-			public void run() {
-				log.info("setting up Mavlink write thread");
-				while (true) {
-					try {
-						if (connection != null && is.getAddress()!=null) {
-							out.setAddress(is.getAddress());
-							log.info("send...");
-							if (setup) {
-								sendHeatBeat();
-								sendStatus();
-								setup = false;
-							}
-							sendIMU();
-							sendHeatBeat();
+		try {
+			this.flightController = flightController;
+			socket = new DatagramSocket(port);
+			is = new UDPInputStream(socket);
+			out = new UDPOutputStream(socket);
+			connection = MavlinkConnection.create(is, out);
+			log.info("Mavlink is available on port {}", port);
+	
+			// read and process messages
+			new Thread() {
+				public void run() {
+					log.info("setting up Mavlink read thread");
+					while (true) {
+						MavlinkMessage message = next();
+						if (message != null) {
+							processMessage(message);
 						}
-					} catch (Exception e) {
-						log.error(e.getMessage(),e);
 					}
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+				};
+			}.start();
+	
+			// send messages
+			new Thread() {
+				public void run() {
+					log.info("setting up Mavlink write thread");
+					while (true) {
+						try {
+							if (connection != null && is.getAddress()!=null) {
+								out.setAddress(is.getAddress());
+								log.info("send...");
+								if (setup) {
+									sendHeatBeat();
+									sendStatus();
+									setup = false;
+								}
+								sendIMU();
+								sendHeatBeat();
+							}
+						} catch (Exception e) {
+							log.error(e.getMessage(),e);
+						}
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
-			}
-
-		}.start();
+	
+			}.start();
+		} catch(Exception ex) {
+			log.error(ex.getMessage(),ex);
+		}
 
 	}
 
@@ -305,8 +309,8 @@ public class MavlinkDevice implements IDevice {
 				send(ack);
 				break;
 			case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
-				log.debug("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES");
-				ack = CommandAck.builder().command(MavCmd.MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES.MAV_CMD_AQ_TELEMETRY.MAV_CMD_RETURN_TO_BASE).result(MavResult.MAV_RESULT_ACCEPTED).build();
+				log.info("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES");
+				ack = CommandAck.builder().command(MavCmd.MAV_CMD_AIRFRAME_CONFIGURATION.MAV_CMD_ACCELCAL_VEHICLE_POS.MAV_CMD_AQ_TELEMETRY.MAV_CMD_ARM_AUTHORIZATION_REQUEST.MAV_CMD_DO_AUTOTUNE_ENABLE.MAV_CMD_NAV_LAND.MAV_CMD_DO_MOTOR_TEST.MAV_CMD_PREFLIGHT_CALIBRATION.MAV_CMD_VIDEO_START_CAPTURE.MAV_CMD_AQ_TELEMETRY.MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES.MAV_CMD_AQ_TELEMETRY.MAV_CMD_RETURN_TO_BASE).result(MavResult.MAV_RESULT_ACCEPTED).build();
 				send(ack);
 				AutopilotVersion apv = AutopilotVersion.builder().capabilities(MavProtocolCapability.MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION).build();
 				send(apv);

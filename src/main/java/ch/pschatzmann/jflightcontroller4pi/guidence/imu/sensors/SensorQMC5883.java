@@ -35,14 +35,18 @@ public class SensorQMC5883 implements ISensor {
 
 
 	@Override
-	public void setup(FlightController flightController) throws IOException {
-		log.info("setup "+this.getName());
-		this.flightController = flightController;
-		// Oversampling: 512 - 00 / 256 - 01 / 128 - 10 / 64 - 11
-		// Range: range 2G - 00 / 8G - 01  
-		// Output data rate: 10Hz - 00 / 50Hz 01 / 100Hz - 10 /  200Hz - 11
-		// Mode: continues read - 01 / standby - 00
-		i2c.write((byte) 0x09, (byte)0b11011001); // control register 1
+	public void setup(FlightController flightController)  {
+		try {
+			log.info("setup "+this.getName());
+			this.flightController = flightController;
+			// Oversampling: 512 - 00 / 256 - 01 / 128 - 10 / 64 - 11
+			// Range: range 2G - 00 / 8G - 01  
+			// Output data rate: 10Hz - 00 / 50Hz 01 / 100Hz - 10 /  200Hz - 11
+			// Mode: continues read - 01 / standby - 00
+			i2c.write((byte) 0x09, (byte)0b11011001); // control register 1
+		} catch(Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
 	}
 
 	@Override

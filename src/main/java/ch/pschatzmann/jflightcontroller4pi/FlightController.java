@@ -36,7 +36,8 @@ public class FlightController {
 	private ParameterStore parameterStore = new ParameterStore();
 	private IFlightMode mode = new FlightMode(Collections.emptyList()); // assign value to prevent npe
 	private List<IFlightMode> modes = Collections.emptyList();
-	private IOutDevice imu, autoPilot;
+	private IDevice imu;
+	private IOutDevice autoPilot;
 	private IControlLoop controlLoop; 
 
 	/**
@@ -125,7 +126,7 @@ public class FlightController {
 	protected void setupDevice(IDevice device) {
 		try {
 			device.setup(this);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}
 	}
@@ -248,7 +249,7 @@ public class FlightController {
 	 * 
 	 * @return
 	 */
-	public IOutDevice getImu() {
+	public IDevice getImu() {
 		return imu;
 	}
 
@@ -257,7 +258,7 @@ public class FlightController {
 	 * 
 	 * @param imu
 	 */
-	public void setImu(IOutDevice imu) {
+	public void setImu(IDevice imu) {
 		this.imu = imu;
 	}
 

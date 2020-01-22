@@ -15,7 +15,7 @@ public interface IDevice {
 	 * Initialize the device
 	 * @throws IOException 
 	 */
-	void setup(FlightController flightController) throws IOException;
+	void setup(FlightController flightController) ;
 	/**
 	 * Shutdown the device
 	 */

@@ -31,26 +31,37 @@ public class SensorMPU6050 implements ISensor {
 	private float temperature;
 
 	@Override
-	public void setup(FlightController flightController) throws IOException {
-		log.info("setup "+this.getName());
-		this.flightController = flightController;
-		// configure the MPU6050 (gyro/accelerometer)
-		i2c.write((byte)0x6B,(byte) 0x00); // exit sleep
-		i2c.write((byte)0x19,(byte) 109); // sample rate = 8kHz 110 = 72.7Hz
-		i2c.write((byte)0x1B,(byte) 0x18); // gyro full scale = +/- 2000dps
-		i2c.write((byte)0x1C,(byte) 0x08); // accelerometer full scale = +/- 4g
+	public void setup(FlightController flightController) {
+		try {
+			log.info("setup " + this.getName());
+			this.flightController = flightController;
+			// configure the MPU6050 (gyro/accelerometer)
+			i2c.write((byte) 0x6B, (byte) 0x00); // exit sleep
+			i2c.write((byte) 0x19, (byte) 109); // sample rate = 8kHz 110 =
+												// 72.7Hz
+			i2c.write((byte) 0x1B, (byte) 0x18); // gyro full scale = +/-
+													// 2000dps
+			i2c.write((byte) 0x1C, (byte) 0x08); // accelerometer full scale =
+													// +/- 4g
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
 	}
 
 	/**
-	 * In the GY87 the magnetometer is not available automatically on the I2C bus. It must be activated by
-	 * enabling the master mypass mode. 
+	 * In the GY87 the magnetometer is not available automatically on the I2C
+	 * bus. It must be activated by enabling the master mypass mode.
 	 * 
 	 * @throws IOException
 	 */
-	public void enableMagnetometer() throws IOException {
-		log.info("enableMagnetometer");
-		i2c.write((byte)0x6A, (byte)0x00); // disable i2c master mode
-		i2c.write((byte)0x37, (byte)0x02); // enable i2c master bypass mode
+	public void enableMagnetometer()  {
+		try {
+			log.info("enableMagnetometer");
+			i2c.write((byte) 0x6A, (byte) 0x00); // disable i2c master mode
+			i2c.write((byte) 0x37, (byte) 0x02); // enable i2c master bypass mode
+		} catch(Exception ex) {
+			log.error(ex.getMessage(),ex);
+		}
 	}
 
 	@Override
@@ -102,6 +113,7 @@ public class SensorMPU6050 implements ISensor {
 
 	/**
 	 * Provides the values from the accelerometer
+	 * 
 	 * @return
 	 */
 	public Value3D getAccelerometer() {
@@ -110,6 +122,7 @@ public class SensorMPU6050 implements ISensor {
 
 	/**
 	 * Provides the values from the gyroscope
+	 * 
 	 * @return the gyro
 	 */
 	public Value3D getGyro() {
@@ -117,13 +130,14 @@ public class SensorMPU6050 implements ISensor {
 	}
 
 	/**
-	 * Provides the temperature 
+	 * Provides the temperature
+	 * 
 	 * @return the temperature in celsius
 	 */
 	public float getTemperature() {
 		return temperature;
 	}
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Gyro: ");
