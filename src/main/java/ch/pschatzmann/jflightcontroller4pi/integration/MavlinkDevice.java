@@ -18,6 +18,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ import io.dronefleet.mavlink.common.SystemTime;
  */
 public class MavlinkDevice implements IDevice {
 	private static final Logger log = LoggerFactory.getLogger(MavlinkDevice.class);
+	private static String uid = UUID.randomUUID().toString();
 	private FlightController flightController;
 	private int port = 14550; 
 	private int systemId = 1; // this device
@@ -310,10 +312,11 @@ public class MavlinkDevice implements IDevice {
 				break;
 			case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
 				log.info("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES");
-				ack = CommandAck.builder().command(MavCmd.MAV_CMD_AIRFRAME_CONFIGURATION.MAV_CMD_ACCELCAL_VEHICLE_POS.MAV_CMD_AQ_TELEMETRY.MAV_CMD_ARM_AUTHORIZATION_REQUEST.MAV_CMD_DO_AUTOTUNE_ENABLE.MAV_CMD_NAV_LAND.MAV_CMD_DO_MOTOR_TEST.MAV_CMD_PREFLIGHT_CALIBRATION.MAV_CMD_VIDEO_START_CAPTURE.MAV_CMD_AQ_TELEMETRY.MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES.MAV_CMD_AQ_TELEMETRY.MAV_CMD_RETURN_TO_BASE).result(MavResult.MAV_RESULT_ACCEPTED).build();
+				float version = cmd.param1();
+				ack = CommandAck.builder().command().result(MavResult.MAV_RESULT_UNSUPPORTED).build();
 				send(ack);
-				AutopilotVersion apv = AutopilotVersion.builder().capabilities(MavProtocolCapability.MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION).build();
-				send(apv);
+				//AutopilotVersion apv = AutopilotVersion.builder().capabilities(MavProtocolCapability.MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION.MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION).uid2(uid.toString().getBytes()).build();
+				//send(apv);
 				break;
 			default:
 				log.info("CommandLong: {} {} {}", payload.getClass().getSimpleName(), cmd.command().entry(), payload.toString());
