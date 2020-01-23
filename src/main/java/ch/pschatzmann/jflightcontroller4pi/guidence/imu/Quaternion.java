@@ -53,16 +53,20 @@ public class Quaternion {
 		this.w = w;
 	}
 
-	public float getRoll() {
+	protected float getRoll() {
 		return (float) Math.atan2(2 * y * w + 2 * x * z, 1 - 2 * y * y - 2 * z * z);
 	}
 
-	public float getPitch() {
+	protected float getPitch() {
 		return (float) Math.atan2(2 * x * w + 2 * y * z, 1 - 2 * x * x - 2 * z * z);
 	}
 
-	public float getYaw() {
+	protected float getYaw() {
 		return (float) Math.asin(2 * x * y + 2 * z * w);
+	}
+	
+	public IMUResult getResult() {
+		return new IMUResult(getRoll(),getPitch(),getYaw());
 	}
 
 }

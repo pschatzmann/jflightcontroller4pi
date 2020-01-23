@@ -18,7 +18,9 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Compass;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.ICompass;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IIMU;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMU;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.IMUResult;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Quaternion;
+import ch.pschatzmann.jflightcontroller4pi.guidence.imu.SimpleIMU;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Velocity;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87;
@@ -43,17 +45,17 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 public class IMUDevice implements IDevice {
 	private static Logger log = LoggerFactory.getLogger(IMUDevice.class);
 	private FlightController flightController;
-	private ICompass compass = new Compass();
+	private Collection<ISensor> sensors = new ArrayList();
 	private Value3D gyro = new Value3D();
 	private Value3D accelerometer = new Value3D();
 	private Value3D magnetometer = new Value3D();
-	private IIMU imu = new IMU();
-	private Collection<ISensor> sensors = new ArrayList();
+	private IIMU imu = new SimpleIMU();
+	private ICompass compass = new Compass();
 	private Velocity speed = new Velocity();
 	private CompassNavigation navigation = new CompassNavigation();
 	private Timer timer;
 	private List<Map<String,Number>> history = new Vector();
-	private long historySize = 50000;
+	private long historySize = 0;
 	private float sampleFreq = 200.0f;
 	
 
@@ -69,8 +71,8 @@ public class IMUDevice implements IDevice {
 	 * 
 	 * @return
 	 */
-	public Quaternion getQuaternion() {
-		return this.getImu().getQuaternion(gyro.x(), gyro.y(), gyro.z(), accelerometer.x(), accelerometer.y(), accelerometer.z(), magnetometer.x(),
+	public IMUResult getResult() {
+		return this.getImu().getResult(gyro.x(), gyro.y(), gyro.z(), accelerometer.x(), accelerometer.y(), accelerometer.z(), magnetometer.x(),
 				magnetometer.y(), magnetometer.z());
 	}
 
@@ -149,7 +151,7 @@ public class IMUDevice implements IDevice {
 		readParameters(magnetometer, ParametersEnum.MAGNETOMETERX, ParametersEnum.MAGNETOMETERY, ParametersEnum.MAGNETOMETERZ);
 
 		// Calculate values
-		Quaternion q = this.getQuaternion();
+		IMUResult q = this.getResult();
 
 		// Update the new IMU parameters
 		double pitch = Math.toDegrees(q.getPitch());
@@ -364,6 +366,11 @@ public class IMUDevice implements IDevice {
 	 */
 	public void setHistory(List<Map<String, Number>> history) {
 		this.history = history;
+	}
+	
+	
+	public void clearHistory() {
+		this.history.clear();
 	}
 
 	/**

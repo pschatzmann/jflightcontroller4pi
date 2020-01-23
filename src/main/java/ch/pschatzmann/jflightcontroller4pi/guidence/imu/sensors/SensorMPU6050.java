@@ -78,6 +78,10 @@ public class SensorMPU6050 implements ISensor {
 		return this.getClass().getSimpleName();
 	}
 	
+	/**
+	 * The sensor needs to sit horizontally to calibrate. Then the average of the x and y axis will need to be 0
+	 * and the z axis will measure 1g.
+	 */
 	public void calibrate() {
 		log.info("calibrate");
 		int buffer[] = new int[10];
@@ -86,9 +90,9 @@ public class SensorMPU6050 implements ISensor {
 			try {
 				Thread.sleep(100);
 				i2c.read(0x3B, 10, buffer);
-				//calibration[0] += buffer[0];
-				//calibration[1] += buffer[1];
-				//calibration[2] += buffer[2];
+				calibration[0] += buffer[0];
+				calibration[1] += buffer[1];
+				calibration[2] += buffer[2];
 				calibration[4] += buffer[4];
 				calibration[5] += buffer[5];
 				calibration[6] += buffer[6];
@@ -98,13 +102,13 @@ public class SensorMPU6050 implements ISensor {
 			}
 		}
 		
-		log.info("Gyro Calibration totals x={} y={}, z={}", calibration[4],calibration[5],calibration[6]);
-		//calibration[0] = calibration[0] / count;
-		//calibration[1] = calibration[1] / count;
-		//calibration[2] = calibration[2] / count;
+		calibration[0] = calibration[0] / count;
+		calibration[1] = calibration[1] / count;
+		calibration[2] = (calibration[2] / count) - 8192.0f;  // target is 1g
 		calibration[4] = calibration[4] / count;
 		calibration[5] = calibration[5] / count;
 		calibration[6] = calibration[6] / count;
+		log.info("Accl Calibration totals x={} y={}, z={}", calibration[0],calibration[1],calibration[2]);
 		log.info("Gyro Calibration result x={} y={}, z={}", calibration[4],calibration[5],calibration[6]);
 		
 	}

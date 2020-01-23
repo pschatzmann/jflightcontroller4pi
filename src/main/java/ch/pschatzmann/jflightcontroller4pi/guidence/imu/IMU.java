@@ -35,7 +35,7 @@ public class IMU implements IIMU {
 	 * 
 	 */
 	@Override
-	public Quaternion getQuaternion(double gx, double gy, double gz, double ax, double ay, double az, double mx, double my,
+	public IMUResult getResult(double gx, double gy, double gz, double ax, double ay, double az, double mx, double my,
 			double mz) {
 		double recipNorm;
 		double s0, s1, s2, s3;
@@ -48,7 +48,7 @@ public class IMU implements IIMU {
 		// magnetometer normalisation)
 		if ((mx == 0.0f) && (my == 0.0f) && (mz == 0.0f)) {
 			madgwickAHRSupdateIMU(gx, gy, gz, ax, ay, az);
-			return result;
+			return result.getResult();
 		}
 
 		// Rate of change of quaternion from gyroscope
@@ -157,7 +157,7 @@ public class IMU implements IIMU {
 		result.setZ(q2);
 		result.setW(q3);
 
-		return result;
+		return result.getResult();
 	}
 
 	public Quaternion madgwickAHRSupdateIMU(double gx, double gy, double gz, double ax, double ay, double az) {
