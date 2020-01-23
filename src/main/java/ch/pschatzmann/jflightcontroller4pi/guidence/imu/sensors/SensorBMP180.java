@@ -11,6 +11,7 @@ import ch.pschatzmann.jflightcontroller4pi.control.MedianFilter;
 import ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
+import ch.pschatzmann.jflightcontroller4pi.integration.I2C.Type2Byte;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
@@ -43,13 +44,14 @@ public class SensorBMP180 implements ISensor {
 	private double md, mc, a, b1, c3, c4, c6, c5, p0, p1, p2, cx0, cx1, cx2, cy0, cy1, cy2;
 	private double baselinePressure;
 	private double baro_temp_c, pressure_pa;
-	
-	private IFilter medianFilter = new MedianFilter(5);
+	private boolean setupTemp = true;
+	private IFilter medianFilter = new MedianFilter(1); // no filtering
 
 	@Override
 	public void setup(FlightController flightController) {
 		try {
 			log.info("setup " + this.getName());
+			setupTemp = true;
 			this.flightController = flightController;
 			// configure the BMP180 (barometer)
 			i2c.write(0xe0, (byte) 0xb6); // reset
@@ -143,6 +145,7 @@ public class SensorBMP180 implements ISensor {
 	 * @throws IOException
 	 */
 	public double calculateBaseline(int count) throws IOException {
+		setupTemp = true;
 		float total = 0.0f;
 		float countF = 0;
 		for (int j = 0; j < count; j++) {
@@ -174,7 +177,7 @@ public class SensorBMP180 implements ISensor {
 			double values[] = getValues();
 			if (flightController != null) {
 				flightController.setValue(ParametersEnum.SENSORPRESSURE, values[0]);
-				flightController.setValue(ParametersEnum.TEMPERATURE, values[0]);
+				flightController.setValue(ParametersEnum.TEMPERATURE, values[1]);
 			}
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
@@ -183,15 +186,21 @@ public class SensorBMP180 implements ISensor {
 	
 
 	public double[] getValues() throws IOException {
-		// start conversion of the temperature sensor
-		i2c.write(0xF4, (byte) 0x2E);
-		i2c.sleep(5);
-		double[] tu = new double[1];
-		i2c.read(0xF6, 1, tu, true);
-
-		// extract the raw value
-		double a = c5 * (tu[0] - c6);
-		baro_temp_c = (double) (a + (mc / (a + md)));
+		if (setupTemp) {
+			log.info("Determining temperature");
+			setupTemp = false;
+			// start conversion of the temperature sensor
+			i2c.write(0xF4, (byte) 0x2E);
+			i2c.sleep(5);
+			int[] tu = new int[1];
+			i2c.read(0xF6, 1, tu, Type2Byte.Unsigned);
+	
+			// extract the raw value
+			double a = c5 * (tu[0] - c6);
+			baro_temp_c = (double) (a + (mc / (a + md)));
+			log.info("Temperature is {}", baro_temp_c);
+			
+		}
 
 		// start conversion of the pressure sensor
 		i2c.write(0xF4, (byte) 0xB4); // 0x34 | 1<<6);
@@ -204,12 +213,13 @@ public class SensorBMP180 implements ISensor {
 		double z = (pu - x) / y;
 
 		// convert the pressure reading
-		pressure_pa = (double) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
+		double pressure = (double) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
 		
-		// filter value
-		this.medianFilter.add(pressure_pa);
+		// filter value if necessary
+		this.medianFilter.add(pressure);
+		pressure_pa = this.medianFilter.getValue();
 		
-		double result[] = { medianFilter.getValue(), baro_temp_c };
+		double result[] = { pressure_pa, baro_temp_c };
 		return result;
 	}
 

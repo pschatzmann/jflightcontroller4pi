@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IFilter;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
+import ch.pschatzmann.jflightcontroller4pi.integration.I2C.Type2Byte;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
@@ -25,13 +27,10 @@ public class SensorQMC5883 implements ISensor {
 	private static final Logger log = LoggerFactory.getLogger(SensorQMC5883.class);
 	private I2C i2c = new I2C(0x0D); // magnetic sensing
 	private FlightController flightController;
-	private double valuesRaw[] = new double[3];
-	private double values[] = new double[3];
 	// we will report the sensor data in gauss dependent on range 2GA->1.22; 8G->4.35
-	private double factor = 1.0 / 4.35;  
+	private double factor = 1.0; // / 4.35;  
 	private Value3D magnetometer = new Value3D();
 	// by default we measure 10 times
-	private int numberOfMeasurements = 10;
 
 
 	@Override
@@ -39,11 +38,14 @@ public class SensorQMC5883 implements ISensor {
 		try {
 			log.info("setup "+this.getName());
 			this.flightController = flightController;
+			// reset
+			i2c.write(0xA,(byte)0x80); 
+			
 			// Oversampling: 512 - 00 / 256 - 01 / 128 - 10 / 64 - 11
 			// Range: range 2G - 00 / 8G - 01  
 			// Output data rate: 10Hz - 00 / 50Hz 01 / 100Hz - 10 /  200Hz - 11
 			// Mode: continues read - 01 / standby - 00
-			i2c.write((byte) 0x09, (byte)0b11011101); // control register 1
+			i2c.write(0x09, (byte)0b11010001); // control register 1
 		} catch(Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
@@ -61,8 +63,7 @@ public class SensorQMC5883 implements ISensor {
 	@Override
 	public void processInput() {
 		try {
-			double values[] = getValues();
-			magnetometer.set(values[0], values[1], values[2]);
+			setValues();
 
 			// update parameters
 			if (flightController!=null) {
@@ -75,39 +76,23 @@ public class SensorQMC5883 implements ISensor {
 		}
 	}
 
-	/**
-	 * We calculate the avarage by repeating the reading getNumberOfMeasurements times.
-	 * @return
-	 * @throws IOException
-	 */
-	public double[] getValues() throws IOException {
-		values[0]=0;
-		values[1]=0;
-		values[2]=0;
-		for (int j=0;j<this.getNumberOfMeasurements();j++) {
-			getValuesRaw();
-			values[0]+=valuesRaw[0];
-			values[1]+=valuesRaw[1];
-			values[2]+=valuesRaw[2];
-			i2c.sleep(11);
-		}
-		values[0]=values[0]/this.getNumberOfMeasurements()*factor;
-		values[1]=values[1]/this.getNumberOfMeasurements()*factor;
-		values[2]=values[2]/this.getNumberOfMeasurements()*factor;
-		return values;
-	}
 
-	
-	public double[] getValuesRaw() throws IOException {
+	public void setValues() throws IOException {
 		byte status[] = new byte[1];
 		// check status bit
 		i2c.read(0x06, 1, status);
-		if ((status[0] & 1) == 1) {
-			i2c.read(0x00, 3, valuesRaw, false);
+		if ((status[0] & 0b00000001) == 1 && (status[0] & 0b00000010) == 0) {
+			int valuesRaw[] = new int[3];
+			i2c.read(0x00, 3, valuesRaw, Type2Byte.SignedReverse);
+			double x = (double)valuesRaw[0] * factor;
+			double y = (double)valuesRaw[1] * factor;
+			double z = (double)valuesRaw[2] * factor;
+			magnetometer.set(x, y, z);
+
+			log.debug("SensorQMC5883 new data");
 		} else {
 			log.debug("SensorQMC5883 data not ready");
 		}
-		return valuesRaw;
 	}
 
 	/**
@@ -134,19 +119,6 @@ public class SensorQMC5883 implements ISensor {
 		return magnetometer;
 	}
 	
-	/**
-	 * @return the numberOfMeasurements
-	 */
-	public int getNumberOfMeasurements() {
-		return numberOfMeasurements;
-	}
-
-	/**
-	 * @param numberOfMeasurements the numberOfMeasurements to set
-	 */
-	public void setNumberOfMeasurements(int numberOfMeasurements) {
-		this.numberOfMeasurements = numberOfMeasurements;
-	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

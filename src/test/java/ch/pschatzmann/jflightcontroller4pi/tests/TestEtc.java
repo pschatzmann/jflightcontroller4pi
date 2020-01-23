@@ -71,6 +71,13 @@ public class TestEtc {
 		f.add(40.0);
 		Assert.assertEquals(20.0, f.getValue(),0.001);
 		
+		
+		f = new MedianFilter(1);
+		f.add(1.0);
+		Assert.assertEquals(1.0, f.getValue(),0.001);
+		f.add(3.0);
+		Assert.assertEquals(3.0, f.getValue(),0.001);
+		
 	}
 	
 	@Test

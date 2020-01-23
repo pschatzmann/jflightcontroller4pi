@@ -37,8 +37,8 @@ public class Compass implements ICompass {
 		// resulting in 2048 LSBs per Gauss.
 		double directionDeg = 0;
 
-		double xGaussData = values.x() * factor;
-		double yGaussData = values.y() * factor;
+		double xGaussData = values.x();// * factor;
+		double yGaussData = values.y();// * factor;
 
 		// Calculate the direction D by first checking to see if the X Gauss
 		// data is equal to 0 to prevent divide by 0 zero errors in the future

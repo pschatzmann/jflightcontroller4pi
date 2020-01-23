@@ -19,6 +19,7 @@ import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 public class I2C {
 	private static final Logger log = LoggerFactory.getLogger(I2C.class);
 	private I2CDevice device;
+	public enum Type2Byte {Signed, Unsigned, SignedReverse}
 
 	/**
 	 * Setup itc device at indicated bus and address
@@ -86,7 +87,7 @@ public class I2C {
 	 * @throws IOException
 	 */
 	public void read(int addr, int len, int[] buffer) throws IOException {
-		read(addr, len, buffer, true);
+		read(addr, len, buffer, Type2Byte.Signed);
 	}
 
 	/**
@@ -98,16 +99,28 @@ public class I2C {
 	 * @param signed
 	 * @throws IOException
 	 */
-	public void read(int addr, int len, int[] buffer, boolean signed) throws IOException {
+	public void read(int addr, int len, int[] buffer, Type2Byte signed) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
-		if (signed) {
+		switch(signed) {
+		case Signed: 
 			toIntArray(byteBuffer, buffer, len);
-		} else {
-			toUnsignedIntArray(byteBuffer, buffer, len);			
+			break;
+		case SignedReverse: 
+			toIntReversedArray(byteBuffer, buffer, len);
+			break;
+		case Unsigned:
+			toUnsignedIntArray(byteBuffer, buffer, len);	
+			break;
 		}
 	}
 	
+	public void toIntReversedArray(byte[] byteBuffer, int[] buffer, int len) {
+		for (int i = 0; i < len; i++) {
+			buffer[i] = (int) toIntReversed(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
+		}
+	}
+
 	/**
 	 * Converts an array of bytes to an array of (signed) ints
 	 * @param byteBuffer
@@ -137,6 +150,11 @@ public class I2C {
 		//return (int) (((b1 << 8) | (b2)));
 		return (b1 * 256) + (b2 & 0xFF);
 	}
+	
+	private int toIntReversed(byte b1, byte b2) {
+		return (b2 * 256) + (b1 & 0xFF);
+	}
+
 
 	/**
 	 * Converts a 2 byte unsigned c int to a java int
@@ -156,14 +174,21 @@ public class I2C {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void read(int addr, int len, double[] buffer, boolean signed) throws IOException {
+	public void read(int addr, int len, double[] buffer, Type2Byte signed) throws IOException {
 		byte byteBuffer[] = new byte[len * 2];
 		read(addr, len * 2, byteBuffer);
 		for (int i = 0; i < len; i++) {
-			if (signed) {
+			switch(signed) {
+			case Unsigned:
 				buffer[i] = (double) toInt(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);
-			} else {
+				break;
+			case Signed:
 				buffer[i] = (double) toIntUnsigned(byteBuffer[i * 2], byteBuffer[(i * 2) + 1]);				
+				break;
+			case  SignedReverse: 
+				buffer[i] = (double) toInt(byteBuffer[(i * 2)+1], byteBuffer[i * 2]);				
+				break;
+
 			}
 		}
 	}
