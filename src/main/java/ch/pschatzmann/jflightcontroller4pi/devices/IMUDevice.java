@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,9 @@ public class IMUDevice implements IDevice {
 	private Velocity speed = new Velocity();
 	private CompassNavigation navigation = new CompassNavigation();
 	private Timer timer;
-	private List<Map<String,Number>> history = new ArrayList();
+	private List<Map<String,Number>> history = new Vector();
 	private long historySize = 50000;
+	private float sampleFreq = 200.0f;
 	
 
 	/**
@@ -84,27 +86,39 @@ public class IMUDevice implements IDevice {
 	@Override
 	public void setup(FlightController flightController) {
 		log.info("setup");;
+		if (flightController==null) {
+			log.error("The flight controller must not be null");
+			return;
+		}
+
+		if (this.sensors.size()==0) {
+			log.error("There are no Sensors for the IMU");
+			return;
+		}
+		
+		this.imu.setSampleFreq(this.getSampleFreq());
 		this.flightController = flightController;
 		this.flightController.setImu(this);
+		this.history.clear();
 		
-		if (this.sensors.size()>0) {		
-			// setup IMU sensors
-			this.sensors.forEach(s ->s.setup(flightController));
-	
-			// setup timer
-		    TimerTask task = new TimerTask() {
-			        public void run() {
-			        	sensors.forEach(s -> s.processInput());
-			    		updateParameters();
-			        }
-			    };
-			    
-	        //running timer task as daemon thread
-	        Timer timer = new Timer(true);
-	        timer.scheduleAtFixedRate(task, 0, (long)(imu.getSampleFreq()*1000.0));
-		} else {
-			log.error("There are no Sensors for the IMU");
-		}
+		// setup IMU sensors
+		this.sensors.forEach(s ->s.setup(flightController));
+
+		// setup timer
+	    TimerTask task = new TimerTask() {
+		        public void run() {
+		        	// update parameters in parameter store
+		        	sensors.forEach(s -> s.processInput());
+		        	// update calculated IMU parameters
+		    		updateParameters();
+		        }
+		    };
+		    
+        //running timer task as daemon thread
+        Timer timer = new Timer(true);
+        
+        long timeMs = (long) (1000.0 / this.getSampleFreq());        
+        timer.scheduleAtFixedRate(task, 0, timeMs);
 		
 	}
 
@@ -125,7 +139,7 @@ public class IMUDevice implements IDevice {
 
 	protected void updateParameters() {
 		if (this.getFlightController()==null) {
-			log.error("The IMUDevice has not been set up");
+			log.error("The IMUDevice has not been set up. The flight controller is null");
 			return;
 		}
 		log.debug("processOutput");
@@ -138,9 +152,9 @@ public class IMUDevice implements IDevice {
 		Quaternion q = this.getQuaternion();
 
 		// Update the new IMU parameters
-		double pitch = q.getPitch();
-		double roll = q.getRoll();
-		double yaw = q.getYaw();
+		double pitch = Math.toDegrees(q.getPitch());
+		double roll = Math.toDegrees(q.getRoll());
+		double yaw = Math.toDegrees(q.getYaw());
 		setParameter(ParametersEnum.SENSORPITCH, pitch);
 		setParameter(ParametersEnum.SENSORROLL,roll);
 		setParameter(ParametersEnum.SENSORYAW, yaw);
@@ -201,9 +215,9 @@ public class IMUDevice implements IDevice {
 			rec.put(ParametersEnum.SENSORYAW.name(), yaw);
 			rec.put(ParametersEnum.SENSORHEADING.name(), direction);
 
-
-			
+			// adds the value to the histry
 			this.history.add(rec);
+			// limit the max number of records
 			if (this.history.size()>=this.getHistorySize()) {
 				this.history.remove(0);
 			}
@@ -342,7 +356,7 @@ public class IMUDevice implements IDevice {
 	 * @return the history
 	 */
 	public List<Map<String, Number>> getHistory() {
-		return history;
+		return new ArrayList(history);
 	}
 
 	/**
@@ -364,6 +378,20 @@ public class IMUDevice implements IDevice {
 	 */
 	public void setHistorySize(long historySize) {
 		this.historySize = historySize;
+	}
+
+	/**
+	 * @return the sampleFreq
+	 */
+	public float getSampleFreq() {
+		return sampleFreq;
+	}
+
+	/**
+	 * @param sampleFreq the sampleFreq to set
+	 */
+	public void setSampleFreq(float sampleFreq) {
+		this.sampleFreq = sampleFreq;
 	}
 
 	/**

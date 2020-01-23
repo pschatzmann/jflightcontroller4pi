@@ -9,9 +9,9 @@ package ch.pschatzmann.jflightcontroller4pi.parameters;
  * 
  */
 public enum ParametersEnum {
-	// => Scaled Parameters
+	// => Scaled Parameters in Degrees
 	ROLL, PITCH, YAW, SPEED, 
-	// imu
+	// imu in Degrees
 	SENSORROLL, SENSORPITCH, SENSORYAW, SENSORSPEED, SENSORHEADING,  // Values from Sensors
 	PRESSUREBASELINE, SENSORPRESSURE, ALTITUDE,
 	// control planes

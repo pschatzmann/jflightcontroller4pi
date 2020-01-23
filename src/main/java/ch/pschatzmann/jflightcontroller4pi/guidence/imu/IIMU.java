@@ -9,5 +9,5 @@ public interface IIMU {
 	public Quaternion getQuaternion(double gx, double gy, double gz, double ax, double ay, double az, double mx, double my,
 			double mz);
 
-	public float getSampleFreq();
+	public void setSampleFreq(float freq);
 }

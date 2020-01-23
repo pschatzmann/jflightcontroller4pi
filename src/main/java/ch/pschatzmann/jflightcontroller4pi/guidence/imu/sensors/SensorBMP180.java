@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IFilter;
+import ch.pschatzmann.jflightcontroller4pi.control.MedianFilter;
 import ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
@@ -41,6 +43,8 @@ public class SensorBMP180 implements ISensor {
 	private double md, mc, a, b1, c3, c4, c6, c5, p0, p1, p2, cx0, cx1, cx2, cy0, cy1, cy2;
 	private double baselinePressure;
 	private double baro_temp_c, pressure_pa;
+	
+	private IFilter medianFilter = new MedianFilter(5);
 
 	@Override
 	public void setup(FlightController flightController) {
@@ -78,7 +82,7 @@ public class SensorBMP180 implements ISensor {
 			p2 = 3038.0 * 100.0 * Math.pow(2, -36);
 			logFactors();
 
-			calculateBaseline();
+			calibrate();
 			if (this.flightController != null) {
 				log.info("The current baseline presure is set to {}", baselinePressure);
 				flightController.setValue(ParametersEnum.PRESSUREBASELINE, baselinePressure);
@@ -123,18 +127,36 @@ public class SensorBMP180 implements ISensor {
 
 	}
 
+	public void calibrate() {
+		log.info("calibrate");
+		try {
+			calculateBaseline(100);
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+		}
+	}
+	
 	/**
 	 * Calculates the average of 100 measurements and records the result as
 	 * baseline.
 	 * 
 	 * @throws IOException
 	 */
-	public void calculateBaseline() throws IOException {
-		float total = 0;
-		for (int j = 0; j < 100; j++) {
-			total += getValues()[0];
+	public double calculateBaseline(int count) throws IOException {
+		float total = 0.0f;
+		float countF = 0;
+		for (int j = 0; j < count; j++) {
+			double p = getValues()[0];
+			if (Double.isFinite(p)) {
+				total += p;
+				countF += 1;
+			}
+			try {
+				Thread.sleep(100);
+			} catch(Exception ex) {}
 		}
-		baselinePressure = total / 100.0;
+		baselinePressure = total / countF;
+		return baselinePressure;
 	}
 
 	@Override
@@ -151,13 +173,14 @@ public class SensorBMP180 implements ISensor {
 		try {
 			double values[] = getValues();
 			if (flightController != null) {
-				flightController.setValue(ParametersEnum.SENSORPRESSURE, pressure_pa);
-				flightController.setValue(ParametersEnum.TEMPERATURE, baro_temp_c);
+				flightController.setValue(ParametersEnum.SENSORPRESSURE, values[0]);
+				flightController.setValue(ParametersEnum.TEMPERATURE, values[0]);
 			}
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
 	}
+	
 
 	public double[] getValues() throws IOException {
 		// start conversion of the temperature sensor
@@ -182,7 +205,11 @@ public class SensorBMP180 implements ISensor {
 
 		// convert the pressure reading
 		pressure_pa = (double) ((p2 * Math.pow(z, 2)) + (p1 * z) + p0);
-		double result[] = { pressure_pa, baro_temp_c };
+		
+		// filter value
+		this.medianFilter.add(pressure_pa);
+		
+		double result[] = { medianFilter.getValue(), baro_temp_c };
 		return result;
 	}
 
@@ -194,6 +221,14 @@ public class SensorBMP180 implements ISensor {
 	public double getPressure() {
 		return this.pressure_pa;
 	}
+	
+	/**
+	 * Returns the baseline pressure (which was meausured on the startup
+	 * @return
+	 */
+	public double getBaselinePressure() {
+		return this.baselinePressure;
+	}
 
 	/**
 	 * Provides temperature from the last processInput() call
@@ -202,6 +237,20 @@ public class SensorBMP180 implements ISensor {
 	 */
 	public double getTemperature() {
 		return this.baro_temp_c;
+	}
+
+	/**
+	 * @return the medianFilter
+	 */
+	public IFilter getFilter() {
+		return medianFilter;
+	}
+
+	/**
+	 * @param medianFilter the medianFilter to set
+	 */
+	public void setFilter(IFilter medianFilter) {
+		this.medianFilter = medianFilter;
 	}
 
 	public String toString() {

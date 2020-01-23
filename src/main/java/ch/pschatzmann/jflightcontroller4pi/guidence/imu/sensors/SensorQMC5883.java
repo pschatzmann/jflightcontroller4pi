@@ -43,7 +43,7 @@ public class SensorQMC5883 implements ISensor {
 			// Range: range 2G - 00 / 8G - 01  
 			// Output data rate: 10Hz - 00 / 50Hz 01 / 100Hz - 10 /  200Hz - 11
 			// Mode: continues read - 01 / standby - 00
-			i2c.write((byte) 0x09, (byte)0b11011001); // control register 1
+			i2c.write((byte) 0x09, (byte)0b11011101); // control register 1
 		} catch(Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}

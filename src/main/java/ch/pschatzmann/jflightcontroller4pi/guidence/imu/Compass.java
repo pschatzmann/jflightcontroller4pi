@@ -58,7 +58,7 @@ public class Compass implements ICompass {
 			// If the X Gauss data is not zero, calculate the arctangent of the
 			// Y Gauss and X Gauss data and convert from polar coordinates to
 			// degrees.
-			directionDeg = (float) Math.atan((yGaussData / xGaussData) * (180.0 / Math.PI));
+			directionDeg = (float)Math.toDegrees(Math.atan((yGaussData / xGaussData)));
 
 			// If the direction D is greater than 360 degrees, subtract 360
 			// degrees from that value.

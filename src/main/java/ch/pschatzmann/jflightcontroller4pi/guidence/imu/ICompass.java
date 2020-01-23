@@ -1,7 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.guidence.imu;
 
 /**
- * The compassmust provide the Degree and 
+ * The compass must provide the Degree  
  * @author pschatzmann
  *
  */

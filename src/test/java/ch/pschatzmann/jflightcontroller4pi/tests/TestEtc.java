@@ -6,6 +6,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.AvgFilter;
+import ch.pschatzmann.jflightcontroller4pi.control.IFilter;
+import ch.pschatzmann.jflightcontroller4pi.control.MedianFilter;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter;
@@ -50,6 +53,42 @@ public class TestEtc {
 	public void testCast() {
 		Assert.assertEquals(2, (int)2.0);
 		Assert.assertEquals(2.0, (float)2,0.001);
+	}
+	
+	@Test
+	public void testMedianFilter() {
+		IFilter f = new MedianFilter(5);
+		Assert.assertEquals(0, f.getValue(),0.001);
+		f.add(10.0);
+		Assert.assertEquals(10.0, f.getValue(),0.001);
+
+		f.add(1.0);
+		f.add(2.0);
+		Assert.assertEquals(2.0, f.getValue(),0.001);
+
+		f.add(20.0);
+		f.add(30.0);
+		f.add(40.0);
+		Assert.assertEquals(20.0, f.getValue(),0.001);
+		
+	}
+	
+	@Test
+	public void testAvgFilter() {
+		IFilter f = new AvgFilter(5);
+		Assert.assertEquals(0, f.getValue(),0.001);
+		f.add(10.0);
+		Assert.assertEquals(10.0, f.getValue(),0.001);
+
+		f.add(1.0);
+		f.add(2.0);
+		Assert.assertEquals(13.0/3.0, f.getValue(),0.001);
+
+		f.add(20.0);
+		f.add(30.0);
+		f.add(40.0);
+		Assert.assertEquals(93.0/5.0, f.getValue(),0.001);
+		
 	}
 
 }

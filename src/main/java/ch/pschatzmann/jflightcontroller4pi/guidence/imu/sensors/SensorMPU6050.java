@@ -29,7 +29,9 @@ public class SensorMPU6050 implements ISensor {
 	private Value3D accelerometer = new Value3D();;
 	private Value3D gyro = new Value3D();
 	private float temperature;
+	private double calibration[] = new double[10];
 
+	
 	@Override
 	public void setup(FlightController flightController) {
 		try {
@@ -43,6 +45,9 @@ public class SensorMPU6050 implements ISensor {
 													// 2000dps
 			i2c.write((byte) 0x1C, (byte) 0x08); // accelerometer full scale =
 													// +/- 4g
+			
+			calibrate();
+			
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
@@ -72,18 +77,49 @@ public class SensorMPU6050 implements ISensor {
 	public String getName() {
 		return this.getClass().getSimpleName();
 	}
+	
+	public void calibrate() {
+		log.info("calibrate");
+		int buffer[] = new int[10];
+		int count=0;
+		for (int j=0;j<100;j++) {
+			try {
+				Thread.sleep(100);
+				i2c.read(0x3B, 10, buffer);
+				//calibration[0] += buffer[0];
+				//calibration[1] += buffer[1];
+				//calibration[2] += buffer[2];
+				calibration[4] += buffer[4];
+				calibration[5] += buffer[5];
+				calibration[6] += buffer[6];
+				count++;
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		
+		log.info("Gyro Calibration totals x={} y={}, z={}", calibration[4],calibration[5],calibration[6]);
+		//calibration[0] = calibration[0] / count;
+		//calibration[1] = calibration[1] / count;
+		//calibration[2] = calibration[2] / count;
+		calibration[4] = calibration[4] / count;
+		calibration[5] = calibration[5] / count;
+		calibration[6] = calibration[6] / count;
+		log.info("Gyro Calibration result x={} y={}, z={}", calibration[4],calibration[5],calibration[6]);
+		
+	}
 
 	@Override
 	public void processInput() {
 		try {
 			i2c.read(0x3B, 10, rx_buffer);
-			int accel_x = rx_buffer[0];
-			int accel_y = rx_buffer[1];
-			int accel_z = rx_buffer[2];
+			int accel_x = (int) (rx_buffer[0] - calibration[0]);
+			int accel_y = (int) (rx_buffer[1] - calibration[1]);
+			int accel_z = (int) (rx_buffer[2] - calibration[2]);
 			int mpu_temp = rx_buffer[3];
-			int gyro_x = rx_buffer[4];
-			int gyro_y = rx_buffer[5];
-			int gyro_z = rx_buffer[6];
+			int gyro_x = (int) (rx_buffer[4] - calibration[4]);
+			int gyro_y = (int) (rx_buffer[5] - calibration[5]);
+			int gyro_z = (int) (rx_buffer[6] - calibration[6]);
 
 			// convert temperature reading into degrees Celsius
 			temperature = mpu_temp / 340.0f + 36.53f;
