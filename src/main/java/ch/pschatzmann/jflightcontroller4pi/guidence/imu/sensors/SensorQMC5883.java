@@ -105,7 +105,7 @@ public class SensorQMC5883 implements ISensor {
 		if ((status[0] & 1) == 1) {
 			i2c.read(0x00, 3, valuesRaw, false);
 		} else {
-			log.info("SensorQMC5883 data not ready");
+			log.debug("SensorQMC5883 data not ready");
 		}
 		return valuesRaw;
 	}
