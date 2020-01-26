@@ -14,12 +14,12 @@
             	<ref bean="throttle" />    
             	<ref bean="elevator" />    
             	<ref bean="jmx" />
-            <!-- 	<ref bean="gameConsole" /> 
-            	<ref bean="datagramReader" />                
-            	<ref bean="datagramWriter" />    
-            	<ref bean="sensors" /> -->
+             	<ref bean="gameConsole" /> 
+            	<ref bean="sensorGY87" />
             	<ref bean="imu" />  
             	<ref bean="mavlinkDevice" />    
+            	<ref bean="datagramReader" />                
+            	<ref bean="datagramWriter" />   
         	</list>
 	  	</property>
 	  	<property name="modes">
@@ -45,13 +45,7 @@
 	</bean>
 
 	<!-- IMU  -->
-	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice" >
-	  	<property name="sensors">
-	  		<list>
-            	<ref bean="sensorGY87" />
-        	</list>
-	  	</property>
-		
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice" >		
 	</bean>
 
 	<bean id="sensorGY87" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87" >

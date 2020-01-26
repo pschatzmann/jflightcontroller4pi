@@ -29,6 +29,7 @@ public class OutDevice implements IOutDeviceEx {
 	private IRecalculate recalculate;
 	private double defaultValue = 0;;
 	private double minValue = -1.0;
+	private double frequency;
 
 	/**
 	 * Empty Constructor. The ParametersEnum control, ParametersEnum sensor, double sensorDefaultSetting, String pinNam
@@ -172,5 +173,17 @@ public class OutDevice implements IOutDeviceEx {
 			this.recalculate.recalculate();
 		}
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 }

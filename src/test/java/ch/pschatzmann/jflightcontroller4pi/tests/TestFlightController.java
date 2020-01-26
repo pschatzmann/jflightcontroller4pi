@@ -9,6 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
+import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore;
 import ch.pschatzmann.jflightcontroller4pi.integration.Utils;
@@ -67,6 +69,38 @@ public class TestFlightController {
 		// run is executing until it is stopped by the timer
 		Assert.assertTrue(ctl.getControlLoop().isStopped());
 	}
+	
+	
+	@Test
+	public void testFrequencies() {
+		FlightController fc = new FlightController();
+		fc.setControlLoop(new ControlLoopWithTimers(true));
+		fc.getControlLoop().setFrequency(100);
+		
+		TestOutputDevice d0 = new TestOutputDevice();
+		TestOutputDevice d1 = new TestOutputDevice();
+		d1.setFrequency(100);
+		TestOutputDevice d2 = new TestOutputDevice();
+		d2.setFrequency(50);
+		
+		TestOutputDevice d3 = new TestOutputDevice();
+		d3.setFrequency(1);
+		fc.addDevices(Arrays.asList(d0, d1, d2, d3));
+		
+		
+		// schedule shutdown in 1 sec
+		new Timer().schedule(Utils.timerTask(() -> fc.shutdown()), 3000);
+		// start control loop
+		fc.run();
+		
+		// run is executing until it is stopped by the timer
+		Assert.assertEquals(300, d1.getCount(),1);
+		Assert.assertEquals(150, d2.getCount(),1);
+		Assert.assertEquals(3, d3.getCount(),1);
+		Assert.assertEquals(300, d0.getCount(),1);
+	}
+
+
 
 	@Test
 	public void testControlLoop() {
@@ -74,7 +108,7 @@ public class TestFlightController {
 		Assert.assertTrue(ctl.getControlLoop() instanceof ControlLoop);
 		Assert.assertTrue(ctl.getControlLoop().isStopped());
 		// schedule shutdown in 1 sec
-		new Timer().schedule(Utils.timerTask(() -> ctl.shutdown()), 1000);
+		new Timer().schedule(Utils.timerTask(() -> ctl.shutdown()), 3000);
 		// start control loop
 		ctl.run();
 		// run is executing until it is stopped by the timer
@@ -104,6 +138,45 @@ public class TestFlightController {
 		Assert.assertEquals(2.0, ctl.getValue(ParametersEnum.SENSORPITCH).value,0.01);
 		Assert.assertEquals(1.5, ctl.getParameterStore().getAvg(ParametersEnum.SENSORPITCH),0.01);
 		Assert.assertEquals(2, ctl.getParameterStore().getHistory(ParametersEnum.SENSORPITCH).length);
+	}
+	
+	
+	class TestOutputDevice implements IOutDevice {
+		private double frequency;
+		long count = 0;
+
+		@Override
+		public void setup(FlightController flightController) {
+		}
+
+		@Override
+		public void shutdown() {
+		}
+
+		@Override
+		public String getName() {
+			return "TestOutputDevice";
+		}
+
+		@Override
+		public void setFrequency(double frequency) {
+			this.frequency = frequency;
+		}
+
+		@Override
+		public double getFrequency() {
+			return this.frequency;
+		}
+
+		@Override
+		public void processOutput() {
+			count++;
+		}
+		
+		public long getCount() {
+			return count;
+		}
+		
 	}
 
 

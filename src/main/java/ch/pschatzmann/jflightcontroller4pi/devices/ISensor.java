@@ -13,4 +13,5 @@ public interface ISensor extends IDevice {
 	 * Process the Input from a Sensor by updating the values (in the parameter store)
 	 * */
 	void processInput() ;
+	
 }

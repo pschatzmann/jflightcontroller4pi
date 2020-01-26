@@ -42,10 +42,9 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  * @author pschatzmann
  *
  */
-public class IMUDevice implements IDevice {
+public class IMUDevice implements IOutDevice {
 	private static Logger log = LoggerFactory.getLogger(IMUDevice.class);
 	private FlightController flightController;
-	private Collection<ISensor> sensors = new ArrayList();
 	private Value3D gyro = new Value3D();
 	private Value3D accelerometer = new Value3D();
 	private Value3D magnetometer = new Value3D();
@@ -53,18 +52,17 @@ public class IMUDevice implements IDevice {
 	private ICompass compass = new Compass();
 	private Velocity speed = new Velocity();
 	private CompassNavigation navigation = new CompassNavigation();
-	private Timer timer;
 	private List<Map<String,Number>> history = new Vector();
 	private long historySize = 0;
 	private float sampleFreq = 200.0f;
+	private double frequency;
 	
-
 	/**
 	 * Default constructor
 	 */
 	public IMUDevice() {
 	}
-
+	
 	/**
 	 * Determine the roll pitch and yaw from the gyro,accelerometer and
 	 * magnetometer
@@ -93,34 +91,11 @@ public class IMUDevice implements IDevice {
 			return;
 		}
 
-		if (this.sensors.size()==0) {
-			log.error("There are no Sensors for the IMU");
-			return;
-		}
 		
 		this.imu.setSampleFreq(this.getSampleFreq());
 		this.flightController = flightController;
 		this.flightController.setImu(this);
 		this.history.clear();
-		
-		// setup IMU sensors
-		this.sensors.forEach(s ->s.setup(flightController));
-
-		// setup timer
-	    TimerTask task = new TimerTask() {
-		        public void run() {
-		        	// update parameters in parameter store
-		        	sensors.forEach(s -> s.processInput());
-		        	// update calculated IMU parameters
-		    		updateParameters();
-		        }
-		    };
-		    
-        //running timer task as daemon thread
-        Timer timer = new Timer(true);
-        
-        long timeMs = (long) (1000.0 / this.getSampleFreq());        
-        timer.scheduleAtFixedRate(task, 0, timeMs);
 		
 	}
 
@@ -131,15 +106,17 @@ public class IMUDevice implements IDevice {
 			log.error("The IMUDevice has not been set up");
 			return;
 		}
-		if (this.timer!=null) {
-			timer.cancel();
-		}
-		
 		this.getFlightController().setImu(null);
 	}
 
 
-	protected void updateParameters() {
+	/**
+	 * Reads the sensor data and stores the calculated IMU data in the parameters
+	 */
+
+	@Override
+	public void processOutput() {
+
 		if (this.getFlightController()==null) {
 			log.error("The IMUDevice has not been set up. The flight controller is null");
 			return;
@@ -341,20 +318,6 @@ public class IMUDevice implements IDevice {
 	}
 	
 	/**
-	 * @return the sensors
-	 */
-	public Collection<ISensor> getSensors() {
-		return sensors;
-	}
-
-	/**
-	 * @param sensors the sensors to set
-	 */
-	public void setSensors(Collection<ISensor> sensors) {
-		this.sensors = sensors;
-	}
-
-	/**
 	 * @return the history
 	 */
 	public List<Map<String, Number>> getHistory() {
@@ -400,31 +363,44 @@ public class IMUDevice implements IDevice {
 	public void setSampleFreq(float sampleFreq) {
 		this.sampleFreq = sampleFreq;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 	/**
 	 * Prints all the relevant values 
 	 */
 	public String toString() {
-		if (flightController==null) {
-			return "IMUDevice";
-		}
 		StringBuffer sb = new StringBuffer();
-		sb.append(flightController.getValue(ParametersEnum.SENSORPITCH).value);
-		sb.append("/");
-		sb.append(flightController.getValue(ParametersEnum.SENSORROLL).value);
-		sb.append("/");
-		sb.append(flightController.getValue(ParametersEnum.SENSORYAW).value);
-		sb.append(" ");
-		sb.append(flightController.getValue(ParametersEnum.SENSORHEADING).value);
-		sb.append(" ");
-		sb.append(flightController.getValue(ParametersEnum.SENSORSPEED).value);
-		sb.append(" ");
-		sb.append(flightController.getValue(ParametersEnum.IMULATITUDE).value);
-		sb.append("/");
-		sb.append(flightController.getValue(ParametersEnum.IMULONGITUDE).value);
-		sb.append(" ");
-		sb.append(flightController.getValue(ParametersEnum.ALTITUDE).value);
-		sb.append(System.lineSeparator());
+		sb.append(this.getName());
+		if (flightController!=null) {
+			sb.append(": ");
+			sb.append(flightController.getValue(ParametersEnum.SENSORPITCH).value);
+			sb.append("/");
+			sb.append(flightController.getValue(ParametersEnum.SENSORROLL).value);
+			sb.append("/");
+			sb.append(flightController.getValue(ParametersEnum.SENSORYAW).value);
+			sb.append(" ");
+			sb.append(flightController.getValue(ParametersEnum.SENSORHEADING).value);
+			sb.append(" ");
+			sb.append(flightController.getValue(ParametersEnum.SENSORSPEED).value);
+			sb.append(" ");
+			sb.append(flightController.getValue(ParametersEnum.IMULATITUDE).value);
+			sb.append("/");
+			sb.append(flightController.getValue(ParametersEnum.IMULONGITUDE).value);
+			sb.append(" ");
+			sb.append(flightController.getValue(ParametersEnum.ALTITUDE).value);
+			sb.append(System.lineSeparator());
+		}
 		return sb.toString();
 	}
 

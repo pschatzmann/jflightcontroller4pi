@@ -43,6 +43,7 @@ public class GameConsole implements ISensor {
 	private IFlightMode offMode;
 	private IFlightMode acroMode;
 	private FlightController flightController;
+	private double frequency;
 
 	public GameConsole() {
 	}
@@ -305,6 +306,21 @@ public class GameConsole implements ISensor {
 	public void setRyParameter(ParametersEnum ryParameter) {
 		this.ryParameter = ryParameter;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
 
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 
 }

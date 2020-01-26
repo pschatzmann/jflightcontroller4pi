@@ -11,8 +11,8 @@ import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
 
 /**
  * 
- * Simple Loop based Control. The speed of the processing can be controled with the help
- * of the sleep parameter which expects the value in milliseconds.
+ * Simple Loop based Control. The speed of the processing is controled with the help
+ * of a Thread sleep which is calculated from the indicated frequency.
  * 
  * @author pschatzmann
  *
@@ -20,9 +20,11 @@ import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
 public class ControlLoop implements IControlLoop {
     private static final Logger log = LoggerFactory.getLogger(ControlLoop.class);
 	private FlightController controller;
-	private int sleepMs = 100;
 	private boolean active = false;
-	
+	private double frequency = 200;
+	private long count = 0;
+	private boolean blocking = true;
+
 	/**
 	 * Empty Constuctor used by Spring
 	 */
@@ -39,6 +41,20 @@ public class ControlLoop implements IControlLoop {
 	 */
 	@Override
 	public void run() {
+		if (this.isBlocking()) {
+			doRun();
+		} else {
+			// if this needs to be non blocking we need to run the loop in it's own thread
+			new Thread() {
+			  public void run() {
+				  doRun();
+			  }
+			}.start();
+		}
+	}
+
+
+	private void doRun() {
 		this.active = true;
 		IFlightMode mode = controller.getMode();
 		if (mode!=null) {
@@ -48,19 +64,18 @@ public class ControlLoop implements IControlLoop {
 		}
 		log.info("The Flight Controller is running...");
 
-		int count = 0;
 		while (active) {
 			try {
 				processSensors();
 				processOut();
 				
-				if (sleepMs>0) {
-					Thread.sleep(sleepMs);	
+				if (getSleepMs()>0) {
+					long sleep = getSleepMs();
+					Thread.sleep(sleep);	
 				}
 				count++;
-				if ((System.currentTimeMillis()/1000) % 10 == 0) {
+				if ((System.currentTimeMillis()/1000) % 60 == 0) {
 					log.info("Number of loops per sec: "+ count / 10.0);
-					count=0;
 				}
 			} catch (InterruptedException e) {
 				// we do not expect this to happen. So we just abort all processing and
@@ -70,35 +85,22 @@ public class ControlLoop implements IControlLoop {
 		}
 	}
 
+
 	protected void processSensors() {
 		this.controller.getDevices().stream()
 			.filter(d -> d instanceof ISensor)
+			.filter(d -> FrequencyCheck.isRelevantForProcessing(getFrequency(),d.getFrequency(), count))
 			.forEach(sensor -> ((ISensor)sensor).processInput());
 	}
 	
 	protected void processOut() {
 		this.controller.getDevices().stream()
 			.filter(d -> d instanceof IOutDevice)
+			.filter(d -> FrequencyCheck.isRelevantForProcessing(getFrequency(),d.getFrequency(), count))
 			.forEach(sensor -> ((IOutDevice)sensor).processOutput());
 	}
 
 	
-	/**
-	 * We can define a small sleeping period in the control loop in milliseconds
-	 * @return
-	 */
-	public int getSleepMs() {
-		return sleepMs;
-	}
-
-	/**
-	 * Returns the sleeping period between the control loop cycles.
-	 * @param sleepMs
-	 */
-	public void setSleepMs(int sleepMs) {
-		this.sleepMs = sleepMs;
-	}
-
 	@Override
 	public void stop()  {
 		active = false;
@@ -108,5 +110,33 @@ public class ControlLoop implements IControlLoop {
 	public boolean isStopped() {
 		return !this.active;
 	}
+
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+	
+	protected int getSleepMs() {
+		return  this.frequency>0 ? (int)(1000.0 / this.frequency): 0;
+	}
+
+
+	@Override
+	public void setBlocking(boolean blocking) {
+		this.blocking = blocking;
+		
+	}
+
+	@Override
+	public boolean isBlocking() {
+		return blocking;
+	}
+
 
 }

@@ -12,7 +12,7 @@ import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
- * MPU6050 Accelerometer and Gyroscope Senosor. We update the ACCELEROMETERx and
+ * MPU6050 Accelerometer and Gyroscope Sensor. We update the ACCELEROMETERx and
  * GYROx parameter values.
  * 
  * https://www.rlocman.ru/i/File/2017/01/28/MPU-6000-Datasheet1.pdf
@@ -30,6 +30,7 @@ public class SensorMPU6050 implements ISensor {
 	private Value3D gyro = new Value3D();
 	private float temperature;
 	private double calibration[] = new double[10];
+	private double frequency;
 
 	
 	@Override
@@ -177,6 +178,18 @@ public class SensorMPU6050 implements ISensor {
 	public float getTemperature() {
 		return temperature;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
@@ -31,8 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class FlightController {
 	private static Logger log = LoggerFactory.getLogger(FlightController.class);
-
-	private Collection<IDevice> devices = new ArrayList<IDevice>();
+	private Collection<IDevice> devices = Collections.synchronizedCollection(new ArrayList<IDevice>());
 	private ParameterStore parameterStore = new ParameterStore();
 	private IFlightMode mode = new FlightMode(Collections.emptyList()); // assign value to prevent npe
 	private List<IFlightMode> modes = Collections.emptyList();
@@ -288,6 +288,7 @@ public class FlightController {
 
 		// setup default control loop
 		if(this.controlLoop==null) {
+			log.info("No control loop defined - we use the default implementation");
 			this.setControlLoop(new ControlLoopWithTimers());
 		}
 		
@@ -325,6 +326,28 @@ public class FlightController {
 			log.error(e.getMessage(), e);
 		}
 
+	}
+	
+	/**
+	 * Returns the maximum frequency in hz that is used in the system. Individual devices
+	 * might be a multitude slower...
+	 * @return
+	 */
+	public double getBaseFrequency() {
+		return this.getControlLoop()==null? 0 : this.getControlLoop().getFrequency();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("FlightController - ");
+		sb.append("No of devices: ");
+		sb.append(this.getDevices().size());
+		sb.append(", mode: ");
+		sb.append(this.getMode());
+		sb.append(", stopped: ");
+		sb.append(this.getControlLoop().isStopped());
+		return sb.toString();
 	}
 
 }

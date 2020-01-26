@@ -21,6 +21,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 public class JMXParameterStore implements JMXParameterStoreMBean {
     private static final Logger log = LoggerFactory.getLogger(JMXParameterStore.class);
 	private FlightController flightController;
+	private double frequency = 1;
 	
 	public JMXParameterStore(){
 	}
@@ -180,7 +181,22 @@ public class JMXParameterStore implements JMXParameterStoreMBean {
 	public void setMode(String mode) {
 		flightController.selectMode(mode);
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency  = frequency;
+		
+	}
 
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
 
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 
 }

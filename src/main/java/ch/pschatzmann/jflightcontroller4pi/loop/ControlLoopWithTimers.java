@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IFrequency;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 
@@ -20,17 +21,14 @@ import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
  */
 public class ControlLoopWithTimers implements IControlLoop {
     private static final Logger log = LoggerFactory.getLogger(ControlLoopWithTimers.class);
-
 	private FlightController controller;
-	private long inputTimerPeriod = 500L;
-	private long outputTimerPeriod = 1000L;
-	private long statisticsTimerPeriod = 10000L;
 	private TimerTask inputTask;
 	private TimerTask outputTask;
 	private TimerTask statisticsTask;
 	private boolean active=false;
 	private boolean blocking=true;
-	private long outCount, inCount, outCountEnd, inCountEnd;
+	private long outCount, inCount, statCountIn, statCountOut;
+	private double frequency = 200;
 	
 	/**
 	 * Empty Constructor used by Spring
@@ -73,15 +71,17 @@ public class ControlLoopWithTimers implements IControlLoop {
 			@Override
 			public void run() {				
 				inCount++;
-				controller.getDevices().stream().filter(d -> d instanceof ISensor)
-						.forEach(sensor -> ((ISensor) sensor).processInput());
-				inCountEnd++;
+				controller.getDevices().stream()
+					.filter(d -> d instanceof ISensor)
+					.filter(d -> FrequencyCheck.isRelevantForProcessing(getFrequency(),d.getFrequency(), inCount))
+					.forEach(sensor -> ((ISensor) sensor).processInput());
+				statCountIn++;
 			}
 		};
 		Timer timer = new Timer("InputTimer");
 
 		long delay = 0L;
-		timer.scheduleAtFixedRate(inputTask, delay, inputTimerPeriod);
+		timer.scheduleAtFixedRate(inputTask, delay, (long) (1000l / this.frequency));
 
 	}
 
@@ -90,33 +90,35 @@ public class ControlLoopWithTimers implements IControlLoop {
 			@Override
 			public void run() {
 				outCount++;
-				controller.getDevices().stream().filter(d -> d instanceof IOutDevice)
+				controller.getDevices().stream()
+				.filter(d -> d instanceof IOutDevice)
+				.filter(d -> FrequencyCheck.isRelevantForProcessing(getFrequency(),d.getFrequency(), outCount))
 				.forEach(sensor -> ((IOutDevice) sensor).processOutput());
-				outCountEnd++;
+				statCountOut++;
 			}
 		};
 		Timer timer = new Timer("OutputTimer");
 
 		long delay = 0L;
-		timer.scheduleAtFixedRate(outputTask, delay, outputTimerPeriod);
+		long waitMs = (long) (1000l / this.frequency);
+		timer.scheduleAtFixedRate(outputTask, delay, waitMs);
 	}
 	
 	protected void processStatistics() {
+		int statisticsTimer = 60000; // 1 min
 		statisticsTask = new TimerTask() {
 			@Override
 			public void run() {
-				log.info("Output {}/{} hz", outCount * 1000.0 / statisticsTimerPeriod ,outCountEnd * 1000.0 / statisticsTimerPeriod  );
-				log.info("Input {}/{} hz", inCount * 1000.0 / statisticsTimerPeriod,inCountEnd * 1000.0 / statisticsTimerPeriod  );
-				outCount = 0;
-				outCountEnd = 0;
-				inCount = 0;
-				inCountEnd = 0;
+				log.info("Input {} hz / Output {} hz", statCountIn / 60.0 ,statCountOut / 60.0 );
+				// restart the statistics
+				statCountIn = 0;
+				statCountOut = 0;
 			}
 		};
 		Timer timer = new Timer("StatisticsTimer");
 
 		long delay = 0L;
-		timer.scheduleAtFixedRate(statisticsTask, delay, statisticsTimerPeriod);
+		timer.scheduleAtFixedRate(statisticsTask, delay, statisticsTimer);
 	}
 
 	public FlightController getFlightController() {
@@ -127,21 +129,7 @@ public class ControlLoopWithTimers implements IControlLoop {
 		this.controller = controller;
 	}
 
-	public long getInputTimerPeriod() {
-		return inputTimerPeriod;
-	}
 
-	public void setInputTimerPeriod(long inputTimerPeriod) {
-		this.inputTimerPeriod = inputTimerPeriod;
-	}
-
-	public long getOutputTimerPeriod() {
-		return outputTimerPeriod;
-	}
-
-	public void setOutputTimerPeriod(long outputTimerPeriod) {
-		this.outputTimerPeriod = outputTimerPeriod;
-	}
 
 	@Override
 	public void stop() {
@@ -167,6 +155,19 @@ public class ControlLoopWithTimers implements IControlLoop {
 	@Override
 	public void setup(FlightController controller) {
 		this.controller = controller;
+	}
+
+
+	@Override
+	public void setFrequency(double freq) {
+		this.frequency = freq;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+		
 	}
 
 }

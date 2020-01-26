@@ -46,6 +46,7 @@ public class SensorBMP180 implements ISensor {
 	private double baro_temp_c, pressure_pa;
 	private boolean setupTemp = true;
 	private IFilter medianFilter = new MedianFilter(1); // no filtering
+	private double frequency;
 
 	@Override
 	public void setup(FlightController flightController) {
@@ -262,6 +263,18 @@ public class SensorBMP180 implements ISensor {
 	public void setFilter(IFilter medianFilter) {
 		this.medianFilter = medianFilter;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

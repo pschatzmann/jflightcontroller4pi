@@ -1,6 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.loop;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IFrequency;
 
 /**
  * Support for different alternative implementations of the control loop
@@ -8,7 +9,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
  * @author pschatzmann
  *
  */
-public interface IControlLoop {
+public interface IControlLoop extends IFrequency {
 	/**
 	 * Starts the execution
 	 */
@@ -29,6 +30,18 @@ public interface IControlLoop {
 	 * @param controller
 	 */
 	void setup(FlightController controller);
+	
+	/**
+	 * Defines that the run command is blocking
+	 * @param blocking
+	 */
+	void setBlocking(boolean blocking);
+	
+	/**
+	 * Checks if the run command is blocking.
+	 * @return
+	 */
+	boolean isBlocking();
 	
 	
 

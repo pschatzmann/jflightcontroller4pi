@@ -26,6 +26,7 @@ public class AutoPilot implements IOutDevice {
 	private double angle;
 	private double speed;
 	private String name = "AutoPilot";
+	private double frequency;
 	
 	/**
 	 * Default Constructor
@@ -151,5 +152,17 @@ public class AutoPilot implements IOutDevice {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 }

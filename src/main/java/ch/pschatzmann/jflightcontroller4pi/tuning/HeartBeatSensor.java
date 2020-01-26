@@ -14,6 +14,7 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 public class HeartBeatSensor implements ISensor {
 	FlightController flightController;
 	boolean isActive;
+	private double frequency;
 
 	@Override
 	public void setup(FlightController flightController) {
@@ -46,5 +47,16 @@ public class HeartBeatSensor implements ISensor {
 	 */
 	public boolean isActive() {
 		return isActive;
+	}
+
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
 	}
 }

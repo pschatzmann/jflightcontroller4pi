@@ -30,6 +30,9 @@ public enum ParametersEnum {
 	// represent an individual pin
 	PIN, NA,
 	// flight mode
-	FLIGHTMODE
+	FLIGHTMODE,
+	
+	// for Quadcompter
+	MOTOR1, MOTOR2, MOTOR3, MOTOR4
 	
 }

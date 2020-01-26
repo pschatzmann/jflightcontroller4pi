@@ -53,7 +53,8 @@ public class TestIMU {
 	@Test
 	public void testGy87() throws IOException, InterruptedException {
 		ISensor sensor = new SensorGY87();
-		sensor.setup(null);
+		FlightController fc = new FlightController();
+		sensor.setup(fc);
 
 		for (int j = 0; j < 10; j++) {
 			sensor.processInput();

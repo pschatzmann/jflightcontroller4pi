@@ -9,6 +9,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.devices.ISensor;
 import ch.pschatzmann.jflightcontroller4pi.guidence.imu.Value3D;
 import ch.pschatzmann.jflightcontroller4pi.integration.I2C;
+import ch.pschatzmann.jflightcontroller4pi.loop.FrequencyCheck;
 
 /**
  * 10 DOF (degree of freedom) boards and all sensor handling is by i2c bus It
@@ -28,6 +29,8 @@ public class SensorGY87 implements ISensor {
 	private SensorBMP180 bmp180 = new SensorBMP180();
 	private SensorQMC5883 qmc5883 = new SensorQMC5883();
 	private SensorMPU6050 mpu6050 = new SensorMPU6050();
+	private double frequency;
+	private long count=0;
 	
 	public SensorGY87(){
 	}
@@ -35,6 +38,7 @@ public class SensorGY87 implements ISensor {
 	@Override
 	public void setup(FlightController flightController) {
 		log.info("setup "+this.getName());
+		this.frequency = flightController.getBaseFrequency();
 		mpu6050.setup(flightController);
 		mpu6050.enableMagnetometer();
 		bmp180.setup(flightController);
@@ -56,10 +60,14 @@ public class SensorGY87 implements ISensor {
 
 	@Override
 	public void processInput() {
+		count++;
 		log.debug("processInput");
-		mpu6050.processInput();
-		bmp180.processInput();
-		qmc5883.processInput();
+		if (FrequencyCheck.isRelevantForProcessing(frequency, mpu6050.getFrequency(), count))
+			mpu6050.processInput();
+		if (FrequencyCheck.isRelevantForProcessing(frequency,bmp180.getFrequency(), count))
+			bmp180.processInput();
+		if (FrequencyCheck.isRelevantForProcessing(frequency,qmc5883.getFrequency(), count))
+			qmc5883.processInput();
 	}
 	
 	public Value3D getAccelerometer() {
@@ -102,13 +110,27 @@ public class SensorGY87 implements ISensor {
 	public SensorMPU6050 getMpu6050() {
 		return mpu6050;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		log.warn("setFrequncy not supported for this device. Please set the frequency on the individual components");
+	}
+
+	@Override
+	public double getFrequency() {
+		return 0;
+	}
+
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(System.lineSeparator());
+		sb.append(this.getName());
+		sb.append(" [");
 		sb.append(mpu6050);
 		sb.append(qmc5883);
 		sb.append(bmp180);
+		sb.append("]");
 		return sb.toString();
 	}
 

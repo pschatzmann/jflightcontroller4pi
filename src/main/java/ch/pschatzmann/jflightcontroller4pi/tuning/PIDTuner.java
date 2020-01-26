@@ -17,7 +17,6 @@ import ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice;
 import ch.pschatzmann.jflightcontroller4pi.devices.IOutDeviceEx;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
-import ch.pschatzmann.jflightcontroller4pi.integration.GraphiteMetrics;
 import ch.pschatzmann.jflightcontroller4pi.modes.PIDModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;

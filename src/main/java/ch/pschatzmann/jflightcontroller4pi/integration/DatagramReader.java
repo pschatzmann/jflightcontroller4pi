@@ -37,7 +37,8 @@ public class DatagramReader implements ISensor {
 	private ByteBuffer buffer = ByteBuffer.allocate(1023);
 	private int port = 5000;
 	private boolean active = true;
-	private long processedRecords = 0;;
+	private long processedRecords = 0;
+	private double frequency;;
 
 	/**
 	 * Constructor used by Spring
@@ -227,5 +228,22 @@ public class DatagramReader implements ISensor {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 
 }

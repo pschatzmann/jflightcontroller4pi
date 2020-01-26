@@ -3,6 +3,7 @@ package ch.pschatzmann.jflightcontroller4pi.devices;
 import java.io.IOException;
 
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.control.IFrequency;
 
 /**
  * Generic functionality for input and output devices
@@ -10,7 +11,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
  * @author pschatzmann
  *
  */
-public interface IDevice {
+public interface IDevice  extends IFrequency{
 	/**
 	 * Initialize the device
 	 * @throws IOException 

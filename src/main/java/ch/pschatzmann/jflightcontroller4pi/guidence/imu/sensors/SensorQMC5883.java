@@ -30,6 +30,7 @@ public class SensorQMC5883 implements ISensor {
 	// we will report the sensor data in gauss dependent on range 2GA->1.22; 8G->4.35
 	private double factor = 1.0; // / 4.35;  
 	private Value3D magnetometer = new Value3D();
+	private double frequency;
 	// by default we measure 10 times
 
 
@@ -118,6 +119,18 @@ public class SensorQMC5883 implements ISensor {
 	public Value3D getMagnetometer() {
 		return magnetometer;
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 	
 
 	public String toString() {

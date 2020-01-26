@@ -34,6 +34,7 @@ public class DatagramWriter implements IOutDevice {
 	private String destinationHost = "localhost";
 	private int port = 5001;
 	private boolean active = true;
+	private double frequency;
 
 	/**
 	 * Default Constructor used by Spring
@@ -211,6 +212,23 @@ public class DatagramWriter implements IOutDevice {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
+	
+	@Override
+	public String toString() {
+		return this.getName();
 	}
 
 

@@ -85,6 +85,7 @@ public class MavlinkDevice implements IDevice {
 	private DatagramSocket socket;
 	private UDPInputStream is;
 	private UDPOutputStream out;
+	private double frequency;
 
 	@Override
 	public void setup(FlightController flightController)  {
@@ -421,7 +422,7 @@ public class MavlinkDevice implements IDevice {
 
 	@Override
 	public String getName() {
-		return null;
+		return this.getClass().getSimpleName();
 	}
 
 	/**
@@ -443,5 +444,21 @@ public class MavlinkDevice implements IDevice {
 		this.isArmed = isArmed;
 	}
 	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 
 }

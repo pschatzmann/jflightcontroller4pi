@@ -25,6 +25,7 @@ public class Sensor implements ISensor {
 	private FlightController flightController;
 	private IInputProcessor inputProcessor = new InputProcessor();
 	private char delimiter = ',';
+	private double frequency;
 
 	public Sensor() {
 	}
@@ -108,5 +109,17 @@ public class Sensor implements ISensor {
 	public String toString() {
 		return this.getName();
 	}
+	
+	@Override
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+		
+	}
+
+	@Override
+	public double getFrequency() {
+		return this.frequency;
+	}
+
 
 }
