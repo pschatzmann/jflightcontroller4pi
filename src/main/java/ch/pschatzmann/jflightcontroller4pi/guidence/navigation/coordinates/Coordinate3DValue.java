@@ -18,6 +18,28 @@ public class Coordinate3DValue {
 		setDeg(deg,min,sec);
 	}
 
+	public Coordinate3DValue(String coordinate) {
+		Coordinate3DValue result = null;
+		if (coordinate.contains(".")) {
+			setDeg(Double.parseDouble(coordinate));
+		} else {
+			String c = coordinate.replaceAll("'", " ");
+			c = c.replaceAll("″", " ");
+			c = c.replaceAll(" ", " ");
+			c = c.replaceAll("′", " ");
+			c = c.replaceAll("°", " ");
+			c = c.replaceAll("  ", " ");
+			String sa[] = c.split(" ");
+			setDeg(value(sa,0),value(sa,1),value(sa,2));
+		}
+	}
+
+	protected static int value(String[] sa, int i) {
+		String str = sa[i].trim();
+		return i < sa.length ? Integer.parseInt(str) : 0 ;
+	}
+
+
 	public void setDeg(double decimal) {
 		this.deg = decimal;
 	}

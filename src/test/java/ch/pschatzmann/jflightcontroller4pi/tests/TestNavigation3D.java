@@ -25,7 +25,7 @@ public class TestNavigation3D {
 	@Before
 	public void beforeMethod() {
 		// Deactivate for the time beeing. These tests must be corrected to use meaningfull values
-		org.junit.Assume.assumeTrue(false);
+		//org.junit.Assume.assumeTrue(false);
 	}
 		
 
@@ -38,6 +38,18 @@ public class TestNavigation3D {
 		Assert.assertEquals(26, c3[1]);
 		Assert.assertEquals(45, c3[2]);
 	}
+
+
+	@Test
+	public void testCoordinateString() throws InterruptedException {
+		Coordinate3DValue c = new Coordinate3DValue("40 26 45");
+		int[] c3 = c.getDegMinSec();
+		Assert.assertEquals(40.446, c.deg(),0.001);
+		Assert.assertEquals(40, c3[0]);
+		Assert.assertEquals(26, c3[1]);
+		Assert.assertEquals(45, c3[2]);
+	}
+
 	
 	@Test
 	public void testHeading() throws InterruptedException {		
@@ -61,8 +73,10 @@ public class TestNavigation3D {
 		Coordinate3D result = new Coordinate3D();
 		navigation.navigate(start,45, 6, result);
 		
-		Assert.assertEquals(4.242, result.getX(), 0.1);
-		Assert.assertEquals(4.242, result.getY(), 0.1);
+		double resultX = new Coordinate3DValue("00° 02′ 17″").deg();
+		double resultY = new Coordinate3DValue("000° 02′ 17″").deg();
+		Assert.assertEquals(resultX, result.getX(), 0.1);
+		Assert.assertEquals(resultY, result.getY(), 0.1);
 	}
 	
 	@Test
@@ -70,16 +84,11 @@ public class TestNavigation3D {
 		Coordinate3D home = new Coordinate3D(0,0);
 		Coordinate3D pos = new Coordinate3D(5,2);
 		
-		double dist = 5.38516;
-		double heading = 201.8014;
-		Assert.assertEquals(dist, navigation.getDistance(pos, home), 0.001);		
-		Assert.assertEquals(heading, navigation.getHeading(pos, home), 0.1);
+		double dist = 598.7; //km
+		double heading =  new Coordinate3DValue("021° 44′ 50″").deg();
+		Assert.assertEquals(dist, navigation.getDistance(home, pos), 0.1);		
+		Assert.assertEquals(heading, navigation.getHeading(home, pos), 0.1);
 
-		Coordinate3D result = new Coordinate3D();
-		navigation.navigate(pos, heading, dist, result);
-		
-		Assert.assertEquals(0, result.getY(), 0.1);
-		Assert.assertEquals(0, result.getX(), 0.1);		
 	}
 	
 	

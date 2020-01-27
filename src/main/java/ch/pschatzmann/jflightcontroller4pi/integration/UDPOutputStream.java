@@ -8,7 +8,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Simple UDPOutputStream which sends DatagramPackets
+ * Simple UDPOutputStream which sends DatagramPackets. This is required because Mavlink requires streams
+ *  to communicated.
+ *
  * @author pschatzmann
  *
  */

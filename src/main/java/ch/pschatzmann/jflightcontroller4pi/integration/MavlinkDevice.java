@@ -64,7 +64,7 @@ import io.dronefleet.mavlink.common.SysStatus;
 import io.dronefleet.mavlink.common.SystemTime;
 
 /**
- * Simple Mavlink command handler which uses UDP to communicated
+ * Simple Mavlink command handler which uses UDP to communicate
  * 
  * @author pschatzmann
  *

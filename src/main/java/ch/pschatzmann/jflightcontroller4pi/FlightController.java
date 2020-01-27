@@ -319,7 +319,7 @@ public class FlightController {
 	 * 
 	 * @param millis
 	 */
-	public void sleep(int millis) {
+	public void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {

@@ -12,7 +12,7 @@ import ch.pschatzmann.jflightcontroller4pi.modes.IFlightMode;
 /**
  * 
  * Simple Loop based Control. The speed of the processing is controled with the help
- * of a Thread sleep which is calculated from the indicated frequency.
+ * of a sleep period which is calculated from the requested frequency.
  * 
  * @author pschatzmann
  *
@@ -65,23 +65,26 @@ public class ControlLoop implements IControlLoop {
 		log.info("The Flight Controller is running...");
 
 		while (active) {
-			try {
-				processSensors();
-				processOut();
-				
-				if (getSleepMs()>0) {
-					long sleep = getSleepMs();
-					Thread.sleep(sleep);	
-				}
-				count++;
-				if ((System.currentTimeMillis()/1000) % 60 == 0) {
-					log.info("Number of loops per sec: "+ count / 10.0);
-				}
-			} catch (InterruptedException e) {
-				// we do not expect this to happen. So we just abort all processing and
-				// shut down
-				throw new RuntimeException(e);
+			long start = System.currentTimeMillis();
+			processSensors();
+			processOut();
+			sleep(start);
+			count++;
+			if ((System.currentTimeMillis()/1000) % 60 == 0) {
+				log.info("Number of loops per sec: "+ count / 10.0);
 			}
+		}
+	}
+
+	/**
+	 * Sleep for the remaining time to run at the requested frequency
+	 * @param start
+	 */
+	protected void sleep(long start) {
+		long currentRunTime = System.currentTimeMillis() - start;
+		long sleep = getSleepMs() - currentRunTime;
+		if (sleep>0) {
+			this.controller.sleep(sleep);	
 		}
 	}
 

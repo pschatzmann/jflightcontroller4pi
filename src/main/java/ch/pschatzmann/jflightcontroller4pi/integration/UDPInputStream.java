@@ -21,7 +21,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-
+/**
+ *  Simple Input stream which reads data from UPD. This is required because Mavlink requires streams
+ *  to communicated.
+ *
+ */
 public class UDPInputStream extends InputStream {
 
 	private static final int PACKET_BUFFER_SIZE = 5000;

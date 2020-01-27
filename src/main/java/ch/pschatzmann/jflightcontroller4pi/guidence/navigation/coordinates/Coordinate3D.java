@@ -14,6 +14,16 @@ public class Coordinate3D implements ICoordinate {
 		this(0.0, 0.0);
 	}
 
+	/**
+	 * Add latutude and longitude as 009° 07′ 11″ or 009 07 11
+	 * @param lat
+	 * @param lng
+	 */
+	public Coordinate3D(String lat, String lng){
+		this.latitude = new Coordinate3DValue(lat);
+		this.longitude = new Coordinate3DValue(lng);
+	}
+
 	public Coordinate3D(Coordinate3DValue lat, Coordinate3DValue lng){
 		this.latitude = lat;
 		this.longitude = lng;
@@ -23,6 +33,7 @@ public class Coordinate3D implements ICoordinate {
 		this.latitude = new Coordinate3DValue(lat);
 		this.longitude = new Coordinate3DValue(lng);
 	}
+
 
 	public String toString() {
 		return longitude +"/"+latitude;

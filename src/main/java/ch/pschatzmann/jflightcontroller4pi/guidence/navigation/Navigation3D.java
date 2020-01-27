@@ -4,7 +4,8 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.Coord
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoordinate;
 
 /**
- * Math to calculate distances, headings and coordinates
+ * Math to calculate distances, headings and coordinates using coordinates in degrees.
+ * For details see https://www.movable-type.co.uk/scripts/latlong.html
  * 
  * @author pschatzmann
  *
@@ -13,14 +14,14 @@ public class Navigation3D implements INavigation {
 	static public final double R = 6371.0; // Earch radius in km
 
 
-
 	/**
-	 * Determines the Bearing between two coordinates
+	 * Determines the Bearing between two coordinates. The values are between 0 and 360 deg.
 	 * @return bearing in deg
 	 */
 	@Override
 	public double getHeading(ICoordinate start, ICoordinate end) {
-	    return Math.toDegrees((getHeadingRad(start, end)));
+	    double result = Math.toDegrees((getHeadingRad(start, end)));
+	    return result >= 0 ? result : result + 360.0;
 	}
 	
 	/**
@@ -37,8 +38,12 @@ public class Navigation3D implements INavigation {
 	    double dstLat = dst.latitude.rad();
 	    double dLng = dst.longitude.rad() - src.longitude.rad();
 
-	    return Math.atan2(Math.sin(dLng) * Math.cos(dstLat),
-	            Math.cos(srcLat) * Math.sin(dstLat) - Math.sin(srcLat) * Math.cos(dstLat) * Math.cos(dLng));
+	    double y = Math.sin(dLng) * Math.cos(dstLat);
+	    double x = Math.cos(srcLat)*Math.sin(dstLat) -
+	            Math.sin(srcLat)*Math.cos(dstLat)*Math.cos(dLng);
+	    return Math.atan2(y, x);
+
+	    
 	}
 	
 	/**

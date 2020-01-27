@@ -190,6 +190,7 @@ public class CompassNavigation {
 	 */
 	public void setNavigation(INavigation navigation) {
 		this.navigation = navigation;
+		this.homePos = navigation.newCoordinate();
 	}
 
 	
