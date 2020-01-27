@@ -29,8 +29,17 @@ public class Coordinate3DValue {
 			c = c.replaceAll("′", " ");
 			c = c.replaceAll("°", " ");
 			c = c.replaceAll("  ", " ");
+			c = c.replaceAll("N","");
+			c = c.replaceAll("E","");
+			c = c.replaceAll("S","");
+			c = c.replaceAll("W","");
+			
 			String sa[] = c.split(" ");
 			setDeg(value(sa,0),value(sa,1),value(sa,2));
+			// if the corrodinate is specified as South or West we need to change the sign
+			if (coordinate.contains("S")||coordinate.contains("W")) {
+				this.setDeg(-1 * this.deg());
+			}
 		}
 	}
 
