@@ -4,7 +4,7 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoor
 
 public interface INavigation {
 	/**
-	 * Determines the distance between two coordinates
+	 * Determines the distance (in km) between two coordinates
 	 * @param start
 	 * @param end
 	 * @return
@@ -12,10 +12,20 @@ public interface INavigation {
 	double getDistance(ICoordinate start, ICoordinate end);
 
 	/**
-	 * Determines the Bearing between two coordinates
+	 * Determines the Bearing in degrees between two coordinates
 	 * @return bearing in deg
 	 */
 	double getHeading(ICoordinate start, ICoordinate end);
+	
+	
+	/**
+	 * Determines the difference in altidude in meters between two coordinates
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	double getAltitudeDifference(ICoordinate start, ICoordinate end);
+		
 
 	/**
 	 * Calculates the result coordinate from a start coordinate, the bearing and distance

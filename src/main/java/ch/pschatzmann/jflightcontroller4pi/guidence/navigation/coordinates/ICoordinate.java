@@ -12,5 +12,12 @@ public interface ICoordinate {
 	 * @return
 	 */
 	double getY();
+	
+	
+	/**
+	 * Returns the altitude in m
+	 * @return
+	 */
+	double getAltitude();
 
 }

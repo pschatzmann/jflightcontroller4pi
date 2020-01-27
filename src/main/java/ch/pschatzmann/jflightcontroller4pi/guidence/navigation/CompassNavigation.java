@@ -21,7 +21,7 @@ public class CompassNavigation {
 	private INavigation navigation = new Navigation2D();
 	private ICoordinate actualPos = navigation.newCoordinate();
 	private ICoordinate homePos = navigation.newCoordinate();
-	private Coordinate3D homePos3D = new Coordinate3D(46.2097, 7.2572);
+	private Coordinate3D homePos3D = new Coordinate3D(46.2097, 7.2572, 0.0);
 
 	/**
 	 * Performs update with infor from the IMU
@@ -63,6 +63,14 @@ public class CompassNavigation {
 	}
 	
 
+	/**
+	 * Determines the Altidude difference to return home
+	 * @return distance in km
+	 */
+	public double getHomeAltidudeDifference() {
+		return navigation.getAltitudeDifference(actualPos, homePos);
+	}
+	
 	
 	/**
 	 * Determines the flight time to return to home in hours
@@ -98,7 +106,7 @@ public class CompassNavigation {
 			double earthDiameter = 12742; // km = 360 deg
 			double x = this.homePos3D.getX() + pos.getX()/12742.0/360.0;
 			double y = this.homePos3D.getY() + pos.getY()/12742.0/360.0;
-			result = new Coordinate3D(x,y);
+			result = new Coordinate3D(x,y, pos.getAltitude());
 		}
 		return (Coordinate3D) result;
 	}	

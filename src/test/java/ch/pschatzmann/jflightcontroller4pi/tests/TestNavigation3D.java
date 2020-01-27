@@ -53,23 +53,23 @@ public class TestNavigation3D {
 	
 	@Test
 	public void testHeading() throws InterruptedException {		
-		Assert.assertEquals(90.00, navigation.getHeading(new Coordinate3D(0, 0), new Coordinate3D(0, 1)), 0.1);
-		Assert.assertEquals(90.00, navigation.getHeading(new Coordinate3D(1, 1), new Coordinate3D(1, 2)), 0.1);
-		Assert.assertEquals(0.00, navigation.getHeading(new Coordinate3D(0, 0), new Coordinate3D(1, 0)), 0.1);
-		Assert.assertEquals(270.00, navigation.getHeading(new Coordinate3D(0, 0), new Coordinate3D(0, -1)), 0.1);
-		Assert.assertEquals(270.00, navigation.getHeading(new Coordinate3D(1, 1), new Coordinate3D(1, 0)), 0.1);
-		Assert.assertEquals(180.00, navigation.getHeading(new Coordinate3D(0, 0), new Coordinate3D(-1, 0)), 0.1);
+		Assert.assertEquals(90.00, navigation.getHeading(new Coordinate3D(0, 0, 0), new Coordinate3D(0, 1, 0)), 0.1);
+		Assert.assertEquals(90.00, navigation.getHeading(new Coordinate3D(1, 1, 0), new Coordinate3D(1, 2, 0)), 0.1);
+		Assert.assertEquals(0.00, navigation.getHeading(new Coordinate3D(0, 0, 0), new Coordinate3D(1, 0, 0)), 0.1);
+		Assert.assertEquals(270.00, navigation.getHeading(new Coordinate3D(0, 0, 0), new Coordinate3D(0, -1, 0)), 0.1);
+		Assert.assertEquals(270.00, navigation.getHeading(new Coordinate3D(1, 1, 0), new Coordinate3D(1, 0, 0)), 0.1);
+		Assert.assertEquals(180.00, navigation.getHeading(new Coordinate3D(0, 0, 0), new Coordinate3D(-1, 0, 0)), 0.1);
 	}
 	
 	@Test
 	public void testDistance() throws InterruptedException {
-		Assert.assertEquals(2.236, navigation.getDistance(new Coordinate3D(0, 0), new Coordinate3D(2, 1)), 0.001);		
-		Assert.assertEquals(4.472, navigation.getDistance(new Coordinate3D(-2, -1), new Coordinate3D(2, 1)), 0.001);		
+		Assert.assertEquals(248.6, navigation.getDistance(new Coordinate3D(0, 0, 0), new Coordinate3D(2, 1, 0)), 0.1);		
+		Assert.assertEquals(497.3, navigation.getDistance(new Coordinate3D(-2, -1, 0), new Coordinate3D(2, 1, 0)), 0.1);		
 	}
 
 	@Test
 	public void testDestinationCoordinate() throws InterruptedException {		
-		Coordinate3D start = new Coordinate3D(0,0);
+		Coordinate3D start = new Coordinate3D(0,0, 0);
 		Coordinate3D result = new Coordinate3D();
 		navigation.navigate(start,45, 6, result);
 		
@@ -81,8 +81,8 @@ public class TestNavigation3D {
 	
 	@Test
 	public void testHome() throws InterruptedException {		
-		Coordinate3D home = new Coordinate3D(0,0);
-		Coordinate3D pos = new Coordinate3D(5,2);
+		Coordinate3D home = new Coordinate3D(0,0, 0);
+		Coordinate3D pos = new Coordinate3D(5,2, 0);
 		
 		double dist = 598.7; //km
 		double heading =  new Coordinate3DValue("021° 44′ 50″").deg();
@@ -102,7 +102,7 @@ public class TestNavigation3D {
 	public void testCompassNavigationSimulation() throws InterruptedException {
 		CompassNavigation cn = new CompassNavigation();
 		cn.setNavigation(navigation);
-		cn.setHomePosition(new Coordinate3D(0, 0));
+		cn.setHomePosition(new Coordinate3D(0, 0, 0));
 		// 200 kmh = 55.5556 m/sec * 10 sec = 550.55m = 0.555km 		
 		cn.recordHeading(10, 200);
 		Thread.sleep(1000 * 10);
@@ -111,6 +111,15 @@ public class TestNavigation3D {
 		Assert.assertEquals(190, cn.getHomeBearing(), 10);
 		Assert.assertEquals(0.555, cn.getHomeDistance(), 0.001);
 		Assert.assertEquals(10, cn.getHomeTimeS(), 0.9);				
+
+	}
+	
+	@Test
+	public void testAltidude() throws InterruptedException {
+		INavigation navigation = new Navigation3D();
+
+		Assert.assertEquals(100, navigation.getAltitudeDifference(new Coordinate3D(0, 0, 0), new Coordinate3D(0, 0, 100)), 0);
+		Assert.assertEquals(-100, navigation.getAltitudeDifference(new Coordinate3D(0, 0, 100), new Coordinate3D(0, 0, 0)), 0);
 
 	}
 

@@ -5,7 +5,8 @@ import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.ICoor
 
 /**
  * Simplified Math to calculate distances, headings and coordinates. Because we just deal with
- * short distances we can use the math in 2 dimensional space.
+ * short distances we can use the math in 2 dimensional space. The 2D coordinates are specified as 
+ * x and y distances in km.
  * 
  * @author pschatzmann
  *
@@ -77,5 +78,10 @@ public class Navigation2D implements INavigation {
 	@Override
 	public ICoordinate newCoordinate(ICoordinate copySource) {
 		return new Coordinate2D(copySource);		
+	}
+
+	@Override
+	public double getAltitudeDifference(ICoordinate start, ICoordinate end) {
+		return end.getAltitude() - start.getAltitude();
 	}
 }
