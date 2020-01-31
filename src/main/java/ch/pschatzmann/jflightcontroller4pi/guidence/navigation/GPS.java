@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.Coordinate3D;
 
 /**
  * API for GPS data which provides the actual location, direction and speed.
@@ -35,6 +36,15 @@ public class GPS {
 	public GPSPosition getValue() {
 		return actualValue;
 	}
+	
+	/**
+	 * Retruns the 3DCoordinates of the current position
+	 * @return
+	 */
+	public Coordinate3D getCoordinate3D() {
+		return actualValue.getCoordinate3D();
+	}
+
 
 	/**
 	 * Updates the actual GPS value
@@ -91,5 +101,6 @@ public class GPS {
 	public String toString() {
 		return this.getValue().toString();
 	}
+
 
 }

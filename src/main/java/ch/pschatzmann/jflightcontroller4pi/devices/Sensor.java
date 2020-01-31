@@ -53,7 +53,9 @@ public class Sensor implements ISensor {
 		// process the input
 		inputProcessor.processInput(flightController, input);
 		// release the memory
-		input.close();
+		if (input!=null) {
+			input.close();
+		}
 	}
 
 	public IPinIn getIn() {

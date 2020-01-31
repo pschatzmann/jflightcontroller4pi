@@ -1,7 +1,11 @@
 package ch.pschatzmann.jflightcontroller4pi.modes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -60,6 +64,9 @@ public class FlightMode implements IFlightMode {
 				
 		// set the new calculation rules in the devices
 		recalcCollection.forEach(rule -> rule.getDevice().setRecalculate(rule));
+		
+		// setup all devices ?
+		this.flightController.getDevices().forEach(d -> d.setup(this.flightController));
 	}
 
 	@Override
@@ -71,7 +78,9 @@ public class FlightMode implements IFlightMode {
 	}
 
 	public Collection<IDevice> getDevices() {
-		return recalcCollection.stream().map(c -> c.getDevice()).collect(Collectors.toSet());
+		List<IDevice> result  = new ArrayList(this.devices);
+		recalcCollection.stream().filter(d -> !result.contains(d)).forEach(c -> result.add(c.getDevice()));
+		return result;
 	}
 	
 	/**

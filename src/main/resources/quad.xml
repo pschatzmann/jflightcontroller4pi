@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!-- Quadrotor  -->
+
+<beans>
+	<import resource="common.xml" />
+	
+	<bean id="flightController" class="ch.pschatzmann.jflightcontroller4pi.FlightController" scope="prototype">
+	    <property name="parameterStore">
+			<bean id="ParameterStore" class="ch.pschatzmann.jflightcontroller4pi.parameters.ParameterStore" />
+	    </property>
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="sensorGY87" />
+            	<ref bean="imu" />
+            	<ref bean="mavlinkDevice" />    
+            	<ref bean="datagramReader" />                
+            	<ref bean="datagramWriter" />   
+            	<ref bean="gps" />  
+        	</list>
+	  	</property>
+	  	<property name="modes">
+	  		<list>
+            	<ref bean="offMode" />
+            	<ref bean="stabilizedMode" />
+        	</list>
+	  	</property>
+	  	
+ 	    <property name="mode" ref="offMode"/> 
+ 	    
+	  	<property name="controlLoop">
+	  		<bean class="ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers">
+	  		</bean>
+	  	</property>
+	  		    	    
+	</bean>
+
+
+	<!-- Modes -->
+	<bean id="offMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="name" value="offMode" /> 
+	</bean>
+	
+	<!-- Stabilized Mode -->
+	<bean id="stabilizedMode" class="ch.pschatzmann.jflightcontroller4pi.modes.FlightMode" >
+	    <property name="name" value="stabilizedMode" /> 
+	  	<property name="devices">
+	  		<list>
+            	<ref bean="quadMotorController" />
+            	<ref bean="motor1" />  
+            	<ref bean="motor2" />  
+            	<ref bean="motor3" />  
+            	<ref bean="motor4" />  
+        	</list>
+	  	</property>	 
+	</bean>
+	
+	<bean id="quadMotorController" class="ch.pschatzmann.jflightcontroller4pi.devices.QuadMotorController" scope="prototype">
+	</bean>
+		
+	<bean id="motor1" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" scope="prototype">
+	  	<property name="controlParameter" value="MOTOR1"/>
+	  	<property name="pin">
+	  		<bean id="pin1" class="ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput" scope="prototype">
+	  			<property name="pinName" value="BCM17" />
+	  			<property name="min" value="0" />
+	  			<property name="max" value="1" />
+			</bean>
+	  	</property>	  	
+	</bean>
+	
+	<bean id="motor2" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" scope="prototype">
+	  	<property name="controlParameter" value="MOTOR2"/>
+	  	<property name="pin">
+	  		<bean id="pin2" class="ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput" scope="prototype">
+	  			<property name="pinName" value="BCM27" />
+	  			<property name="min" value="0" />
+	  			<property name="max" value="1" />
+			</bean>
+	  	</property>	  	
+	</bean>
+			
+	<bean id="motor3" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" scope="prototype">
+	  	<property name="controlParameter" value="MOTOR3"/>
+	  	<property name="pin">
+	  		<bean id="pin3" class="ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput" scope="prototype">
+	  			<property name="pinName" value="BCM22" />
+	  			<property name="min" value="0" />
+	  			<property name="max" value="1" />
+			</bean>
+	  	</property>	  	
+	</bean>
+
+	<bean id="motor4" class="ch.pschatzmann.jflightcontroller4pi.devices.OutDevice" scope="prototype">
+	  	<property name="controlParameter" value="MOTOR4"/>
+	  	<property name="pin">
+	  		<bean id="pin4" class="ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput" scope="prototype">
+	  			<property name="pinName" value="BCM23" />
+	  			<property name="min" value="0" />
+	  			<property name="max" value="1" />
+			</bean>
+	  	</property>	  	
+	</bean>
+	
+</beans>

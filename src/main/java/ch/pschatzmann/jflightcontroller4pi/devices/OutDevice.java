@@ -7,7 +7,7 @@ import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.control.Scaler;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import ch.pschatzmann.jflightcontroller4pi.protocols.IPinOut;
-import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
+import ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput;
 
 /**
  * Output Device which needs to be configured to implement the following flow:
@@ -83,7 +83,7 @@ public class OutDevice implements IOutDeviceEx {
 
 	public void setPinName(String pinName) {
 		this.pinName = pinName;
-		this.pwmPi = new OutputToPiPwm(pinName);
+		this.pwmPi = new PwmOutput(pinName);
 	}
 
 	@Override

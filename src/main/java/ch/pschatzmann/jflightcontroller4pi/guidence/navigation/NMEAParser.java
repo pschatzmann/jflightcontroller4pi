@@ -29,33 +29,46 @@ public class NMEAParser {
     
     
 	public GPSPosition parse(String line) {
-		if(line.startsWith("$")) {
-			String nmea = line.substring(1);
-			String[] tokens = nmea.split(",");
-			String type = tokens[0];
-			if(NMEASentenceParsers.containsKey(type)) {
-				log.info("parsing {}", type);
-				NMEASentenceParsers.get(type).parse(tokens, position);
+		try {
+			if(line.startsWith("$")) {
+				String nmea = line.substring(1);
+				String[] tokens = nmea.split(",");
+				String type = tokens[0];
+				if(NMEASentenceParsers.containsKey(type)) {
+					log.info("parsing {}", type);
+					NMEASentenceParsers.get(type).parse(tokens, position);
+				}
+			} else {
+				log.warn("Ignored invalid NMEA message '{}'",line);				
 			}
+		} catch(Exception ex) {
+			log.error("Could not parse NMEA message '{}'",line, ex);
 		}
 		return position;
+		
 	}
 	
 	// utils
-	static double Latitude2Decimal(String lat, String NS) {
-		double med = Double.parseDouble(lat.substring(2))/60.0f;
-		med +=  Double.parseDouble(lat.substring(0, 2));
-		if(NS.startsWith("S")) {
-			med = -med;
+	static Double latitude2Decimal(String lat, String NS) {
+		Double med = null;
+		if (!lat.isEmpty()) {
+			med = Double.parseDouble(lat.substring(2))/60.0f;
+			med +=  Double.parseDouble(lat.substring(0, 2));
+			if(NS.startsWith("S")) {
+				med = -med;
+			}
 		}
 		return med;
 	}
 
-	static double Longitude2Decimal(String lon, String WE) {
-		double med = Double.parseDouble(lon.substring(3))/60.0f;
-		med +=  Double.parseDouble(lon.substring(0, 3));
-		if(WE.startsWith("W")) {
-			med = -med;
+	static Double longitude2Decimal(String lon, String WE) {
+		Double med = null;
+		if (!lon.isEmpty()) {
+			 med = Double.parseDouble(lon.substring(3))/60.0f;
+			med +=  Double.parseDouble(lon.substring(0, 3));
+			if(WE.startsWith("W")) {
+				med = -med;
+			}
 		}
 		return med;
 	}
@@ -65,10 +78,12 @@ public class NMEAParser {
 		@Override
 		public boolean parse(String [] tokens, GPSPosition position) {
 			position.setTime( Double.parseDouble(tokens[1]));
-			position.setLatitude(Latitude2Decimal(tokens[2], tokens[3]));
-			position.setLongitude(Longitude2Decimal(tokens[4], tokens[5]));
-			position.setQuality(Integer.parseInt(tokens[6]));
-			position.setAltitude(Double.parseDouble(tokens[9]));
+			position.setLatitude(latitude2Decimal(tokens[2], tokens[3]));
+			position.setLongitude(longitude2Decimal(tokens[4], tokens[5]));
+			if (!tokens[6].isEmpty())
+				position.setQuality(Integer.parseInt(tokens[6]));
+			if (!tokens[9].isEmpty())
+				position.setAltitude(Double.parseDouble(tokens[9]));
 			return true;
 		}
 	}
@@ -76,8 +91,8 @@ public class NMEAParser {
 	class GPGGL implements INMEASentenceParser {
 		@Override
 		public boolean parse(String [] tokens, GPSPosition position) {
-			position.setLatitude(Latitude2Decimal(tokens[1], tokens[2]));
-			position.setLongitude(Longitude2Decimal(tokens[3], tokens[4]));
+			position.setLatitude(latitude2Decimal(tokens[1], tokens[2]));
+			position.setLongitude(longitude2Decimal(tokens[3], tokens[4]));
 			position.setTime(Double.parseDouble(tokens[5]));
 			return true;
 		}
@@ -87,9 +102,10 @@ public class NMEAParser {
 		@Override
 		public boolean parse(String [] tokens, GPSPosition position) {
 			position.setTime(Double.parseDouble(tokens[1]));
-			position.setLatitude(Latitude2Decimal(tokens[3], tokens[4]));
-			position.setLongitude( Longitude2Decimal(tokens[5], tokens[6]));
-			position.setSpeed(Double.parseDouble(tokens[7]));
+			position.setLatitude(latitude2Decimal(tokens[3], tokens[4]));
+			position.setLongitude( longitude2Decimal(tokens[5], tokens[6]));
+			if (!tokens[7].isEmpty())
+				position.setSpeed(Double.parseDouble(tokens[7]));
 			//position.dir = Double.parseDouble(tokens[8]);
 			return true;
 		}
@@ -106,7 +122,8 @@ public class NMEAParser {
 	class GPVTG implements INMEASentenceParser {
 		@Override
 		public boolean parse(String [] tokens, GPSPosition position) {
-			position.setSpeed( Double.parseDouble(tokens[7]));
+			if (!tokens[7].isEmpty())
+					position.setSpeed( Double.parseDouble(tokens[7]));
 			return true;
 		}
 	}

@@ -1,0 +1,41 @@
+FROM ros
+ENV ROS_DISTRO melodic
+ 
+RUN apt-get update && apt-get install -y git 
+
+# install ros tutorials packages
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    libeigen3-dev  ros-${ROS_DISTRO}-desktop-full ros-${ROS_DISTRO}-joy \ 
+    ros-${ROS_DISTRO}-octomap-ros ros-${ROS_DISTRO}-mavlink python-wstool python-catkin-tools \
+    protobuf-compiler libgoogle-glog-dev ros-${ROS_DISTRO}-control-toolbox \
+    && rm -rf /var/lib/apt/lists/
+
+# clone ros package repo
+ENV ROS_WS /opt/ros_ws
+ENV GAZEBO_RESOURCE_PATH=/opt/ros_ws/src/rotors_simulator/rotors_gazebo
+
+RUN mkdir -p $ROS_WS/src
+WORKDIR $ROS_WS/src
+RUN git clone https://github.com/ethz-asl/mav_comm.git \
+    && git clone https://github.com/ethz-asl/rotors_simulator.git
+
+# install ros package dependencies
+WORKDIR $ROS_WS
+RUN apt-get update && rosdep update && \
+    rosdep install -y \
+      --from-paths \
+        /opt/ros_ws/src \
+     --ignore-src && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# build ros package source
+RUN catkin config \
+      --extend /opt/ros/$ROS_DISTRO && \
+     catkin build
+    
+
+# source ros package from entrypoint
+RUN sed --in-place --expression \
+      '$isource "$ROS_WS/devel/setup.bash"' \
+      /ros_entrypoint.sh

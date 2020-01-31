@@ -90,6 +90,14 @@ public class FlightController {
 		log.error("The mode '{}' does not exist - command was ignored", mode);
 	}
 	
+	public IFlightMode getMode(String mode) {
+		for (IFlightMode m : this.getModes()) {
+			if (m.getName().equals(mode)) {
+				return m;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Provides the currently defined devices
@@ -121,6 +129,25 @@ public class FlightController {
 		this.devices.addAll(newDevices);
 		// setup initial input devices
 		newDevices.forEach(device -> setupDevice(device));
+	}
+	
+	/**
+	 * Removes a devices
+	 * @param device
+	 */
+	public IDevice removeDevice(IDevice device) {
+		boolean ok = this.devices.remove(device);
+		return ok ? device : null;
+	}
+	
+	/**
+	 * Removes a device by name
+	 * @param name
+	 */
+	public IDevice removeDevice(String name) {
+		IDevice device = this.getDevice(name);
+		this.devices.remove(device);
+		return device;
 	}
 
 	protected void setupDevice(IDevice device) {
@@ -343,10 +370,14 @@ public class FlightController {
 		sb.append("FlightController - ");
 		sb.append("No of devices: ");
 		sb.append(this.getDevices().size());
-		sb.append(", mode: ");
-		sb.append(this.getMode());
-		sb.append(", stopped: ");
-		sb.append(this.getControlLoop().isStopped());
+		if (this.getMode()!=null) {
+			sb.append(", mode: ");
+			sb.append(this.getMode());
+		}
+		if (this.getControlLoop()!=null) {
+			sb.append(", stopped: ");
+			sb.append(this.getControlLoop().isStopped());
+		}
 		return sb.toString();
 	}
 

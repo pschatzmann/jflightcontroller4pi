@@ -25,8 +25,8 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
  *
  */
 
-public class OutputToPiPwm implements IPinOut {
-	private static Logger log = LoggerFactory.getLogger(OutputToPiPwm.class);
+public class PwmOutput implements IPinOut {
+	private static Logger log = LoggerFactory.getLogger(PwmOutput.class);
 	private GpioController gpio;
 	private GpioPinPwmOutput pwm;
 	private double value;
@@ -37,11 +37,11 @@ public class OutputToPiPwm implements IPinOut {
 	private double min = -1.0;
 	private double max = 1.0;
 
-	public OutputToPiPwm(String pinName) {
+	public PwmOutput(String pinName) {
 		this.pinName = pinName;
 	}
 
-	public OutputToPiPwm() {
+	public PwmOutput() {
 	}
 
 	protected void setup() {
@@ -157,6 +157,34 @@ public class OutputToPiPwm implements IPinOut {
 	 */
 	public void setRange(double min, double max) {
 		this.min = min;
+		this.max = max;
+	}
+
+	/**
+	 * @return the min
+	 */
+	public double getMin() {
+		return min;
+	}
+
+	/**
+	 * @param min the min to set
+	 */
+	public void setMin(double min) {
+		this.min = min;
+	}
+
+	/**
+	 * @return the max
+	 */
+	public double getMax() {
+		return max;
+	}
+
+	/**
+	 * @param max the max to set
+	 */
+	public void setMax(double max) {
 		this.max = max;
 	}
 

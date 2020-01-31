@@ -65,14 +65,13 @@ public class SensorQMC5883 implements ISensor {
 	public void processInput() {
 		try {
 			setValues();
-
 			// update parameters
 			if (flightController!=null) {
 				flightController.setValue(ParametersEnum.MAGNETOMETERX, magnetometer.x());
 				flightController.setValue(ParametersEnum.MAGNETOMETERY, magnetometer.y());
 				flightController.setValue(ParametersEnum.MAGNETOMETERZ, magnetometer.z());
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}

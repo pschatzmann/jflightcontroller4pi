@@ -40,7 +40,7 @@ public class Coordinate3D implements ICoordinate {
 	}
 
 	public String toString() {
-		return longitude +"/"+latitude;
+		return latitude +"/"+longitude+"/"+altitude;
 	}
 
 	@Override

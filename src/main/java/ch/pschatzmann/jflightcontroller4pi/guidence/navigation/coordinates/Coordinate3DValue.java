@@ -30,8 +30,8 @@ public class Coordinate3DValue {
 			c = c.replaceAll("°", " ");
 			c = c.replaceAll("  ", " ");
 			c = c.replaceAll("N","");
-			c = c.replaceAll("E","");
 			c = c.replaceAll("S","");
+			c = c.replaceAll("E","");
 			c = c.replaceAll("W","");
 			
 			String sa[] = c.split(" ");

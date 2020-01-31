@@ -41,11 +41,7 @@ public class ManualModeRule implements IRecalculate {
 	}
 	
 	public FlightController getFlightController() {
-		return flightController;
-	}
-	
-	public void setFlightController(FlightController flightController) {
-		this.flightController = flightController;
+		return this.getDevice() == null ? null : this.getDevice().getFlightController();
 	}
 	
 	public ParametersEnum getParameterFrom() {

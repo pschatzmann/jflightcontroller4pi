@@ -24,7 +24,7 @@ public class CompassNavigation {
 	private Coordinate3D homePos3D = new Coordinate3D(46.2097, 7.2572, 0.0);
 
 	/**
-	 * Performs update with infor from the IMU
+	 * Performs update with the info from the IMU
 	 * @param bearing
 	 * @param speedKmh
 	 */

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<!-- Devices -->
+	<bean id="gameConsole" class="ch.pschatzmann.jflightcontroller4pi.devices.GameConsole" scope="prototype">
+	</bean>
+
+	<!-- IMU  -->
+	<bean id="imu" class="ch.pschatzmann.jflightcontroller4pi.devices.IMUDevice" scope="prototype">		
+	</bean>
+
+	<bean id="sensorGY87" class="ch.pschatzmann.jflightcontroller4pi.guidence.imu.sensors.SensorGY87" scope="prototype">
+	</bean>
+	
+	<bean id="autopilot" class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.AutoPilot" scope="prototype">
+	</bean>
+	
+	<bean id="gps" class="ch.pschatzmann.jflightcontroller4pi.devices.Sensor" scope="prototype">
+	  	<property name="name" value="gps"/>
+	  	<property name="in">
+	  		<bean class="ch.pschatzmann.jflightcontroller4pi.protocols.InputSerialWithEvents" scope="prototype">
+			    <property name="device" value="/dev/serial0"/>
+			    <property name="baud" value="9600"/>
+	  		</bean>
+	  	</property>
+	  	<property name="inputProcessor">
+	  		<bean class="ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPSInputProcessor" scope="prototype">	
+	  		</bean>
+	  	</property>
+	  	<property name="frequency" value="20"/>
+	  	
+	</bean>
+	<!-- Import and Export of data via Datagrams -->
+
+	<bean id="datagramReader" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader" scope="prototype">
+	  	<property name="port" value="7001"/>
+	  	<property name="fieldDefinitions">
+	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions" scope="prototype">
+	  			<property name="fieldNames">
+		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
+						<value>SENSORROLL</value>
+						<value>SENSORPITCH</value>
+						<value>SENSORYAW</value>
+						<value>SENSORSPEED</value>
+						<value>SENSORHEADING</value>
+						<value>ALTITUDE</value>
+		        	</list>
+		        </property>
+        	</bean>
+        </property>
+	</bean>
+
+
+	<bean id="datagramWriter" class="ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter" scope="prototype">
+	  	<property name="port" value="7000"/>
+	  	<property name="host" value="localhost"/>
+	  	<property name="fieldDefinitions" >
+	  		 <bean class="ch.pschatzmann.jflightcontroller4pi.integration.FieldDefinitions" scope="prototype">
+	  			<property name="fieldNames">
+		  		 	<list value-type="ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum">
+						<value>AILERON</value>
+						<value>ELEVATOR</value>
+						<value>THROTTLE</value>
+						<value>RUDDER</value>
+		        	</list>
+		        </property>
+        	</bean>
+	  	</property>
+	</bean>						
+
+	<bean id="mavlinkDevice" class="ch.pschatzmann.jflightcontroller4pi.integration.MavlinkDevice" scope="prototype" >
+	</bean>
+
+
+	<!-- JMX -->
+	<bean id="jmx" class="ch.pschatzmann.jflightcontroller4pi.integration.JMXParameterStore" scope="prototype">
+	</bean>
+		
+	
+	<!-- Pins -->
+	<bean id="nop" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" scope="prototype"/>
+	
+	<bean id="pin1" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" scope="prototype">
+	</bean>
+	<bean id="pin2" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" scope="prototype">
+	</bean>
+	<bean id="pin3" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" scope="prototype">
+	</bean>
+	<bean id="pin4" class="ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice" scope="prototype">
+	</bean>
+	
+	<bean id="scaler100" class="ch.pschatzmann.jflightcontroller4pi.control.Scaler" scope="prototype">
+	    <property name="inputMin" value="-1.0"/>
+	    <property name="inputMax" value="1.0"/>
+	    <property name="outputMin" value="0.0"/>
+	    <property name="outputMax" value="100.0"/>
+	</bean>
+	
+	<!-- Others -->
+	<bean id="flightgearLauncher" class="ch.pschatzmann.jflightcontroller4pi.tuning.FlightgearLauncher" scope="prototype">
+ 	</bean>
+		
+	
+</beans>

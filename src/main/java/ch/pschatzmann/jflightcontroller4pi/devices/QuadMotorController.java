@@ -251,5 +251,9 @@ public class QuadMotorController implements IOutDevice {
 		return this.frequency;
 	}
 
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 	 	 
 }

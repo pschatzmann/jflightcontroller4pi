@@ -19,5 +19,5 @@ public interface ICoordinate {
 	 * @return
 	 */
 	double getAltitude();
-
+	
 }

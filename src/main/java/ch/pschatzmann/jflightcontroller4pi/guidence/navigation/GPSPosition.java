@@ -1,5 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.guidence.navigation;
 
+import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.coordinates.Coordinate3D;
+
 /**
  * Processing of GPS Sensor values
  * https://www.ridgesolutions.ie/index.php/2013/11/14/algorithm-to-calculate-speed-from-two-gps-latitude-and-longitude-points-and-time-difference/
@@ -30,16 +32,20 @@ public class GPSPosition {
 		return longitude;
 	}
 
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
+	public void setLongitude(Double longitude) {
+		if (longitude!=null) {
+			this.longitude = longitude;
+		}
 	}
 
 	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
+	public void setLatitude(Double latitude) {
+		if (latitude!=null) {
+			this.latitude = latitude;
+		}
 	}
 
 	public int getQuality() {
@@ -168,6 +174,11 @@ public class GPSPosition {
 	 */
 	public void setSpeed(double speed) {
 		this.speed = speed;
+	}
+	
+	
+	public Coordinate3D getCoordinate3D() {
+		return new Coordinate3D(this.longitude, this.latitude, this.altitude);
 	}
 
 	public String toString() {

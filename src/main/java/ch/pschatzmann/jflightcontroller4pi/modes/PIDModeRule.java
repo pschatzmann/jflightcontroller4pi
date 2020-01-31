@@ -116,11 +116,7 @@ public class PIDModeRule implements IRecalculate {
 	}
 
 	public FlightController getFlightController() {
-		return flightController;
-	}
-
-	public void setFlightController(FlightController flightController) {
-		this.flightController = flightController;
+		return this.getDevice()==null ? null : this.getDevice().getFlightController();
 	}
 
 	public void setDevice(IOutDeviceEx device) {

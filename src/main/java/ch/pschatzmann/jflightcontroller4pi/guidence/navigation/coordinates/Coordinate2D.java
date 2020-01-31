@@ -55,4 +55,5 @@ public class Coordinate2D implements ICoordinate {
 		return x +"/"+y+"/"+altitude;
 	}
 
+
 }

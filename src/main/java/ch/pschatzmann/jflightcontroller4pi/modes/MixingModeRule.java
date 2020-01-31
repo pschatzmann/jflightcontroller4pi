@@ -18,7 +18,6 @@ import ch.pschatzmann.jflightcontroller4pi.devices.IRecalculate;
  */
 public class MixingModeRule implements IRecalculate {
 	private String name = this.getClass().getSimpleName();
-	private FlightController flightController; 
 	private Collection<MixerComponent> mixerComponents = Collections.emptyList();
 	private IOutDeviceEx device;
 	private Mixer mixer;
@@ -37,14 +36,15 @@ public class MixingModeRule implements IRecalculate {
 	
 	@Override	
 	public void recalculate() {	
-		if (this.mixer==null) {
-			throw new RuntimeException("The mixer is not defined for "+getName());
-		}
-		if (flightController==null) {
+		FlightController fc = this.getFlightController();
+		if (fc==null) {
 			throw new RuntimeException("The flightController is not defined for "+getName());			
 		}
+		if (this.mixer==null) {
+			this.mixer = new Mixer(fc, mixerComponents);
+		}
 		double value = this.mixer.getValue();
-		flightController.setValue(this.device.getControlParameter(),value);
+		fc.setValue(this.device.getControlParameter(),value);
 	}
 
 	public Collection<MixerComponent> getMixerComponents() {
@@ -52,11 +52,7 @@ public class MixingModeRule implements IRecalculate {
 	}
 
 	public void setMixerComponents(Collection<MixerComponent> mixerComponents) {
-		if (flightController==null) {
-			throw new RuntimeException("Define the flightController first");
-		}
 		this.mixerComponents = mixerComponents;
-		this.mixer = new Mixer(flightController, mixerComponents);
 	}
 
 	public String getName() {
@@ -68,11 +64,8 @@ public class MixingModeRule implements IRecalculate {
 	}
 
 	public FlightController getFlightController() {
-		return flightController;
+		return this.getDevice()==null ? null : this.getDevice().getFlightController();
 	}
 
-	public void setFlightController(FlightController flightController) {
-		this.flightController = flightController;
-	}
 
 }

@@ -84,4 +84,5 @@ public class Navigation2D implements INavigation {
 	public double getAltitudeDifference(ICoordinate start, ICoordinate end) {
 		return end.getAltitude() - start.getAltitude();
 	}
+
 }

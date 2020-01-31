@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+
+  ros:
+    image: ros:rotors
+    container_name: master
+    restart: always
+    command: roscore -v --master-logger-level=debug      
+    network_mode: host
+
+  rotors:
+    image: ros:rotors
+    container_name: rotors
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-rotors
+    environment:
+     - ROS_HOSTNAME=rotors
+     - ROS_MASTER_URI=http://master:11311
+     - GAZEBOIP=127.0.0.1:11346
+    command: roslaunch rotors_gazebo mav_hovering_example.launch verbose:=true debug:=true gui:=false mav_name:=firefly world_name:=basic
+    network_mode: host
+
+  gzweb:
+    image: ros:gzweb
+    container_name: gzweb
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-gzweb
+    ports:
+      - 8080:8080
+    environment:
+     - ROS_HOSTNAME=gzweb
+     - GAZEBO_MASTER_URI=http://rotors:11347
+     - ROS_MASTER_URI=http://master:11311
+     - GAZEBO_RESOURCE_PATH=/opt/ros_ws/src/rotors_simulator/rotors_gazebo
+    
+
+  rosbridge:
+    image: ros:rosbridge
+    container_name: rosbridge
+    restart: always
+    ports:
+     - 9090:9090
+    build:
+      context: .
+      dockerfile: Dockerfile-rosbridge
+    environment:
+     - ROS_HOSTNAME=rosbridge
+     - ROS_MASTER_URI=http://master:11311
+    command: roslaunch rosbridge_server rosbridge_websocket.launch
+    

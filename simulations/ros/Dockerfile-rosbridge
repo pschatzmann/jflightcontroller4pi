@@ -1,0 +1,5 @@
+FROM ros:rotors
+# install ros tutorials packages
+RUN apt-get update && apt-get install -y \
+    ros-melodic-rosbridge-suite \
+    && rm -rf /var/lib/apt/lists/

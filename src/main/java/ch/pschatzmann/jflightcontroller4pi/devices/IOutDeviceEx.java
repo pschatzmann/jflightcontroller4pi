@@ -1,5 +1,6 @@
 package ch.pschatzmann.jflightcontroller4pi.devices;
 
+import ch.pschatzmann.jflightcontroller4pi.FlightController;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 
 /**
@@ -14,6 +15,8 @@ public interface IOutDeviceEx extends IOutDevice {
 	
 	public void setRecalculate(IRecalculate c);
 
-	ParametersEnum getControlParameter();
+	public ParametersEnum getControlParameter();
+	
+	public FlightController getFlightController();
 	
 }

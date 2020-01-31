@@ -1,0 +1,33 @@
+FROM ros:rotors
+
+# install dependencies
+RUN apt-get update && apt-get install -y curl subversion \
+    gazebo9 libgazebo9-dev libjansson-dev \
+    libboost-dev imagemagick libtinyxml-dev mercurial cmake build-essential  \
+    xvfb \
+    && rm -rf /var/lib/apt/lists/
+
+# Install Node
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+
+WORKDIR /opt
+
+# Setup gzweb
+RUN hg clone https://bitbucket.org/osrf/gzweb
+WORKDIR /opt/gzweb
+RUN hg up default
+
+# source /usr/share/gazebo/setup.sh
+ENV GAZEBO_RESOURCE_PATH=/opt/ros_ws/src/rotors_simulator/rotors_gazebo
+
+RUN npm run deploy
+ 
+EXPOSE 8080
+EXPOSE 7681
+
+CMD npm start
+
+
+
+ 

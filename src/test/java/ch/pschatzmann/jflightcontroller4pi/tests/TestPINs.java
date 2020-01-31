@@ -29,8 +29,8 @@ import com.pi4j.wiringpi.Gpio;
 
 import ch.pschatzmann.jflightcontroller4pi.data.IData;
 import ch.pschatzmann.jflightcontroller4pi.guidence.navigation.GPS;
-import ch.pschatzmann.jflightcontroller4pi.protocols.InputSerial;
-import ch.pschatzmann.jflightcontroller4pi.protocols.OutputToPiPwm;
+import ch.pschatzmann.jflightcontroller4pi.protocols.InputSerialWithEvents;
+import ch.pschatzmann.jflightcontroller4pi.protocols.PwmOutput;
 
 /**
  * Test for Raspberry PI Pins
@@ -89,7 +89,7 @@ public class TestPINs {
 			return;
 		System.out.println("testPWM18");
 		System.out.println(RaspiBcmPin.GPIO_18.getName());
-		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_18.getName());
+		PwmOutput pwm = new PwmOutput(RaspiBcmPin.GPIO_18.getName());
 
 		// our managed range is between -1.0 and 1.0
 		for (int j = 0; j < 10; j++) {
@@ -120,7 +120,7 @@ public class TestPINs {
 			return;
 		System.out.println("testPWM21");
 		System.out.println(RaspiBcmPin.GPIO_21.getName());
-		OutputToPiPwm pwm = new OutputToPiPwm(RaspiBcmPin.GPIO_21.getName());
+		PwmOutput pwm = new PwmOutput(RaspiBcmPin.GPIO_21.getName());
 		for (int j = 0; j < 100; j++) {
 			pwm.setValue(j);
 			Thread.sleep(500);
@@ -148,7 +148,7 @@ public class TestPINs {
 		SerialConfig config = new SerialConfig();
 
 		config.device("/dev/ttyS0").baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
-		InputSerial is = new InputSerial(config);
+		InputSerialWithEvents is = new InputSerialWithEvents(config);
 
 		// read data and process it in a separate thread
 		new Thread(new Runnable() {
@@ -183,7 +183,7 @@ public class TestPINs {
 		SerialConfig config = new SerialConfig();
 
 		config.device("/dev/ttyS0").baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
-		InputSerial is = new InputSerial(config);
+		InputSerialWithEvents is = new InputSerialWithEvents(config);
 
 		new Thread(new Runnable() {
 			public void run() {

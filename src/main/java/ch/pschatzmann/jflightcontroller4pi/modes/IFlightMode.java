@@ -1,6 +1,9 @@
 package ch.pschatzmann.jflightcontroller4pi.modes;
 
+import java.util.Collection;
+
 import ch.pschatzmann.jflightcontroller4pi.FlightController;
+import ch.pschatzmann.jflightcontroller4pi.devices.IDevice;
 
 /**
  * Interface for Flight Modes
@@ -17,6 +20,13 @@ public interface IFlightMode {
 	 * Shut down e.g. before switching to another mode
 	 */
 	public void shutdown();
+	
+	/**
+	 * Lists all devices which are available for this mode
+	 * @return
+	 */
+	public Collection<IDevice> getDevices();
+
 
 	/**
 	 * Name for mode

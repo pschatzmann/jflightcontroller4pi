@@ -12,6 +12,7 @@ import ch.pschatzmann.jflightcontroller4pi.control.MedianFilter;
 import ch.pschatzmann.jflightcontroller4pi.devices.OutDevice;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramReader;
 import ch.pschatzmann.jflightcontroller4pi.integration.DatagramWriter;
+import ch.pschatzmann.jflightcontroller4pi.integration.LineSplitter;
 import ch.pschatzmann.jflightcontroller4pi.loop.ControlLoopWithTimers;
 import ch.pschatzmann.jflightcontroller4pi.loop.IControlLoop;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
@@ -95,6 +96,19 @@ public class TestEtc {
 		f.add(30.0);
 		f.add(40.0);
 		Assert.assertEquals(93.0/5.0, f.getValue(),0.001);
+		
+	}
+	
+	@Test
+	public void testSplit() {
+		String s = "abc"+System.lineSeparator()+"def"+System.lineSeparator()+"end";
+		LineSplitter sp = new LineSplitter();
+		Assert.assertEquals(2,sp.split(s).length);
+		
+		String sa[] = sp.split("x"+System.lineSeparator());
+		Assert.assertEquals(1,sa.length);
+		Assert.assertEquals("endx",sa[0]);
+		
 		
 	}
 

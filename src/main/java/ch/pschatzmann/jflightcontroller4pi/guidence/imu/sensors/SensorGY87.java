@@ -60,14 +60,18 @@ public class SensorGY87 implements ISensor {
 
 	@Override
 	public void processInput() {
-		count++;
-		log.debug("processInput");
-		if (FrequencyCheck.isRelevantForProcessing(frequency, mpu6050.getFrequency(), count))
-			mpu6050.processInput();
-		if (FrequencyCheck.isRelevantForProcessing(frequency,bmp180.getFrequency(), count))
-			bmp180.processInput();
-		if (FrequencyCheck.isRelevantForProcessing(frequency,qmc5883.getFrequency(), count))
-			qmc5883.processInput();
+		try {
+			count++;
+			log.debug("processInput");
+			if (FrequencyCheck.isRelevantForProcessing(frequency, mpu6050.getFrequency(), count))
+				mpu6050.processInput();
+			if (FrequencyCheck.isRelevantForProcessing(frequency,bmp180.getFrequency(), count))
+				bmp180.processInput();
+			if (FrequencyCheck.isRelevantForProcessing(frequency,qmc5883.getFrequency(), count))
+				qmc5883.processInput();
+		} catch(Throwable ex) {
+			log.error(ex.getMessage(),ex);
+		}
 	}
 	
 	public Value3D getAccelerometer() {
