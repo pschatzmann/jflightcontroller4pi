@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +27,6 @@ import ch.pschatzmann.jflightcontroller4pi.modes.FlightMode;
 import ch.pschatzmann.jflightcontroller4pi.modes.ManualModeRule;
 import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 import ch.pschatzmann.jflightcontroller4pi.protocols.NullDevice;
-import junit.framework.Assert;
 
 /**
  * Tests for the Gy87 Sensor and the IMU
@@ -38,7 +38,7 @@ public class TestIMU {
 
 	@Before
 	public void beforeMethod() {
-		//org.junit.Assume.assumeTrue(i2cExists());
+		org.junit.Assume.assumeTrue(i2cExists());
 	}
 
 	private boolean i2cExists() {
@@ -69,7 +69,7 @@ public class TestIMU {
 		ISensor sensor = new SensorGY87();
 		IMUDevice imu = new IMUDevice();
 		fc.addDevices(Arrays.asList(sensor, imu));
-				
+		fc.getControlLoop().setBlocking(false);		
 		fc.run();
 
 		for (int j = 0; j < 10; j++) {

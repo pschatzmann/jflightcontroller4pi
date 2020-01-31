@@ -1,6 +1,7 @@
 package ch.pschatzmann.jflightcontroller4pi.tests;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -20,12 +21,14 @@ import ch.pschatzmann.jflightcontroller4pi.parameters.ParametersEnum;
 public class TestEtc {
 
 	/**
-	 * Testing the remote control 
+	 * Testing the remote control. This requires that the external remote control is set into action and sends
+	 * some commands
 	 */
 	
+	@Ignore
 	@Test
 	public void testReceive() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("plane.xml");
 		FlightController ctl = (FlightController) context.getBean("flightController");
 		
 		// select mode
@@ -39,11 +42,9 @@ public class TestEtc {
 		r.setActive(true);
 		
 		// use nun blocking control loop for the junit test
-		IControlLoop cl = new ControlLoopWithTimers(false);
-		ctl.setControlLoop(cl);
-
+		ctl.getControlLoop().setBlocking(false);
 		ctl.run();
-		ctl.sleep(10000);
+		ctl.sleep(50000);
 		ctl.stop();
 		
 		Assert.assertTrue(r.getRecordCount()>0);
